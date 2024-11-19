@@ -1,0 +1,101 @@
+/* Estructura base */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(rgba(255, 255, 255, 0.108), rgba(255, 255, 255, 0.07)),
+                url('/img/fondoverduras.png') no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+
+  header {
+    background-color: #fff;
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  header nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  header nav ul li {
+    margin-left: 20px;
+  }
+
+  header nav ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+  }
+
+  header nav ul li a:hover {
+    color: #4CAF50;
+  }
+
+  /* Sección de contacto */
+  .contact-section {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .contact-section h1 {
+    color: #4CAF50;
+    margin-bottom: 10px;
+  }
+
+  .contact-section p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+  }
+
+  .contact-form-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .contact-form-container form {
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .contact-form-container label {
+    display: block;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: left;
+  }
+
+  .contact-form-container input,
+  .contact-form-container textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  .contact-form-container button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .contact-form-container button:hover {
+    background-color: #45a049;
+  }

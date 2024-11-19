@@ -4,3 +4,6 @@ export const login = (req, res) => {
 export const principal = (req, res) => {
     res.render("views.principalproveedor.ejs")
 }
+export const contactanos = (req, res) => {
+    res.render("views.contactanos.ejs")
+}

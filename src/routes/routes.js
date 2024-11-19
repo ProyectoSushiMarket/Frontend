@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { login, principal } from "../controllers/controller.login.js";
+import { contactanos, login, principal } from "../controllers/controller.login.js";
 
 const rutaprincipal = Router();
 
 rutaprincipal.get("/", login);
 rutaprincipal.get("/principalproveedor", principal)
+rutaprincipal.get("/contactanos", contactanos)
 
 
 export default rutaprincipal;
