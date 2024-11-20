@@ -10,7 +10,7 @@ body {
   }
 
   header {
-    background-color: #fff;
+    background-color: #4caf4f75;
     padding: 10px 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
@@ -29,12 +29,12 @@ body {
 
   header nav ul li a {
     text-decoration: none;
-    color: #333;
+    color: #ffffff;
     font-weight: bold;
   }
 
   header nav ul li a:hover {
-    color: #4CAF50;
+    color: #01ff2b;
   }
 
   /* Sección de contacto */

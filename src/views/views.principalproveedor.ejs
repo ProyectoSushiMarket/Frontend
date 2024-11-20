@@ -17,9 +17,9 @@
             </ul>
             <div class="icons">
                 <a href="#" class="cart-icon">🛒</a>
-                <a href="#" class="login-icon">Perfil</a>
+                <a href="/perfilproveedor" class="login-icon">Perfil</a>
                 <button class="contact-button" onclick="window.location.href='/contactanos';">Contáctenos</button>
-
+                <button class="CerrarSesion-button" onclick="CerrarSesion()">Cerrar Sesión</button>
 
             </div>
         </nav>
@@ -27,11 +27,11 @@
 
     <section class="search-bar">
         <input type="text" placeholder="Buscar...">
-        <button class="search-button">🔍</button>
+        <button class="buscar-button">🔍</button>
     </section>
 
     <section class="filter-bar">
-        <span>Tarifa</span>
+        <!-- <span>Tarifa</span> -->
         <span>Ordenar por: <select><option>Destacado</option></select></span>
     </section>
 
@@ -249,6 +249,11 @@
             <h3 class="Zuccini">Zuccini</h3>
         </div>
     </section>
+    <footer>
+        <p>&copy; 2024 Jhoan. Todos los derechos reservados.</p>
+      </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/principal.js"></script>
 </body>
 </html>

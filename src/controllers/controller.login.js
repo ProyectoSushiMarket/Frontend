@@ -7,3 +7,6 @@ export const principal = (req, res) => {
 export const contactanos = (req, res) => {
     res.render("views.contactanos.ejs")
 }
+export const perfilproveedor = (req, res) => {
+    res.render("views.perfilproveedor.ejs")
+}

@@ -1,3 +1,9 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
 body {
     font-family: Arial, sans-serif;
     background: linear-gradient(rgba(255, 255, 255, 0.108), rgba(255, 255, 255, 0.07)),
@@ -6,7 +12,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    flex-direction: column;
+    height: 100%;
     margin: 0;
 }
 
@@ -33,7 +40,7 @@ body {
     margin-bottom: 20px;
 }
 
-.login-container input[type=text], 
+.login-container input[type=text],
 .login-container input[type=password] {
     width: 100%;
     padding: 12px 20px;
@@ -65,7 +72,7 @@ body {
     max-width: 100px;
 }
 
-/* Nuevos estilos para el formulario de registro */
+/*estilos para el formulario de registro */
 .hidden {
     display: none;
 }
@@ -116,4 +123,16 @@ body {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+
+footer {
+    text-align: center;
+    padding: 0px 0;
+    background-color: #45a04941;
+    color: white;
+    font-size: 14px;
+    width: 100%;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: auto;
 }
