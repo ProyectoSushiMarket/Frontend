@@ -6,7 +6,7 @@ html, body {
 }
 body {
     font-family: Arial, sans-serif;
-    background: linear-gradient(rgba(255, 255, 255, 0.108), rgba(255, 255, 255, 0.07)),
+    background: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)),
                 url('/img/fondoverduras.png') no-repeat center center fixed;
     background-size: cover;
     display: flex;

@@ -3,7 +3,7 @@ import { contactanos, login, perfilproveedor, principal } from "../controllers/c
 
 const rutaprincipal = Router();
 
-rutaprincipal.get("/login", login);
+rutaprincipal.get("/", login);
 rutaprincipal.get("/principalproveedor", principal)
 rutaprincipal.get("/contactanos", contactanos)
 rutaprincipal.get("/perfilproveedor", perfilproveedor )
