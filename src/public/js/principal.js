@@ -52,7 +52,28 @@ document.querySelectorAll('.add-to-cart').forEach(cartIcon => {
 
 document.querySelector('.cart-icon').addEventListener('click', (event) => {
     event.preventDefault(); // Evitar que la página recargue si el ícono tiene un enlace
-    alert(`Tienes ${cartCount} productos en tu carrito.`);
+    let timerInterval;
+Swal.fire({
+  title: `Tienes ${cartCount} productos en tu carrito.`,
+  html: "Se ve cerrar en: <b></b> Milisegundos.",
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: () => {
+    Swal.showLoading();
+    const timer = Swal.getPopup().querySelector("b");
+    timerInterval = setInterval(() => {
+      timer.textContent = `${Swal.getTimerLeft()}`;
+    }, 100);
+  },
+  willClose: () => {
+    clearInterval(timerInterval);
+  }
+}).then((result) => {
+  /* Read more about handling dismissals below */
+  if (result.dismiss === Swal.DismissReason.timer) {
+    console.log("I was closed by the timer");
+  }
+});
 });
 
 
