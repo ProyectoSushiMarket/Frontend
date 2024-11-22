@@ -7,6 +7,7 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f5f5f5;
+    overflow: hidden;
 }
 
 .navbar {
@@ -68,6 +69,15 @@ body {
     border-radius: 4px;
     cursor: pointer;
 }
+.AgregarProducto-button {
+    background-color: #45a049;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
 
 .search-bar {
     display: flex;
@@ -140,11 +150,11 @@ body {
     position: absolute;
     bottom: 10px;
     left: 10px;
-    background-color: rgba(0, 0, 0, 0.7); /* Fondo semitransparente */
+    background-color: rgba(0, 0, 0, 0.7); 
     color: #fff;
     padding: 8px;
     border-radius: 50%;
-    display: none; /* Ocultar por defecto */
+    display: none; 
     cursor: pointer;
     transition: opacity 0.3s, transform 0.3s;
     font-size: 18px;
@@ -155,3 +165,90 @@ body {
     opacity: 1;
     transform: scale(1.2); /* Animación de entrada */
 }
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: left;
+    animation: slideIn 0.5s ease-out;
+}
+
+/* Animación de desvanecimiento */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Animación de deslizamiento */
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #4CAF50;
+}
+
+.modal-body label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+}
+
+.modal-body input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
+
+.save-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 4px;
+}
+
+.cancel-button {
+    background-color: #e74c3c;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 4px;
+}
+

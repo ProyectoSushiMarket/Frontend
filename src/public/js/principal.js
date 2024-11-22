@@ -33,22 +33,48 @@ function filterProductsRealtime() {
 // Agregar evento en tiempo real a la barra de búsqueda
 document.getElementById('searchBar').addEventListener('input', filterProductsRealtime);
 
+
+// carrito de compras ------------------------------// -------------------------------------
+
 // contador carrito
 let cartCount = 0;
+
+let cartItems = [];
 
 document.querySelectorAll('.add-to-cart').forEach(cartIcon => {
     cartIcon.addEventListener('click', (event) => {
         // Obtener el nombre del producto
-        const productName = event.target.closest('.product-card').querySelector('.product-name').textContent;
+        const productCard = event.target.closest('.product-card').querySelector('.product-name').textContent;
+        const productName = productCard.querySelector('h3').textContent;
 
-        alert(`Has agregado "${productName}" al carrito.`);
+        Swal.fire({
+          title: "Producto agregado",
+          text: `"${productName}" se agregó al carrito.`,
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false
+      });
 
         cartCount++;
         document.getElementById('cart-count').textContent = cartCount;
 
-        // aqui se puede poner mas adelante para agregar productos mediante el backend
+        cartItems.push(productName);
+
+        renderCartItems();
     });
 });
+
+// Función para renderizar los productos en el carrito
+function renderCartItems() {
+  const cartList = document.getElementById('cart-items');
+  cartList.innerHTML = ""; // Limpiar la lista del carrito
+
+  cartItems.forEach(item => {
+      const listItem = document.createElement('li');
+      listItem.textContent = item;
+      cartList.appendChild(listItem);
+  });
+}
 
 document.querySelector('.cart-icon').addEventListener('click', (event) => {
     event.preventDefault(); // Evitar que la página recargue si el ícono tiene un enlace
@@ -76,7 +102,7 @@ Swal.fire({
 });
 });
 
-
+// Cerrar Sesion ------------------------------ // -----------------------------
 
 // Funcion de alerta para Cerrar Sesion
 function CerrarSesion() {
@@ -100,3 +126,43 @@ function CerrarSesion() {
       }
     });
   }
+
+// Modal
+function abrirModal() {
+  document.getElementById('modal').style.display = 'flex';
+}
+
+function cerrarModal() {
+  document.getElementById('modal').style.display = 'none';
+}
+
+// Guardar cambios con validación
+function guardarCambios() {
+  const productName = document.getElementById('product-name').value.trim();
+  const productUrl = document.getElementById('product-url').value.trim();
+
+  if (!productName || !productUrl) {
+    Swal.fire({
+      icon: "warning",
+      title: "Campos incompletos",
+      text: "Por favor, llena todos los campos antes de guardar.",
+      confirmButtonText: "Aceptar",
+    });
+    return;
+  }
+
+  Swal.fire({
+    icon: "success",
+    title: "¡Producto agregado con éxito!",
+    text: `El producto "${productName}" fue agregado.`,
+    showConfirmButton: false,
+    timer: 1500,
+  });
+
+  // Limpiar campos después de guardar
+  document.getElementById('product-name').value = '';
+  document.getElementById('product-url').value = '';
+
+  cerrarModal();
+}
+

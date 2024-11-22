@@ -16,7 +16,7 @@
                 <li><a href="/contactanos">Contáctenos</a></li>
             </ul>
             <div class="icons">
-                <a href="#" class="cart-icon">🛒</a>
+                <a href="#" class="cart-icon">🛒<span id="cart-count">0</span></a>
                 <a href="/perfilproveedor" class="login-icon">Perfil</a>
                 <button class="contact-button" onclick="window.location.href='/contactanos';">Contáctenos</button>
                 <button class="CerrarSesion-button" onclick="CerrarSesion()">Cerrar Sesión</button>
@@ -33,6 +33,7 @@
     <section class="filter-bar">
         <!-- <span>Tarifa</span> -->
         <span>Ordenar por: <select><option>Destacado</option></select></span>
+        <button class="AgregarProducto-button" onclick="abrirModal()">Agregar Producto</button>
     </section>
 
     <section class="products-grid">
@@ -41,7 +42,7 @@
                 <img src="/img/fondoverduras.png" alt="AguacateLorena">
             </div>
             <h3 class="AguacateLorena">Aguacate Lorena</h3>
-            <div class="add-to-cart">
+            <div class="add-to-cart" id="add-to-cart">
                 🛒
             </div>
         </div>
@@ -514,6 +515,27 @@
             </div>
         </div>
     </section>
+
+    <!-- Modal para agregar producto -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">Agregar Producto</div>
+        <div class="modal-body">
+            <form id="product-form">
+                <label for="product-name">Nombre del producto:</label>
+                <input type="text" id="product-name" name="product-name" placeholder="Ingresa el nombre del producto">
+
+                <label for="product-url">URL de la imagen:</label>
+                <input type="text" id="product-url" name="product-url" placeholder="Ingresa la URL de la imagen">
+            </form>
+        </div>
+        <div class="modal-actions">
+            <button class="save-button" onclick="guardarCambios()">Guardar</button>
+            <button class="cancel-button" onclick="cerrarModal()">Cancelar</button>
+        </div>
+    </div>
+</div>
+  
     
     <script src="/js/principal.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
