@@ -146,163 +146,107 @@ body {
     object-fit: cover; 
 }
 
-.add-to-cart {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    background-color: rgba(0, 0, 0, 0.7); 
-    color: #fff;
-    padding: 8px;
-    border-radius: 50%;
-    display: none; 
-    cursor: pointer;
-    transition: opacity 0.3s, transform 0.3s;
-    font-size: 18px;
-}
-
 .product-card:hover .add-to-cart {
     display: block;
     opacity: 1;
     transform: scale(1.2);
 }
 
-/* Modal */
+/* Contenedor general del modal */
 .modal {
     display: none;
     position: fixed;
-    top: 0;
+    z-index: 1000;
+    padding-top: 60px;
     left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    animation: fadeIn 0.5s ease-out;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
-.modal-content {
-    background: white;
+/* Contenedor del contenido del modal */
+.modal-content-container {
+    position: relative;
+    margin: auto;
+    background-color: #fff;
+    border-radius: 10px;
     padding: 20px;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 40%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+/* Estilos de la imagen en el modal */
+.modal-content {
+    max-width: 80%;
+    max-height: 200px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    object-fit: contain;
+}
+
+/* Información del producto (descripción, cantidad, etc.) */
+.modal-info {
     text-align: left;
-    animation: slideIn 0.5s ease-out;
+    margin-top: 10px;
 }
 
-/* Animación de desvanecimiento */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+.modal-info p {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #333;
 }
 
-/* Animación de deslizamiento */
-@keyframes slideIn {
-    from {
-        transform: translateY(-50px);
-    }
-    to {
-        transform: translateY(0);
-    }
-}
-
-.modal-header {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    color: #4CAF50;
-}
-
-.modal-body label {
+.modal-info label {
     display: block;
-    margin: 10px 0 5px;
-    font-weight: bold;
+    font-size: 14px;
+    margin: 5px 0;
 }
 
-.modal-body input {
+.modal-info input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.modal-info button {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-.custom-file-input button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 4px;
-    border: none; /* Esto sirve para quitar los bordes de los botones */
-    margin-left: 10px;
+    font-size: 16px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.custom-file-input button:hover {
-    background-color: #45a049;
-    color: rgb(0, 0, 0);
-    transform: scale(1.05);
+.modal-info button:hover {
+    background-color: #218838;
 }
 
-.custom-file-input button:active {
-    transform: scale(0.98);
-}
-
-
-.custom-file-input span {
-    margin-left: 10px;
-    font-size: 0.9rem;
-    color: #555;
-    font-weight: 500;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 15px;
-}
-
-.save-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 4px;
-    border: none; /* Esto sirve para quitar los bordes de los botones */
-    margin-left: 10px;
+/* Botón de cerrar */
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    color: #000;
+    font-size: 30px;
+    font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
-.save-button:hover {
-    background-color: #45a049;
-    color: rgb(0, 0, 0);
-    transform: scale(1.05);
+.close:hover,
+.close:focus {
+    color: #f00;
+    text-decoration: none;
 }
 
-.cancel-button {
-    background-color: #e74c3c;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 4px;
-    border: none; /* Esto sirve para quitar los bordes de los botones */
-    margin-left: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    
-}
 
-.cancel-button:hover {
-    background-color: #c0392b;
-    color: rgb(0, 0, 0);
-    transform: scale(1.05);
-}
 
 

@@ -127,21 +127,39 @@ function CerrarSesion() {
     });
   }
 
+
 // Modal
 function abrirModal() {
   document.getElementById('modal').style.display = 'flex';
 }
 
 function cerrarModal() {
+  // Ocultar el modal
   document.getElementById('modal').style.display = 'none';
+
+  // Limpiar los campos
+  document.getElementById('product-name').value = '';
+  document.getElementById('product-image').value = '';
+  document.getElementById('file-name').textContent = 'Ningún archivo seleccionado';
+}
+
+// Mostrar nombre del archivo seleccionado
+function mostrarNombreArchivo() {
+  const fileInput = document.getElementById('product-image');
+  const fileNameDisplay = document.getElementById('file-name');
+  if (fileInput.files.length > 0) {
+    fileNameDisplay.textContent = fileInput.files[0].name;
+  } else {
+    fileNameDisplay.textContent = 'Ningún archivo seleccionado';
+  }
 }
 
 // Guardar cambios con validación
 function guardarCambios() {
   const productName = document.getElementById('product-name').value.trim();
-  const productUrl = document.getElementById('product-url').value.trim();
+  const productImage = document.getElementById('product-image').files[0];
 
-  if (!productName || !productUrl) {
+  if (!productName || !productImage) {
     Swal.fire({
       icon: "warning",
       title: "Campos incompletos",
@@ -151,6 +169,7 @@ function guardarCambios() {
     return;
   }
 
+  // Puesta de productos con el backend en esta parte
   Swal.fire({
     icon: "success",
     title: "¡Producto agregado con éxito!",
@@ -161,8 +180,13 @@ function guardarCambios() {
 
   // Limpiar campos después de guardar
   document.getElementById('product-name').value = '';
-  document.getElementById('product-url').value = '';
+  document.getElementById('product-image').value = '';
+  document.getElementById('file-name').textContent = 'Ningún archivo seleccionado';
 
   cerrarModal();
 }
+
+
+
+
 

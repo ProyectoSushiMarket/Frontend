@@ -1,0 +1,165 @@
+/* General */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f1f8e9; /* Fondo verde claro como una hoja tierna */
+    color: #3e4c3f; /* Verde oscuro como un tallo fresco */
+    height: 100vh; /* Asegura que el body ocupe toda la altura de la ventana */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #45a049; /* Verde lima */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo-img {
+    height: 50px;
+}
+
+.menu a {
+    text-decoration: none;
+    color: white;
+    margin: 0 15px;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+.menu a:hover {
+    color: #33691e; /* Verde hoja oscura */
+}
+
+/* Cart */
+.cart {
+    display: flex;
+    align-items: center;
+    background-color: #f8ffd7; /* Fondo amarillo verdoso */
+    border-radius: 20px;
+    padding: 5px 15px;
+}
+
+.cart-icon {
+    font-size: 20px;
+    margin-right: 8px;
+}
+
+.cart-count {
+    font-weight: bold;
+    color: #388e3c; /* Verde vibrante */
+}
+
+/* Main content */
+.main-content {
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Esto asegura que el contenido ocupe todo el espacio disponible */
+}
+
+/* Empty cart */
+.empty-cart {
+    padding: 30px;
+    background-color: #dcedc8; /* Verde pastel */
+    border-radius: 10px;
+    border: 1px solid #c5e1a5; /* Verde suave */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.empty-cart p {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2e7d32; /* Verde profundo */
+}
+
+/* Buttons */
+.btn {
+    background-color: #689f38; /* Verde fuerte */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #33691e; /* Verde hoja oscura */
+}
+
+/* Product list */
+.product-list {
+    display: flex !important;
+    flex-wrap: wrap; /* Cambiar de nowrap a wrap para permitir varias filas */
+    gap: 15px;
+    justify-content: flex-start;
+    overflow: hidden; /* Eliminar la barra de desplazamiento horizontal */
+    align-items: flex-start; /* Alinear los productos al principio */
+    padding: 0 20px; /* Espaciado horizontal para no pegarse al borde */
+    flex-grow: 1; /* Esto asegura que el contenedor de productos ocupe el espacio restante */
+    max-height: 100%; /* No limitar la altura del contenedor */
+}
+
+/* Product items */
+.product-list .product-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #ffffff;
+    border: 1px solid #c5e1a5;
+    border-radius: 10px;
+    padding: 10px;
+    width: 150px;
+    max-height: 250px; /* Limita la altura para evitar tarjetas largas */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    flex: 0 0 auto;
+    overflow: hidden;
+    text-align: center;
+}
+
+.product-list .product-item:hover {
+    transform: scale(1.05);
+}
+
+.product-list .product-image {
+    width: 100px; /* Tamaño fijo para imágenes */
+    height: auto;
+    object-fit: cover; /* Ajuste proporcional */
+    margin-bottom: 10px;
+}
+
+/* Cart details */
+.cart-details {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #e8f5e9; /* Verde muy claro */
+    border-radius: 10px;
+    border: 1px solid #a5d6a7;
+}
+
+.cart-details h3 {
+    color: #2e7d32; /* Verde profundo */
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.cart-details ul {
+    list-style: none;
+    padding: 0;
+}
+
+.cart-details ul li {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #558b2f; /* Verde más intenso */
+}

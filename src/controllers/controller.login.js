@@ -10,3 +10,9 @@ export const contactanos = (req, res) => {
 export const perfilproveedor = (req, res) => {
     res.render("views.perfilproveedor.ejs")
 }
+export const principalcliente = (req, res) => {
+    res.render("views.principalcliente.ejs")
+}
+export const canasta = (req, res) => {
+    res.render("views.canasta.ejs")
+}
