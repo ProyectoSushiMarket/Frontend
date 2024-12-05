@@ -116,17 +116,6 @@ body {
     padding: 20px 50px;
 }
 
-.product-card {
-    position: relative;
-    background-color: #ffffff;
-    padding: 15px;
-    border-radius: 5px;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: transform 0.3s;
-}
-
 .product-card:hover {
     transform: scale(1.03);
 }
@@ -137,21 +126,48 @@ body {
     margin-top: 10px;
 }
 
-.product-image img {
-    width: 90%;
-    max-width: 300px; 
-    max-height: 300px; 
-    height: auto; 
-    border-radius: 8px; 
+.product-card .product-image img {
+    width: 150px; 
+    height: 150px; 
     object-fit: cover; 
+    border-radius: 8px; 
+    display: block;
+    margin: 0 auto; 
 }
+
 
 .product-card:hover .add-to-cart {
     display: block;
     opacity: 1;
-    transform: scale(1.2);
+    transform: scale(1);
 }
- 
+ /* Estilo para el botón Añadir al carrito */
+.add-to-cart {
+    background-color: #4CAF50; /* Azul */
+    color: white; 
+    padding: 12px 20px; 
+    border: none; 
+    border-radius: 8px; 
+    font-size: 16px;
+    cursor: pointer; 
+    text-align: center;
+    display: block; 
+    margin: 10px auto; 
+    transition: all 0.3s ease; 
+}
+
+/* Efecto hover */
+.add-to-cart:hover {
+    background-color: #366e38; 
+    transform: scale(1.05); 
+}
+
+
+.add-to-cart:active {
+    background-color: #4CAF50; 
+    transform: scale(1); 
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+}
 .modal {
     display: none;
     position: fixed;
