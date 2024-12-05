@@ -25,9 +25,9 @@ body {
 }
 
 .login-container {
-    background-color: white;
-    padding: 20px;
-    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.152);
+    padding: 100px;
+    border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 300px;
     position: relative;
@@ -80,12 +80,12 @@ body {
 .toggle-text {
     text-align: center;
     font-size: 0.9em;
-    color: #666;
+    color: #ffffff;
     margin-top: 10px;
 }
 
 .toggle-text span {
-    color: #4CAF50;
+    color: #ff0000;
     cursor: pointer;
     font-weight: bold;
 }

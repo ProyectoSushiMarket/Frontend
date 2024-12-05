@@ -146,28 +146,109 @@ body {
     object-fit: cover; 
 }
 
-.add-to-cart {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    background-color: rgba(0, 0, 0, 0.7); 
-    color: #fff;
-    padding: 8px;
-    border-radius: 50%;
-    display: none; 
-    cursor: pointer;
-    transition: opacity 0.3s, transform 0.3s;
-    font-size: 18px;
-}
-
 .product-card:hover .add-to-cart {
     display: block;
     opacity: 1;
     transform: scale(1.2);
 }
+ 
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    padding-top: 60px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Contenedor del contenido del modal */
+.modal-content-container {
+    position: relative;
+    margin: auto;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    width: 40%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+/* Estilos de la imagen en el modal */
+.modal-content {
+    max-width: 80%;
+    max-height: 200px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    object-fit: contain;
+}
+
+/* Información del producto (descripción, cantidad, etc.) */
+.modal-info {
+    text-align: left;
+    margin-top: 10px;
+}
+
+.modal-info p {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.modal-info label {
+    display: block;
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.modal-info input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.modal-info button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal-info button:hover {
+    background-color: #218838;
+}
+
+/* Botón de cerrar */
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    color: #000;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #f00;
+    text-decoration: none;
+}
+
 
 /* Modal */
-.modal {
+.add-product-modal {
     display: none;
     position: fixed;
     top: 0;
@@ -181,7 +262,8 @@ body {
     animation: fadeIn 0.5s ease-out;
 }
 
-.modal-content {
+/* Contenedor del contenido del modal */
+.add-product-modal-content {
     background: white;
     padding: 20px;
     border-radius: 8px;
@@ -192,7 +274,7 @@ body {
     animation: slideIn 0.5s ease-out;
 }
 
-/* Animación de desvanecimiento */
+/* Animaciones */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -202,7 +284,6 @@ body {
     }
 }
 
-/* Animación de deslizamiento */
 @keyframes slideIn {
     from {
         transform: translateY(-50px);
@@ -212,49 +293,64 @@ body {
     }
 }
 
-.modal-header {
+/* Cabecera del modal */
+.add-product-modal-header {
     font-size: 1.5rem;
     margin-bottom: 10px;
     color: #4CAF50;
+    font-weight: bold;
+    text-align: center;
 }
 
-.modal-body label {
+/* Cuerpo del modal */
+.add-product-modal-body {
+    padding: 10px 0;
+}
+
+.add-product-modal-body label {
     display: block;
     margin: 10px 0 5px;
     font-weight: bold;
+    color: #333;
 }
 
-.modal-body input {
+/* Campos de entrada del modal */
+.add-product-modal-body input {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 6px;
     box-sizing: border-box;
+    font-size: 1rem;
+    margin-bottom: 15px;
 }
 
-.custom-file-input button {
+/* Input de archivo personalizado */
+.file-input-container {
+    display: flex;
+    align-items: center;
+}
+
+.file-input-container button {
     background-color: #4CAF50;
     color: white;
     padding: 10px 15px;
-    border-radius: 4px;
-    border: none; /* Esto sirve para quitar los bordes de los botones */
+    border-radius: 6px;
+    border: none;
     margin-left: 10px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.custom-file-input button:hover {
+.file-input-container button:hover {
     background-color: #45a049;
-    color: rgb(0, 0, 0);
-    transform: scale(1.05);
 }
 
-.custom-file-input button:active {
+.file-input-container button:active {
     transform: scale(0.98);
 }
 
-
-.custom-file-input span {
+.file-input-container span {
     margin-left: 10px;
     font-size: 0.9rem;
     color: #555;
@@ -263,46 +359,56 @@ body {
     vertical-align: middle;
 }
 
-
-.modal-actions {
+/* Acciones del modal */
+.add-product-modal-actions {
     display: flex;
-    justify-content: flex-end;
-    margin-top: 15px;
+    justify-content: space-between;
+    margin-top: 20px;
 }
 
-.save-button {
+.save-product-button,
+.cancel-product-button {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-size: 1rem;
+    width: 45%;
+}
+
+/* Estilo para el botón "Guardar" */
+.save-product-button {
     background-color: #4CAF50;
     color: white;
-    padding: 10px 15px;
-    border-radius: 4px;
-    border: none; /* Esto sirve para quitar los bordes de los botones */
-    margin-left: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
-.save-button:hover {
+.save-product-button:hover {
     background-color: #45a049;
-    color: rgb(0, 0, 0);
     transform: scale(1.05);
 }
 
-.cancel-button {
+.save-product-button:active {
+    transform: scale(0.98);
+}
+
+/* Estilo para el botón "Cancelar" */
+.cancel-product-button {
     background-color: #e74c3c;
     color: white;
-    padding: 10px 15px;
-    border-radius: 4px;
-    border: none; /* Esto sirve para quitar los bordes de los botones */
-    margin-left: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    
 }
 
-.cancel-button:hover {
+.cancel-product-button:hover {
     background-color: #c0392b;
-    color: rgb(0, 0, 0);
     transform: scale(1.05);
 }
+
+.cancel-product-button:active {
+    transform: scale(0.98);
+}
+
+
+
 
 

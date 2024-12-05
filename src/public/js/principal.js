@@ -36,106 +36,151 @@ document.getElementById('searchBar').addEventListener('input', filterProductsRea
 
 // carrito de compras ------------------------------// -------------------------------------
 
-// contador carrito
-let cartCount = 0;
+// Modal y elementos
+const modal = document.getElementById("imageModal");
+const modalImg = document.getElementById("modalImage");
+const captionText = document.getElementById("caption");
+const closeModal = document.getElementById("modalCloseBtn");
+const addProductButton = document.getElementById("addProductButton");
 
-let cartItems = [];
+// Imágenes de los productos
+const images = document.querySelectorAll(".product-image img");
 
-document.querySelectorAll('.add-to-cart').forEach(cartIcon => {
-    cartIcon.addEventListener('click', (event) => {
-        // Obtener el nombre del producto
-        const productCard = event.target.closest('.product-card').querySelector('.product-name').textContent;
-        const productName = productCard.querySelector('h3').textContent;
+// Elementos del carrito
+const cartCount = document.getElementById("cart-count");
+const cartDetails = document.getElementById("cart-details");
+const cartItemsList = document.getElementById("cart-items-list");
 
-        Swal.fire({
-          title: "Producto agregado",
-          text: `"${productName}" se agregó al carrito.`,
-          icon: "success",
-          timer: 1500,
-          showConfirmButton: false
-      });
-
-        cartCount++;
-        document.getElementById('cart-count').textContent = cartCount;
-
-        cartItems.push(productName);
-
-        renderCartItems();
-    });
-});
-
-// Función para renderizar los productos en el carrito
-function renderCartItems() {
-  const cartList = document.getElementById('cart-items');
-  cartList.innerHTML = ""; // Limpiar la lista del carrito
-
-  cartItems.forEach(item => {
-      const listItem = document.createElement('li');
-      listItem.textContent = item;
-      cartList.appendChild(listItem);
-  });
+// Función para obtener la fecha y hora actual
+function getCurrentDateTime() {
+    const now = new Date();
+    const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit', 
+        hour12: true 
+    };
+    return now.toLocaleString('es-ES', options); // Formato en español
 }
 
-document.querySelector('.cart-icon').addEventListener('click', (event) => {
-    event.preventDefault(); // Evitar que la página recargue si el ícono tiene un enlace
-    let timerInterval;
-Swal.fire({
-  title: `Tienes ${cartCount} productos en tu carrito.`,
-  html: "Se ve cerrar en: <b></b> Milisegundos.",
-  timer: 3000,
-  timerProgressBar: true,
-  didOpen: () => {
-    Swal.showLoading();
-    const timer = Swal.getPopup().querySelector("b");
-    timerInterval = setInterval(() => {
-      timer.textContent = `${Swal.getTimerLeft()}`;
-    }, 100);
-  },
-  willClose: () => {
-    clearInterval(timerInterval);
-  }
-}).then((result) => {
-  /* Read more about handling dismissals below */
-  if (result.dismiss === Swal.DismissReason.timer) {
-    console.log("I was closed by the timer");
-  }
-});
-});
+// Función para actualizar la fecha y hora dentro del modal
+function updateModalDateTime() {
+    const dateTimeElement = document.getElementById("current-time");
+    dateTimeElement.textContent = "Fecha y Hora Actual: " + getCurrentDateTime();
+}
 
-// Cerrar Sesion ------------------------------ // -----------------------------
-
-// Funcion de alerta para Cerrar Sesion
-function CerrarSesion() {
-    Swal.fire({
-      title: "¿Quieres Cerrar Sesión?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes"
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: "Sesión Cerrada con Éxito",
-          icon: "success",
-          timer: 1500,
-          showConfirmButton: false
-        }).then(() => {
-          window.location.href = "/";
-        });
-      }
+// Evento para mostrar el modal
+images.forEach((img) => {
+    img.addEventListener("click", () => {
+        modal.style.display = "block";
+        modalImg.src = img.src;
+        captionText.innerText = img.alt; // Texto basado en 'alt' de la imagen
+        updateModalDateTime(); // Actualizar la fecha y hora al abrir el modal
     });
-  }
+});
 
+// Evento para cerrar el modal
+closeModal.addEventListener("click", () => {
+    modal.style.display = "none";
+});
+
+// Cerrar al hacer clic fuera del contenido
+modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+        modal.style.display = "none";
+    }
+});
+
+// Función para mostrar notificación de éxito
+function showNotification(message) {
+    const notification = document.createElement("div");
+    notification.className = "notification";
+    notification.textContent = message;
+
+    document.body.appendChild(notification);
+
+    // Eliminar después de 3 segundos
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Función para actualizar el carrito
+function updateCart() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cartCount.textContent = cart.length;
+
+    cartItemsList.innerHTML = '';
+    cart.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.product} - Cantidad: ${item.quantity} - $${item.price} x ${item.quantity} - Fecha: ${new Date(item.dateTime).toLocaleString('es-ES')}`;
+        cartItemsList.appendChild(li);
+    });
+}
+
+// Prevenir envío del formulario
+const form = document.getElementById("productForm");
+form.addEventListener("submit", (e) => e.preventDefault());
+
+// Evento del botón "Añadir Producto"
+addProductButton.addEventListener("click", () => {
+    const quantity = document.getElementById("quantity").value;
+    const productName = captionText.innerText;
+    const productImage = modalImg.src;
+    const productPrice = 5; // Precio fijo, modifícalo si es necesario
+
+    if (!quantity || isNaN(quantity) || quantity <= 0) {
+        showNotification("Por favor, introduce una cantidad válida.");
+        return;
+    }
+
+    const currentDateTime = new Date().toISOString(); // Fecha y hora en formato ISO
+
+    const product = {
+        product: productName,
+        quantity: parseInt(quantity),
+        price: productPrice,
+        image: productImage,
+        dateTime: currentDateTime // Guardar la fecha y hora del momento de la adición
+    };
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart.push(product);
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCart();
+
+    showNotification("Producto añadido con éxito al carrito");
+    modal.style.display = "none";
+});
+
+// Actualizar la fecha y hora en tiempo real cada segundo
+setInterval(updateModalDateTime, 1000);
+
+// Mostrar detalles del carrito al hacer hover
+cartCount.addEventListener("mouseenter", () => {
+    cartDetails.style.display = "block";
+});
+
+cartDetails.addEventListener("mouseleave", () => {
+    cartDetails.style.display = "none";
+});
+
+// Cargar el carrito al cargar la página
+document.addEventListener('DOMContentLoaded', updateCart);
 
 // Modal
 function abrirModal() {
-  document.getElementById('modal').style.display = 'flex';
+  document.getElementById('add-product-modal').style.display = 'flex';
 }
 
 function cerrarModal() {
   // Ocultar el modal
-  document.getElementById('modal').style.display = 'none';
+  document.getElementById('add-product-modal').style.display = 'none';
 
   // Limpiar los campos
   document.getElementById('product-name').value = '';
@@ -185,6 +230,7 @@ function guardarCambios() {
 
   cerrarModal();
 }
+
 
 
 

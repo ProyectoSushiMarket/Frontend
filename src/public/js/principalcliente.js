@@ -88,7 +88,7 @@ function getCurrentDateTime() {
         second: '2-digit', 
         hour12: true 
     };
-    return now.toLocaleString('es-ES', options); // Formato en español
+    return now.toLocaleString('es-ES', options); 
 }
 
 // Función para actualizar la fecha y hora dentro del modal

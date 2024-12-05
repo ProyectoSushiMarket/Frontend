@@ -18,7 +18,11 @@ function mostrarProductos() {
       item.className = "product-item";
       item.innerHTML = `
         <img src="${product.image}" alt="${product.product}" class="product-image">
-        <p>${product.product} - $${product.price} x ${product.quantity}</p>
+        <strong>${product.product}</strong> <br>
+        <p>Cliente: ${product.product} <br>
+        Cantidad: ${product.quantity} <br>
+        Fecha: ${new Date(product.dateTime).toLocaleString("es-ES")} <br> <!-- Mostrar fecha y hora -->
+        Precio: $${(product.price * product.quantity).toFixed(2)}</p> <!-- Precio total -->
       `;
       productList.appendChild(item);
     });
