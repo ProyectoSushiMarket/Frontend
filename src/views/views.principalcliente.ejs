@@ -5,24 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tienda Verduras</title>
     <link rel="stylesheet" href="/css/principalcliente.css">
+
+
+    <!-- Validacion del token -->
+    <script>
+        const token = sessionStorage.getItem("token");
+        if (token == "" || token == null) {
+            window.location.href = "/"
+        }
+        const url = sessionStorage.getItem("urltiendaverduras") + "/usuario/oauth";
+        if (url == "" || url == null) {
+            window.location.href = "/principalcliente"
+        }
+        const options = {
+            method : "POST",
+            headers: {
+                "content-Type": "application/json",
+                "x-access-token": token
+            }
+        }
+        fetch(url, options)
+        .then(res => res.json())
+        .then(data=>{
+            if (data.error == true) {
+                window.location.href = "/"
+            }
+        });
+    </script>
+    <script>
+        const CerrarSesion = () => {
+            sessionStorage.setItem("token", "");
+            window.location.href = "/"
+        }
+    </script>
 </head>
 <body>
     <header>
         <nav class="navbar">
             <div class="logo">Tienda Verduras</div>
             <ul>
-                <li><a href="/principalproveedor">Inicio</a></li>
-                <li><a href="/principalproveedor">Tienda</a></li>
+                <li><a href="/principalcliente">Tienda</a></li>
                 <li><a href="/contactanos">Contáctenos</a></li>
             </ul>
             <div class="icons">
                 <a href="/canasta" class="cart-icon">🛒<span id="cart-count">0</span></a>
-                <button class="contact-button" onclick="window.location.href='/contactanos';">Contáctenos</button>
+                <div class="usuario">Perfil 👤: CLIENTE</div>
                 <button class="CerrarSesion-button" onclick="CerrarSesion()">Cerrar Sesión</button>
             </div>
         </nav>
     </header>
-
+    
     <section class="search-bar">
         <input type="text" id="searchBar" placeholder="Buscar...">
         <!-- <button class="buscar-button">🔍</button> -->
@@ -31,376 +63,57 @@
     
 
     <section class="products-grid">
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="AguacateLorena">
-            </div>
-            <h3 class="AguacateLorena">Aguacate Lorena</h3>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Albahaca">
-            </div>
-            <h3 class="Albahaca">Albahaca</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="AjiDulce"></div>
-            <h3 class="AjiDulce">Aji dulce</h3>
-            <div class="add-to-cart">
-            </div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Ajirocoto">
-            </div>
-            <h3 class="Ajirocoto">Aji rocoto</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="AjiImportado">
-            </div>
-            <h3 class="AjiImportado">Aji importado</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Brocoli">
-            </div>
-            <h3 class="Brocoli">Brocoli</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="CebollaPuerro">
-            </div>
-            <h3 class="CebollaPuerro">Cebolla Puerro</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="CebollaBlanca">
-            </div>
-            <h3 class="CebollaBlanca">Cebolla Blanca</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="CebollaMorada">
-            </div>
-            <h3 class="CebollaMorada">Cebolla Morada</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="CebollaRama">
-            </div>
-            <h3 class="CebollaRama">Cebolla Rama</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Cebollin">
-            </div>
-            <h3 class="Cebollin">Cebollin</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Champinones">
-            </div>
-            <h3 class="Champinones">Champiñones</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Cilantro">
-            </div>
-            <h3 class="Cilantro">Cilantro</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Coliflor">
-            </div>
-            <h3 class="Coliflor">Coliflor</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Colchina">
-            </div>
-            <h3 class="Colchina">Colchina</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Esparragos">
-            </div>
-            <h3 class="Esparragos">Esparragos</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Fresa">
-            </div>
-            <h3 class="Fresa">Fresa</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="GerminadoAlfafa">
-            </div>
-            <h3 class="GerminadoAlfafa">Germinado de alfafa</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Guisantes">
-            </div>
-            <h3 class="Guisantes">Guisantes</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Jengibre">
-            </div>
-            <h3 class="Jengibre">Jengibre</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Kiwi">
-            </div>
-            <h3 class="Kiwi">Kiwi</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="LechugaMorada">
-            </div>
-            <h3 class="LechugaMorada">Lechuga Morada</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="LechugaVerde">
-            </div>
-            <h3 class="LechugaVerde">Lechuga Verde</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="LimonTahiti">
-            </div>
-            <h3 class="LimonTahiti">Limon Tahiti</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="LimonPajarito">
-            </div>
-            <h3 class="LimonPajarito">Limon Pajarito</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="LimonMandarino">
-            </div>
-            <h3 class="LimonMandarino">Limon Mandarino</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Limonaria">
-            </div>
-            <h3 class="Limonaria">Limonaria</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="MaizBlanco">
-            </div>
-            <h3 class="MaizBlanco">Maiz Blanco</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="MangoTomi">
-            </div>
-            <h3 class="MangoTomi">Mango Tomi</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Marracuya">
-            </div>
-            <h3 class="Marracuya">Marracuya</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Murrapo">
-            </div>
-            <h3 class="Murrapo">Murrapo</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="NaranjaTangelo">
-            </div>
-            <h3 class="NaranjaTangelo">Naranja Tangelo</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="PapaCapira">
-            </div>
-            <h3 class="PapaCapira">Papa Capira</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Pepino">
-            </div>
-            <h3 class="Pepino">Pepino</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Perejil">
-            </div>
-            <h3 class="Perejil">Perejil</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="PimentonRojo">
-            </div>
-            <h3 class="PimentonRojo">Pimenton Rojo</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="PimentonAmarillo">
-            </div>
-            <h3 class="PimentonAmarillo">Pimenton Amarillo</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="PinaOromiel">
-            </div>
-            <h3 class="PinaOromiel">Piña Oromiel</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Mezclun">
-            </div>
-            <h3 class="Mezclun">Mezclun</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="PlatanoMaduro">
-            </div>
-            <h3 class="PlatanoMaduro">Platano Maduro</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="PlatanoVerde">
-            </div>
-            <h3 class="PlatanoVerde">Platano Verde</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Remolacha">
-            </div>
-            <h3 class="Remolacha">Remolacha</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Rabano">
-            </div>
-            <h3 class="Rabano">Rabano</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="RepolloMorado">
-            </div>
-            <h3 class="RepolloMorado">Repollo Morado</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="RaizChina">
-            </div>
-            <h3 class="RaizChina">Raiz China</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Romero">
-            </div>
-            <h3 class="Romero">Romero</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="SandiaBaby">
-            </div>
-            <h3 class="SandiaBaby">Sandia Baby</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Huevos">
-            </div>
-            <h3 class="Huevos">Huevos</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Yacon">
-            </div>
-            <h3 class="Yacon">Yacon</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Uchuva">
-            </div>
-            <h3 class="Uchuva">Uchuva</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="YerbaBuena">
-            </div>
-            <h3 class="YerbaBuena">YerbaBuena</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Zanahoria">
-            </div>
-            <h3 class="Zanahoria">Zanahoria</h3>
-            <div class="add-to-cart"></div>
-        </div>
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="Zuccini">
-            </div>
-            <h3 class="Zuccini">Zuccini</h3>
-            <div class="add-to-cart"></div>
-        </div>
+             <!-- Consumo mostrar productos -->
+             <script>
+                function modalproducto () {
+                    document.getElementById("add-product-modal").style.display = "flex";
+                }
+                const apiURL = "http://localhost:4100/producto";
+            
+                // Función para cargar los productos desde el backend
+                async function cargarProductos() {
+                    try {
+                        const response = await fetch(apiURL);
+                        if (!response.ok) throw new Error("Error al cargar los productos");
+            
+                        const productos = await response.json();
+                        const productsGrid = document.querySelector(".products-grid");
+            
+                        // Limpiamos el grid
+                        productsGrid.innerHTML = "";
+            
+                        // Iteramos y renderizamos cada producto
+                        productos.forEach(producto => {
+                            const productCard = document.createElement("div");
+                            productCard.className = "product-card";
+            
+                            productCard.innerHTML = `
+                                <div class="product-image">
+                                    <img src="${producto.imagen}" alt="${producto.nombre}">
+                                </div>
+                                <div class="product-info" style="text-align: center;">
+                                    <h3>${producto.nombre}</h3>
+                                </div>
+                            `;
+            
+                            productsGrid.appendChild(productCard);
+                        });
+                    } catch (error) {
+                        console.error("Error:", error);
+                        alert("No se pudieron cargar los productos.");
+                    }
+                }
+            
+                // Simula agregar al carrito (puedes reemplazar esta función con tu lógica)
+                function agregarAlCarrito(idProducto) {
+                    alert(`Producto con ID ${idProducto} añadido al carrito`);
+                }
+            
+                // Cargar productos al cargar la página
+                document.addEventListener("DOMContentLoaded", cargarProductos);
+                
+            </script>
+        
     </section>
     
     <!-- Modal para productos -->

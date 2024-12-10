@@ -38,3 +38,4 @@ document.getElementById('searchBar').addEventListener('input', filterProductsRea
 
 
 
+

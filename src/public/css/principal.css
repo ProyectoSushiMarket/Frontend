@@ -9,6 +9,11 @@ body {
     background-color: #f5f5f5;
     /* overflow: hidden; Esto es para paralizar la pantalla para que no se mueva, funciona igual para el modal */ 
 }
+.usuario {
+    padding-top: 10px;
+    font-weight: bold;
+    color: #333;
+}
 
 .navbar {
     display: flex;
@@ -134,8 +139,18 @@ body {
     display: block;
     margin: 0 auto; 
 }
-
-
+.product-info {
+    color: #000000; 
+    font-family: 'Arial', sans-serif; 
+    font-size: 1.2rem; 
+    line-height: 1.5; 
+    padding: 0px;
+    border-radius: 8px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    margin-top: 5px;
+    max-width: 100%;
+    word-wrap: break-word; 
+}
 .product-card:hover .add-to-cart {
     display: block;
     opacity: 1;

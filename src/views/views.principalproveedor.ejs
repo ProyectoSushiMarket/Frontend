@@ -44,14 +44,14 @@
         <nav class="navbar">
             <div class="logo">Tienda Verduras</div>
             <ul>
-                <li><a href="/principalproveedor">Inicio</a></li>
+                
                 <li><a href="/principalproveedor">Tienda</a></li>
                 <li><a href="/contactanos">Contáctenos</a></li>
+                <li><a href="/vistaclienteproveedor">Clientes</a></li>
             </ul>
             <div class="icons">
                 <a href="/canasta" class="cart-icon">🛒<span id="cart-count">0</span></a>
-                <a href="/perfilproveedor" class="login-icon">Perfil</a>
-                <button class="contact-button" onclick="window.location.href='/contactanos';">Contáctenos</button>
+                <a href="/perfilproveedor" class="login-icon">👤Perfil: <strong>PROVEEDOR</strong></a>
                 <button class="CerrarSesion-button" onclick="CerrarSesion()">Cerrar Sesión</button>
 
             </div>
@@ -72,11 +72,6 @@
     </section>
 
     <section class="products-grid">
-        <div class="product-card">
-            <div class="product-image">
-                <img src="/img/fondoverduras.png" alt="AguacateLorena">
-            </div>
-
             <!-- Consumo mostrar productos -->
             <script>
                 const apiURL = "http://localhost:4100/producto";
@@ -104,7 +99,6 @@
                                 </div>
                                 <div class="product-info" style="text-align: center;">
                                     <h3>${producto.nombre}</h3>
-                                    <button class="add-to-cart" style="margin: 0 auto; display: block;" onclick="agregarAlCarrito(${producto.id_producto})">Hacer pedido</button>
                                 </div>
                             `;
             
@@ -123,6 +117,7 @@
             
                 // Cargar productos al cargar la página
                 document.addEventListener("DOMContentLoaded", cargarProductos);
+                
             </script>
             
 
@@ -227,8 +222,8 @@
                         return response.json();
                     })
                     .then((data) => {
-                        console.log('Producto guardado con éxito:', data);
-                        alert('Producto agregado con éxito');
+                        console.log('Producto guardado con éxito:', data)
+                        alert("Producto Agregado")
                         cerrarModal();
                         location.reload(); // Recarga la página automáticamente
                     })
@@ -240,7 +235,6 @@
 
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/js/principal.js"></script>
     
 </body>

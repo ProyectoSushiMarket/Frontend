@@ -1,7 +1,7 @@
 
 export const principalproveedor = (req, res) => {
     let datos = {}
-    fetch("http://localhost:4000")
+    fetch("http://localhost:4100")
     .then(res => res.json())
     .then(data => {
         datos = data
