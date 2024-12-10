@@ -21,7 +21,7 @@
         <h2>Lista de Clientes</h2>
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Buscar cliente..." />
-            <!-- <button class="crearcliente">Crear Cliente</button> -->
+            <button class="crearcliente">Crear Cliente</button>
         </div>
         <table id="clientesTabla">
             <thead>
@@ -33,19 +33,18 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Aquí se insertarán las filas dinámicamente -->
             </tbody>
         </table>
     </main>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // URL de tu API (ajusta la URL según tu backend)
+            
             const apiUrl = "http://localhost:4100/usuario";
 
-            // Referencia al cuerpo de la tabla
+            
             const tbody = document.querySelector("#clientesTabla tbody");
 
-            // Función para obtener clientes desde la API
+            
             async function obtenerClientes() {
                 try {
                     const response = await fetch(apiUrl);
@@ -54,10 +53,10 @@
                     }
                     const clientes = await response.json();
 
-                    // Limpiar tabla antes de agregar los datos
+                    
                     tbody.innerHTML = "";
 
-                    // Llenar la tabla con los datos de los clientes
+                    
                     clientes.forEach(cliente => {
                         const fila = document.createElement("tr");
 
@@ -75,7 +74,7 @@
                 }
             }
 
-            // Llamar a la función para cargar los clientes al cargar la página
+            
             obtenerClientes();
             
         });
