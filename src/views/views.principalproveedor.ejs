@@ -67,6 +67,8 @@
         <!-- <span>Tarifa</span> -->
         <!-- <span>Ordenar por: <select><option>Destacado</option></select></span> -->
         <button class="AgregarProducto-button" onclick="abrirModal()">Agregar Producto</button>
+
+
     </section>
 
     <section class="products-grid">
@@ -75,6 +77,7 @@
                 <img src="/img/fondoverduras.png" alt="AguacateLorena">
             </div>
 
+            <!-- Consumo mostrar productos -->
             <script>
                 const apiURL = "http://localhost:4100/producto";
             
@@ -101,7 +104,7 @@
                                 </div>
                                 <div class="product-info" style="text-align: center;">
                                     <h3>${producto.nombre}</h3>
-                                    <button class="add-to-cart" style="margin: 0 auto; display: block;" onclick="agregarAlCarrito(${producto.id_producto})">Añadir al carrito</button>
+                                    <button class="add-to-cart" style="margin: 0 auto; display: block;" onclick="agregarAlCarrito(${producto.id_producto})">Hacer pedido</button>
                                 </div>
                             `;
             
@@ -150,8 +153,6 @@
         </div>
     </div>
 
-
-
         <!-- Modal para agregar producto -->
     <div id="add-product-modal" class="add-product-modal">
         <div class="add-product-modal-content">
@@ -160,13 +161,18 @@
                 <form id="product-form">
                     <label for="product-name">Nombre del producto:</label>
                     <input type="text" id="product-name" name="product-name" placeholder="Ingresa el nombre del producto">
+            
+                    <label for="product-cantidad">Cantidad:</label>
+                    <input type="text" id="product-cantidad" name="product-cantidad" placeholder="Ingresa la cantidad">
 
+                    <label for="product-UnidadDeMedida">Unidad de medida:</label>
+                    <input type="text" id="product-UnidadDeMedida" name="product-UnidadDeMedida" placeholder="Ingresa la unidad de medida">
+                        
+                    <label for="product-caracteristicas">Caracteristicas:</label>
+                    <input type="text" id="product-caracteristicas" name="product-caracteristicas" placeholder="Caracteristicas">
+            
                     <label for="product-image">Imagen del producto:</label>
-                    <div class="file-input-container">
-                        <button type="button" onclick="document.getElementById('product-image').click()">Adjuntar</button>
-                        <span id="file-name">Ningún archivo seleccionado</span>
-                        <input type="file" id="product-image" name="product-image" accept="image/*" style="display: none;" onchange="mostrarNombreArchivo()">
-                    </div>
+                    <input type="text" id="product-image" name="product-image" placeholder="Ingresa la URL de la imagen" style="width: 100%;">
                 </form>
             </div>
             <div class="add-product-modal-actions">
@@ -175,6 +181,64 @@
             </div>
         </div>
     </div>
+
+        
+    <script>
+            // Función para abrir el modal
+            function abrirModal() {
+                document.getElementById("add-product-modal").style.display = "flex";
+            }
+
+            // Función para cerrar el modal
+            function cerrarModal() {
+                document.getElementById("add-product-modal").style.display = "none";
+            }
+
+            // Función para guardar el producto
+            function guardarCambios() {
+                // Capturar los valores directamente desde el formulario
+                const nombre = document.getElementById("product-name").value;
+                const cantidad = document.getElementById("product-cantidad").value;
+                const unidadmedida = document.getElementById("product-UnidadDeMedida").value;
+                const caracteristicas = document.getElementById("product-caracteristicas").value;
+                const imagen = document.getElementById("product-image").value;
+
+                // Crear el objeto con los datos para enviar
+                const datos = {
+                    nombre: nombre,
+                    cantidad: cantidad,
+                    unidadmedida: unidadmedida,
+                    caracteristicas: caracteristicas,
+                    imagen: imagen
+                };
+
+                // Enviar los datos al backend
+                fetch('http://localhost:4100/producto', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(datos),
+                })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error('Error al guardar los datos');
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        console.log('Producto guardado con éxito:', data);
+                        alert('Producto agregado con éxito');
+                        cerrarModal();
+                        location.reload(); // Recarga la página automáticamente
+                    })
+                    .catch((error) => {
+                        console.error('Error al guardar el producto:', error);
+                        alert('No se pudo guardar el producto');
+                    });
+            }
+
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/js/principal.js"></script>

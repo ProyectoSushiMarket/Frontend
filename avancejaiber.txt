@@ -1,0 +1,6 @@
+Poner el diseño como si fuera una factura, que primero sea el cliente, segundo sea el nombre del producto, el tercero la fecha y el cuarto la cantidad,
+
+El producto debe de tener Unidad de medida, cantidad, características, responsable (cliente), la fecha no se puede modificar que sea la actual del día que se pedirá el producto,
+ exportar todos los pedidos en PDF, quitar la foto de los pedidos, agregar botón de clientes y que el administrador pueda registrar los clientes
+
+Agregar el boton de contactanos que con solo darle un clic mande a un numero de contacto (whatsapp) -- disabled
