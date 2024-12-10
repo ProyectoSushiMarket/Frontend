@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tienda Verduras</title>
+    <title>Tienda Verduras (cliente)</title>
     <link rel="stylesheet" href="/css/principalcliente.css">
 
 
@@ -45,7 +45,7 @@
             <div class="logo">Tienda Verduras</div>
             <ul>
                 <li><a href="/principalcliente">Tienda</a></li>
-                <li><a href="/contactanos">Contáctenos</a></li>
+                <li><a href="https://wa.me/+573188342212">Contactanos</a></li>
             </ul>
             <div class="icons">
                 <a href="/canasta" class="cart-icon">🛒<span id="cart-count">0</span></a>
@@ -59,8 +59,6 @@
         <input type="text" id="searchBar" placeholder="Buscar...">
         <!-- <button class="buscar-button">🔍</button> -->
     </section>
-
-    
 
     <section class="products-grid">
              <!-- Consumo mostrar productos -->
@@ -115,35 +113,8 @@
             </script>
         
     </section>
-    
-    <!-- Modal para productos -->
-    <div id="imageModal" class="modal">
-        <div class="modal-content-container">
-            <span class="close" id="modalCloseBtn">&times;</span>
-            <img class="modal-content" id="modalImage" alt="Product Image">
-            <div class="modal-info">
-                <p id="caption"></p>
-                <p id="current-time"></p> <!-- Aquí se mostrará la fecha y hora actual -->
-                
-                <label for="custom-date-time">Fecha y hora personalizada:</label>
-                <input type="datetime-local" id="custom-date-time" name="custom-date-time">
-                
-                <form id="productForm">
-                    <label for="quantity">Cantidad:</label>
-                    <input type="number" id="quantity" name="quantity" min="1" value="1">
-                    
-                    <!-- <label for="weight">Unidad de medida:</label>
-                    <input type="text" id="weight" name="weight" min="1" step="50" value="100"> -->
-    
-                    <button type="button" id="addProductButton">Añadir al carrito</button>
-                </form>
-            </div>
-        </div>
-    </div>
-    
-    
+
     <script src="/js/principalcliente.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </body>
 </html>

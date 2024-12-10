@@ -1,3 +1,4 @@
+/* General */
 * {
     margin: 0;
     padding: 0;
@@ -8,15 +9,8 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f5f5f5;
 }
-.usuario {
-    padding-top: 10px;
-    font-weight: bold;
-    color: #333;
-    margin-right: 20px;
-    color: #333;
-    text-decoration: none;
-}
 
+/* Navbar */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -49,6 +43,7 @@ body {
 .navbar .icons {
     display: flex;
     align-items: center;
+    gap: 20px; /* Aumenté el espacio entre los elementos */
 }
 
 .navbar .cart-icon,
@@ -58,6 +53,35 @@ body {
     text-decoration: none;
 }
 
+/* Perfil y botón Cerrar Sesión */
+.perfil-container {
+    display: flex;
+    align-items: center; /* Alinear verticalmente al centro */
+    gap: 20px; /* Reducido a 20px, para más separación entre los elementos */
+}
+
+.usuario {
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+}
+
+.cerrar-sesion {
+    padding: 8px 15px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+}
+
+.cerrar-sesion:hover {
+    background-color: #218838;
+}
+
+/* Botones */
 .contact-button, .CerrarSesion-button, .AgregarProducto-button {
     background-color: #45a049;
     color: white;
@@ -67,6 +91,7 @@ body {
     cursor: pointer;
 }
 
+/* Search Bar */
 .search-bar {
     display: flex;
     justify-content: center;
@@ -90,6 +115,7 @@ body {
     cursor: pointer;
 }
 
+/* Filter Bar */
 .filter-bar {
     display: flex;
     justify-content: space-between;
@@ -97,20 +123,21 @@ body {
     background-color: #ffffff;
 }
 
+/* Products Grid */
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));  /* Ajusté el tamaño mínimo para las columnas */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
     padding: 20px 50px;
 }
 
 .product-card .product-image img {
-    width: 150px; 
-    height: 150px; 
-    object-fit: cover; 
-    border-radius: 8px; 
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
     display: block;
-    margin: 0 auto; 
+    margin: 0 auto;
 }
 
 .product-card:hover {
@@ -124,12 +151,12 @@ body {
 }
 
 .product-image img {
-    width: 150px; 
-    height: 150px; 
-    object-fit: cover; 
-    border-radius: 8px; 
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
     display: block;
-    margin: 0 auto; 
+    margin: 0 auto;
 }
 
 .product-card:hover .add-to-cart {
