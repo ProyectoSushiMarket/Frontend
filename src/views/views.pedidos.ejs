@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedidos</title>
+  <link rel="stylesheet" href="/css/pedidos.css">
+
+
+  <!-- Validacion del token -->
+  <script>
+    const token = sessionStorage.getItem("token");
+    if (token == "" || token == null) {
+        window.location.href = "/"
+    }
+    const url = sessionStorage.getItem("urltiendaverduras") + "/usuario/oauth";
+    if (url == "" || url == null) {
+        window.location.href = "/principalcliente"
+    }
+    const options = {
+        method : "POST",
+        headers: {
+            "content-Type": "application/json",
+            "x-access-token": token
+        }
+    }
+    fetch(url, options)
+    .then(res => res.json())
+    .then(data=>{
+        if (data.error == true) {
+            window.location.href = "/"
+        }
+    });
+</script>
+<script>
+  const CerrarSesion = () => {
+      sessionStorage.setItem("token", "");
+      window.location.href = "/"
+  }
+</script>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">
+      <div class="logo">Tienda Verduras</div>
+    </div>
+    <ul>
+      <li><a href="/principalcliente">Tienda</a></li>
+      <li><a href="https://wa.me/+573188342212">Contáctanos</a></li>
+  </ul>
+    <button class="CerrarSesion-button" onclick="CerrarSesion()">Cerrar Sesión</button>
+  </header>
+  
+  <main class="main-content">
+      <div class="cart-content">
+        <div class="empty-cart" id="empty-cart">
+          <p>No tienes pedidos aún</p>
+        </div>
+        
+        <div class="product-list" id="product-list" style="display: block;">
+          <!-- Los productos se mostrarán aquí dinámicamente -->
+        </div>
+        
+        <div class="cart-details" id="cart-details" style="display: none;">
+          <h3>Productos en el carrito:</h3>
+          <ul id="cart-items-list"></ul>
+        </div>
+      </div>
+  </main>
+  
+  <script src="/js/pedidos.js"></script>
+
+  <script>
+    
+  </script>
+</body>
+</html>

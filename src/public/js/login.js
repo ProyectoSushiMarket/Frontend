@@ -1,18 +1,8 @@
 // Esperar a que el DOM esté cargado
 document.addEventListener("DOMContentLoaded", () => {
-  const loginForm = document.getElementById("login-form");
-  const registerForm = document.getElementById("register-form");
+  const loginForm = document.getElementById("login-form"); 
   const showLogin = document.getElementById("show-login");
-  const showRegister = document.getElementById("show-register");
   const loginButton = document.getElementById("login-button");
-
-  // Mostrar formulario de registro
-  if (showRegister) {
-    showRegister.addEventListener("click", () => {
-      loginForm.classList.add("hidden");
-      registerForm.classList.remove("hidden");
-    });
-  }
 
   // Mostrar formulario de login
   if (showLogin) {

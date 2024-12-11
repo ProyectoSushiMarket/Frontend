@@ -84,55 +84,15 @@ body {
     margin-top: 10px;
 }
 
-.toggle-text span {
-    color: #ff0000;
+.toggle-text a {
+    color: #000000;
     cursor: pointer;
     font-weight: bold;
+    text-decoration: none;
 }
 
-.toggle-text span:hover {
+.toggle-text a:hover {
     text-decoration: underline;
 }
 
-/* Animación y efecto visual al cambiar entre formularios */
-#form-container {
-    perspective: 1000px;
-    transform-style: preserve-3d;
-}
 
-#login-form, #register-form {
-    backface-visibility: hidden;
-}
-
-/* Transiciones de formularios */
-#login-form {
-    animation: fadeIn 0.5s ease-in-out;
-}
-
-#register-form {
-    animation: fadeIn 0.5s ease-in-out;
-}
-
-/* Animación de entrada */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-
-footer {
-    text-align: center;
-    padding: 0px 0;
-    background-color: #45a04941;
-    color: white;
-    font-size: 14px;
-    width: 100%;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    margin-top: auto;
-}

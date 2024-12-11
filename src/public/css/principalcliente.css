@@ -106,15 +106,6 @@ body {
     margin-right: 10px;
 }
 
-.buscar-button {
-    padding: 10px 15px;
-    background-color: #45a049;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
 /* Filter Bar */
 .filter-bar {
     display: flex;

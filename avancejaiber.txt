@@ -4,3 +4,12 @@ El producto debe de tener Unidad de medida, cantidad, características, responsa
  exportar todos los pedidos en PDF, quitar la foto de los pedidos, agregar botón de clientes y que el administrador pueda registrar los clientes
 
 Agregar el boton de contactanos que con solo darle un clic mande a un numero de contacto (whatsapp) -- disabled
+
+
+//editar y eliminar
+<th>Editar</th>
+<th>Eliminar</th>
+<td><button class="btn-editar" onclick="editarCliente(${cliente.id_usuario})">Editar</button></td>
+<td><button class="btn-eliminar" onclick="eliminarCliente(${cliente.id_usuario})">Eliminar</button></td>
+
+

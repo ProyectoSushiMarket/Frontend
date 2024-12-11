@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clientes de Tienda de Verduras</title>
+    <title>Clientes</title>
     <link rel="stylesheet" href="/css/vistaclienteproveedor.css">
 </head>
 <body>
@@ -12,7 +12,7 @@
             <h1>Tienda Verduras</h1>
             <nav>
                 <a href="/principalproveedor">Tienda</a>
-                <a href="https://wa.me/+573188342212">Contactanos</a>
+                <a href="https://wa.me/+573188342212">Contáctanos</a>
                 <span class="perfil">👤 Perfil: <strong>PROVEEDOR</strong></span>
             </nav>
         </div>
@@ -21,7 +21,9 @@
         <h2>Lista de Clientes</h2>
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Buscar cliente..." />
-            <button class="crearcliente" onclick="abrirModal()">Crear Cliente</button>
+            <button class="crearcliente" onclick="abrirModalCrear()">Crear Cliente</button>
+            <button class="editarusuario" onclick="abrirModalEditar()">Editar Usuario</button>
+            <button class="eliminarusuario" onclick="abrirModalEliminar()">Eliminar Usuario</button>
         </div>
         <table id="clientesTabla">
             <thead>
@@ -30,56 +32,13 @@
                     <th>Nombre</th>
                     <th>Usuario</th>
                     <th>Rol</th>
-                    <th>Editar/Eliminar</th>
                 </tr>
             </thead>
             <tbody>
             </tbody>
         </table>
     </main>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            
-            const apiUrl = "http://localhost:4100/usuario";
 
-            
-            const tbody = document.querySelector("#clientesTabla tbody");
-
-            
-            async function obtenerClientes() {
-                try {
-                    const response = await fetch(apiUrl);
-                    if (!response.ok) {
-                        throw new Error("Error al obtener los datos");
-                    }
-                    const clientes = await response.json();
-
-                    
-                    tbody.innerHTML = "";
-
-                    
-                    clientes.forEach(cliente => {
-                        const fila = document.createElement("tr");
-
-                        fila.innerHTML = `
-                            <td>${cliente.id_usuario}</td>
-                            <td>${cliente.nombre}</td>
-                            <td>${cliente.usuario}</td>
-                            <td>${cliente.rol}</td>
-                        `;
-
-                        tbody.appendChild(fila);
-                    });
-                } catch (error) {
-                    console.error("Error al cargar los clientes:", error);
-                }
-            }
-
-            
-            obtenerClientes();
-            
-        });
-    </script>
     <!-- Modal para agregar cliente -->
     <div id="add-cliente-modal" class="add-cliente-modal">
         <div class="add-cliente-modal-content">
@@ -88,75 +47,191 @@
                 <form id="cliente-form">
                     <label for="cliente-nombre">Nombre del cliente:</label>
                     <input type="text" id="cliente-nombre" name="cliente-nombre" placeholder="Ingresa el nombre">
-            
                     <label for="cliente-usuario">Usuario:</label>
                     <input type="text" id="cliente-usuario" name="cliente-usuario" placeholder="Ingresa el usuario">
-
                     <label for="cliente-contrasena">Contraseña:</label>
                     <input type="password" id="cliente-contrasena" name="cliente-contrasena" placeholder="Ingresa la Contraseña">
-                        
                     <label for="cliente-rol">Rol:</label>
                     <input type="text" id="cliente-rol" name="cliente-rol" placeholder="Ingresa el rol">
                 </form>
             </div>
             <div class="add-cliente-modal-actions">
-                <button class="save-cliente-button" onclick="guardarCambios()">Guardar</button>
-                <button class="cancel-cliente-button" onclick="cerrarModal()">Cancelar</button>
+                <button class="save-cliente-button" onclick="guardarCliente()">Guardar</button>
+                <button class="cancel-cliente-button" onclick="cerrarModal('add-cliente-modal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar usuario -->
+    <div id="edit-cliente-modal" class="edit-cliente-modal">
+        <div class="edit-cliente-modal-content">
+            <div class="edit-cliente-modal-header">Editar Usuario</div>
+            <div class="edit-cliente-modal-body">
+                <form id="edit-usuario-form">
+
+                    <label for="edit-cliente-id">Id del usuario:</label>
+                    <input type="text" id="edit-cliente-id" name="edit-cliente-id" placeholder="Ingresa el id">
+
+                    <label for="edit-cliente-nombre">Nombre del cliente:</label>
+                    <input type="text" id="edit-cliente-nombre" name="edit-cliente-nombre" placeholder="Ingresa el nombre">
+
+                    <label for="edit-cliente-usuario">Usuario:</label>
+                    <input type="text" id="edit-cliente-usuario" name="edit-cliente-usuario" placeholder="Ingresa el usuario">
+
+                    <label for="edit-cliente-contrasena">Contraseña:</label>
+                    <input type="password" id="edit-cliente-contrasena" name="edit-cliente-contrasena" placeholder="Ingresa la contraseña nueva">
+
+                    <label for="edit-cliente-rol">Rol:</label>
+                    <input type="text" id="edit-cliente-rol" name="edit-cliente-rol" placeholder="Ingresa el nuevo rol">
+                </form>
+            </div>
+            <div class="edit-cliente-modal-actions">
+                <button class="save-edit-button" onclick="guardarEdicion()">Guardar Cambios</button>
+                <button class="cancel-edit-button" onclick="cerrarModal('edit-cliente-modal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para eliminar usuario -->
+    <div id="delete-cliente-modal" class="delete-cliente-modal">
+        <div class="delete-cliente-modal-content">
+            <div class="delete-cliente-modal-header">Eliminar Usuario</div>
+            <div class="delete-cliente-modal-body">
+                <p>¿Estás seguro de que deseas eliminar un usuario?</p>
+                <input type="text" id="delete-cliente-id" placeholder="Ingresa ID del usuario">
+            </div>
+            <div class="delete-cliente-modal-actions">
+                <button class="save-delete-button" onclick="eliminarUsuario()">Eliminar</button>
+                <button class="cancel-delete-button" onclick="cerrarModal('delete-cliente-modal')">Cancelar</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Función para abrir el modal
-        function abrirModal() {
-                document.getElementById("add-cliente-modal").style.display = "flex";
-            }
+        document.addEventListener("DOMContentLoaded", () => {
+            const apiUrl = "http://localhost:4100/usuario";
+            const tbody = document.querySelector("#clientesTabla tbody");
 
-            // Función para cerrar el modal
-            function cerrarModal() {
-                document.getElementById("add-cliente-modal").style.display = "none";
-            }
-            // Función para guardar el producto
-            function guardarCambios() {
-                // Capturar los valores directamente desde el formulario
-                const nombre = document.getElementById("cliente-nombre").value;
-                const usuario = document.getElementById("cliente-usuario").value;
-                const contrasena = document.getElementById("cliente-contrasena").value;
-                const rol = document.getElementById("cliente-rol").value;
+            async function obtenerClientes() {
+                try {
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) {
+                        throw new Error("Error al obtener los datos");
+                    }
+                    const clientes = await response.json();
+                    tbody.innerHTML = "";
 
-                
-                const datos = {
-                    nombre: nombre,
-                    usuario: usuario,
-                    contrasena: contrasena,
-                    rol: rol
-                };
-
-                // Enviar los datos al backend
-                fetch('http://localhost:4100/usuario', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(datos),
-                })
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error('Error al guardar los datos');
-                        }
-                        return response.json();
-                    })
-                    .then((data) => {
-                        console.log('Cliente creado con éxito:', data)
-                        alert("Cliente Agregado")
-                        cerrarModal();
-                        location.reload(); // Recarga la página automáticamente
-                    })
-                    .catch((error) => {
-                        console.error('Error al crear el usuario:', error);
-                        alert('No se pudo crear el usuario');
+                    clientes.forEach(cliente => {
+                        const fila = document.createElement("tr");
+                        fila.innerHTML = `
+                            <td>${cliente.id_usuario}</td>
+                            <td>${cliente.nombre}</td>
+                            <td>${cliente.usuario}</td>
+                            <td>${cliente.rol}</td>
+                        `;
+                        tbody.appendChild(fila);
                     });
+                } catch (error) {
+                    console.error("Error al cargar los clientes:", error);
+                }
             }
+
+            obtenerClientes();
+        });
+
+        
+        function abrirModalCrear() {
+            document.getElementById("add-cliente-modal").style.display = "flex";
+        }
+
+        
+        function abrirModalEditar() {
+            document.getElementById("edit-cliente-modal").style.display = "flex";
+        }
+
+        
+        function abrirModalEliminar() {
+            document.getElementById("delete-cliente-modal").style.display = "flex";
+        }
+
+
+        function cerrarModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+
+        
+        function guardarCliente() {
+            const nombre = document.getElementById("cliente-nombre").value;
+            const usuario = document.getElementById("cliente-usuario").value;
+            const contrasena = document.getElementById("cliente-contrasena").value;
+            const rol = document.getElementById("cliente-rol").value;
+
+            const datos = {
+                nombre: nombre,
+                usuario: usuario,
+                contrasena: contrasena,
+                rol: rol
+            };
+
+            fetch('http://localhost:4100/usuario', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(datos),
+            })
+            .then((response) => response.json())
+            .then(() => {
+                cerrarModal("add-cliente-modal");
+                location.reload();
+            })
+            .catch((error) => console.error('Error al crear el usuario:', error));
+        }
+
+        
+        function guardarEdicion() {
+            const id = document.getElementById("edit-cliente-id").value;
+            const nombre = document.getElementById("edit-cliente-nombre").value;
+            const usuario = document.getElementById("edit-cliente-usuario").value;
+            const contrasena = document.getElementById("edit-cliente-contrasena").value;
+            const rol = document.getElementById("edit-cliente-rol").value;
+
+            const datos = {
+                id: id,
+                nombre: nombre,
+                usuario: usuario,
+                contrasena: contrasena,
+                rol: rol
+            };
+
+            fetch(`http://localhost:4100/usuario/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(datos),
+            })
+            .then((response) => response.json())
+            .then(() => {
+                cerrarModal("edit-cliente-modal");
+                location.reload();
+            })
+            .catch((error) => console.error('Error al editar el usuario:', error));
+        }
+
+        
+        function eliminarUsuario() {
+            const id = document.getElementById("delete-cliente-id").value;
+
+            fetch(`http://localhost:4100/usuario/${id}`, {
+                method: 'DELETE',
+            })
+            .then(() => {
+                cerrarModal("delete-cliente-modal");
+                location.reload();
+            })
+            .catch((error) => console.error('Error al eliminar el usuario:', error));
+        }
     </script>
 
     <script src="/js/vistaclienteproveedor.js"></script>

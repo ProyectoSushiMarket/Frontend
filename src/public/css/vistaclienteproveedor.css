@@ -101,15 +101,28 @@ tr:nth-child(even) {
 tr:hover {
     background-color: #e2e6ea;
 }
-.crearcliente {
+
+.crearcliente, 
+.editarusuario, 
+.eliminarusuario {
     background-color: #45a049;
     color: white;
     padding: 8px 15px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    margin-right: 10px; /* Espacio entre los botones */
 }
-/* Modal */
+
+/* Opcional: Eliminar el margen en el último botón */
+.editarusuario:last-child,
+.eliminarusuario:last-child {
+    margin-right: 0;
+}
+
+/* Estilos para los modales */
+.edit-cliente-modal,
+.delete-cliente-modal,
 .add-cliente-modal {
     display: none;
     position: fixed;
@@ -124,16 +137,61 @@ tr:hover {
     animation: fadeIn 0.3s ease-in-out;
 }
 
-.add-cliente-modal-content {
-    background: white;
+.add-cliente-modal-content,
+.edit-cliente-modal-content,
+.delete-cliente-modal-content {
+    background-color: white;
     padding: 20px;
     border-radius: 8px;
+    max-width: 400px;
     width: 100%;
-    max-width: 500px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    text-align: left;
 }
 
+.add-cliente-modal-header,
+.edit-cliente-modal-header,
+.delete-cliente-modal-header {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #4CAF50;
+    font-weight: bold;
+    text-align: center;
+}
+
+.add-cliente-modal-body,
+.edit-cliente-modal-body,
+.delete-cliente-modal-body {
+    margin-bottom: 20px;
+}
+
+.add-cliente-modal-actions,
+.edit-cliente-modal-actions,
+.delete-cliente-modal-actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Botones de los modales */
+.save-cliente-button,
+.save-edit-button,
+.save-delete-button {
+    background-color: #45a049;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.cancel-cliente-button,
+.cancel-edit-button,
+.cancel-delete-button {
+    background-color: #d9534f;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
 
 /* Animaciones */
 @keyframes fadeIn {
@@ -145,30 +203,25 @@ tr:hover {
     }
 }
 
-@keyframes slideIn {
-    from {
-        transform: translateY(-50px);
-    }
-    to {
-        transform: translateY(0);
-    }
-}
-
-/* Cabecera del modal */
-.add-cliente-modal-header {
+/* Cabecera y cuerpo del modal */
+.add-cliente-modal-header,
+.edit-cliente-modal-header {
+    text-align: center;
     font-size: 1.5rem;
-    margin-bottom: 10px;
     color: #4CAF50;
     font-weight: bold;
-    text-align: center;
 }
 
 /* Cuerpo del modal */
-.add-cliente-modal-body {
+.add-cliente-modal-body,
+.edit-cliente-modal-body,
+.delete-cliente-modal-body {
     padding: 10px 0;
 }
 
-.add-cliente-modal-body label {
+.add-cliente-modal-body label,
+.edit-cliente-modal-body label,
+.delete-cliente-modal-body label {
     display: block;
     margin: 10px 0 5px;
     font-weight: bold;
@@ -176,7 +229,9 @@ tr:hover {
 }
 
 /* Campos de entrada del modal */
-.add-cliente-modal-body input {
+.add-cliente-modal-body input,
+.edit-cliente-modal-body input,
+.delete-cliente-modal-body input {
     width: 100%;
     padding: 12px;
     border: 1px solid #ccc;
@@ -185,15 +240,22 @@ tr:hover {
     font-size: 1rem;
     margin-bottom: 15px;
 }
-/* Acciones del modal */
-.add-cliente-modal-actions {
+
+/* Acciones de los modales */
+.add-cliente-modal-actions,
+.edit-cliente-modal-actions,
+.delete-cliente-modal-actions {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
 }
 
 .save-cliente-button,
-.cancel-cliente-button {
+.cancel-cliente-button,
+.save-edit-button,
+.cancel-edit-button,
+.save-delete-button,
+.cancel-delete-button {
     padding: 10px 20px;
     border-radius: 6px;
     border: none;
@@ -205,34 +267,43 @@ tr:hover {
 }
 
 /* Estilo para el botón "Guardar" */
-.save-cliente-button {
+.save-cliente-button,
+.save-edit-button,
+.save-delete-button {
     background-color: #4CAF50;
     color: white;
 }
 
-.save-cliente-button:hover {
+.save-cliente-button:hover,
+.save-edit-button:hover,
+.save-delete-button:hover {
     background-color: #45a049;
     transform: scale(1.05);
 }
 
-.save-cliente-button:active {
+.save-cliente-button:active,
+.save-edit-button:active,
+.save-delete-button:active {
     transform: scale(0.98);
 }
 
 /* Estilo para el botón "Cancelar" */
-.cancel-cliente-button {
+.cancel-cliente-button,
+.cancel-edit-button,
+.cancel-delete-button {
     background-color: #e74c3c;
     color: white;
 }
 
-.cancel-cliente-button:hover {
+.cancel-cliente-button:hover,
+.cancel-edit-button:hover,
+.cancel-delete-button:hover {
     background-color: #c0392b;
     transform: scale(1.05);
 }
 
-.cancel-cliente-button:active {
+.cancel-cliente-button:active,
+.cancel-edit-button:active,
+.cancel-delete-button:active {
     transform: scale(0.98);
 }
-
-
-
