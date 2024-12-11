@@ -5,6 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clientes</title>
     <link rel="stylesheet" href="/css/vistaclienteproveedor.css">
+
+    <!-- Validacion del token -->
+    <script>
+        const token = sessionStorage.getItem("token");
+        if (token == "" || token == null) {
+            window.location.href = "/"
+        }
+        const url = sessionStorage.getItem("urltiendaverduras") + "/usuario/oauth";
+        if (url == "" || url == null) {
+            window.location.href = "/principalproveedor"
+        }
+        const options = {
+            method : "POST",
+            headers: {
+                "content-Type": "application/json",
+                "x-access-token": token
+            }
+        }
+        fetch(url, options)
+        .then(res => res.json())
+        .then(data=>{
+            if (data.error == true) {
+                window.location.href = "/"
+            }
+        });
+    </script>
+    <script>
+        const CerrarSesion = () => {
+            sessionStorage.setItem("token", "");
+            window.location.href = "/"
+        }
+    </script>
 </head>
 <body>
     <header>

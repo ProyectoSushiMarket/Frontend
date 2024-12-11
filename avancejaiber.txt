@@ -8,7 +8,7 @@ El producto debe de tener Unidad de medida, cantidad, características, responsa
  <!-- Modal para agregar producto -->
     <div id="add-product-modal" class="add-product-modal">
         <div class="add-product-modal-content">
-            <div class="add-product-modal-header">Agregar Producto</div>
+            <div class="add-product-modal-header">Hacer pedido</div>
             <div class="add-product-modal-body">
                 <form id="product-form">
                     <label for="product-name">Nombre del producto:</label>

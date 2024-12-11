@@ -43,7 +43,7 @@ body {
 .navbar .icons {
     display: flex;
     align-items: center;
-    gap: 20px; /* Aumenté el espacio entre los elementos */
+    gap: 20px;
 }
 
 .navbar .cart-icon,
@@ -56,8 +56,8 @@ body {
 /* Perfil y botón Cerrar Sesión */
 .perfil-container {
     display: flex;
-    align-items: center; /* Alinear verticalmente al centro */
-    gap: 20px; /* Reducido a 20px, para más separación entre los elementos */
+    align-items: center;
+    gap: 20px;
 }
 
 .usuario {
@@ -122,6 +122,18 @@ body {
     padding: 20px 50px;
 }
 
+.product-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover {
+    transform: scale(1.03);
+}
+
 .product-card .product-image img {
     width: 150px;
     height: 150px;
@@ -131,8 +143,9 @@ body {
     margin: 0 auto;
 }
 
-.product-card:hover {
-    transform: scale(1.03);
+.product-info {
+    text-align: center;
+    padding: 10px;
 }
 
 .product-name {
@@ -141,19 +154,20 @@ body {
     margin-top: 10px;
 }
 
-.product-image img {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 8px;
-    display: block;
-    margin: 0 auto;
+.make-order-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
 }
 
-.product-card:hover .add-to-cart {
-    display: block;
-    opacity: 1;
-    transform: scale(1.2);
+.make-order-button:hover {
+    background-color: #218838;
 }
 
 /* Modal */
@@ -213,6 +227,22 @@ body {
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 14px;
+}
+
+/* Estilos para el select (flechita de selección) */
+.modal-info select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.modal-info select:hover {
+    border-color: #28a745;
 }
 
 .modal-info button {

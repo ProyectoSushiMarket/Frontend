@@ -6,37 +6,41 @@
     <title>Tienda Verduras (cliente)</title>
     <link rel="stylesheet" href="/css/principalcliente.css">
 
-
-    <!-- Validacion del token -->
+    <!-- Validación del token -->
     <script>
         const token = sessionStorage.getItem("token");
-        if (token == "" || token == null) {
-            window.location.href = "/"
+        if (!token) {
+            window.location.href = "/";
         }
         const url = sessionStorage.getItem("urltiendaverduras") + "/usuario/oauth";
-        if (url == "" || url == null) {
-            window.location.href = "/principalcliente"
+        if (!url) {
+            window.location.href = "/principalcliente";
         }
         const options = {
-            method : "POST",
+            method: "POST",
             headers: {
-                "content-Type": "application/json",
+                "Content-Type": "application/json",
                 "x-access-token": token
             }
-        }
+        };
         fetch(url, options)
         .then(res => res.json())
-        .then(data=>{
-            if (data.error == true) {
-                window.location.href = "/"
+        .then(data => {
+            if (data.error) {
+                window.location.href = "/";
+            } else {
+                // Guardar información del usuario autenticado
+                sessionStorage.setItem("usuarioId", data.usuario.id_usuario);
+                sessionStorage.setItem("usuarioNombre", data.usuario.nombre);
+                sessionStorage.setItem("usuariocontrasena", data.usuario.contrasena);
             }
         });
     </script>
     <script>
         const CerrarSesion = () => {
             sessionStorage.setItem("token", "");
-            window.location.href = "/"
-        }
+            window.location.href = "/";
+        };
     </script>
 </head>
 <body>
@@ -49,71 +53,146 @@
                 <li><a href="/pedidos">Pedidos</a></li>
             </ul>
             <div class="icons">
-                <div class="usuario">Perfil 👤: CLIENTE</div>
+                <div class="usuario">Perfil 👤: <span id="usuario-nombre-header">CLIENTE</span></div>
                 <button class="CerrarSesion-button" onclick="CerrarSesion()">Cerrar Sesión</button>
             </div>
         </nav>
     </header>
-    
+
     <section class="search-bar">
         <input type="text" id="searchBar" placeholder="Buscar...">
     </section>
 
     <section class="products-grid">
-             <!-- Consumo mostrar productos -->
-             <script>
-                function modalproducto () {
-                    document.getElementById("add-product-modal").style.display = "flex";
-                }
+        <script>
+            async function cargarProductos() {
                 const apiURL = "http://localhost:4100/producto";
-            
-                // Función para cargar los productos desde el backend
-                async function cargarProductos() {
-                    try {
-                        const response = await fetch(apiURL);
-                        if (!response.ok) throw new Error("Error al cargar los productos");
-            
-                        const productos = await response.json();
-                        const productsGrid = document.querySelector(".products-grid");
-            
-                        // Limpiamos el grid
-                        productsGrid.innerHTML = "";
-            
-                        // Iteramos y renderizamos cada producto
-                        productos.forEach(producto => {
-                            const productCard = document.createElement("div");
-                            productCard.className = "product-card";
-            
-                            productCard.innerHTML = `
-                                <div class="product-image">
-                                    <img src="${producto.imagen}" alt="${producto.nombre}">
-                                </div>
-                                <div class="product-info" style="text-align: center;">
-                                    <h3>${producto.nombre}</h3>
-                                </div>
-                            `;
-            
-                            productsGrid.appendChild(productCard);
-                        });
-                    } catch (error) {
-                        console.error("Error:", error);
-                        alert("No se pudieron cargar los productos.");
-                    }
+                try {
+                    const response = await fetch(apiURL);
+                    if (!response.ok) throw new Error("Error al cargar los productos");
+
+                    const productos = await response.json();
+                    const productsGrid = document.querySelector(".products-grid");
+
+                    productsGrid.innerHTML = "";
+
+                    productos.forEach(producto => {
+                        const productCard = document.createElement("div");
+                        productCard.className = "product-card";
+
+                        productCard.innerHTML = `
+                            <div class="product-image">
+                                <img src="${producto.imagen}" alt="${producto.nombre}">
+                            </div>
+                            <div class="product-info" style="text-align: center;">
+                                <h3>${producto.nombre}</h3>
+                                <button class="make-order-button" onclick="mostrarModal('${producto.id}', '${producto.nombre}')">Hacer Pedido</button>
+                            </div>
+                        `;
+
+                        productsGrid.appendChild(productCard);
+                    });
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("No se pudieron cargar los productos.");
                 }
-            
-                // Simula agregar al carrito (puedes reemplazar esta función con tu lógica)
-                function agregarAlCarrito(idProducto) {
-                    alert(`Producto con ID ${idProducto} añadido al carrito`);
-                }
-            
-                // Cargar productos al cargar la página
-                document.addEventListener("DOMContentLoaded", cargarProductos);
-                
-            </script>
-        
+            }
+
+            function mostrarModal(productoId, productoNombre) {
+                const modal = document.getElementById("order-modal");
+                document.getElementById("modal-product-name").innerText = productoNombre;
+                document.getElementById("producto-id").value = productoId;
+
+                // Mostrar el nombre del usuario autenticado
+                const usuarioNombre = sessionStorage.getItem("usuarioNombre");
+                document.getElementById("usuario-nombre").innerText = usuarioNombre;
+
+                // Configurar el input oculto con el ID del usuario autenticado
+                const usuarioId = sessionStorage.getItem("usuarioId");
+                document.getElementById("usuario-id").value = usuarioId;
+
+                modal.style.display = "flex";
+            }
+
+            function cerrarModal() {
+                const modal = document.getElementById("order-modal");
+                modal.style.display = "none";
+            }
+
+            cargarProductos();
+        </script>
     </section>
 
-    <script src="/js/principalcliente.js"></script>
+    <div id="order-modal" class="modal">
+        <div class="modal-content-container">
+            <span class="close" onclick="cerrarModal()">&times;</span>
+            <h2>Realizar Pedido</h2>
+            <p id="modal-product-name"></p>
+            <form id="pedido-form" onsubmit="realizarPedido(event)">
+                <div class="modal-info">
+                
+                    <label for="usuario-nombre">Usuario:</label>
+                    <p id="usuario-nombre"></p>
+                    <input type="hidden" id="usuario-id" name="id_usuario">
 
+                    <label for="producto-id">ID Producto:</label>
+                    <input type="text" id="producto-id" name="id_producto" placeholder="ID del Producto" readonly>
+
+                    <label for="fecha_pedido">Fecha del Pedido:</label>
+                    <input type="datetime-local" id="fecha-pedido" name="fecha_pedido" required>
+
+                    <label for="cantidad">Cantidad:</label>
+                    <input type="number" id="cantidad" name="cantidad" placeholder="Ingresa la cantidad que necesitas" required>
+
+                    <label for="unidad_de_medida">Unidad de medida:</label>
+                    <select id="unidad-de-medida" name="unidad_de_medida" required>
+                        <option value="KL">KL</option>
+                        <option value="UND">UND</option>
+                    </select>
+
+                    <label for="caracteristicas">Características:</label>
+                    <input type="text" id="caracteristicas" name="caracteristicas" placeholder="Características del producto">
+
+                    <button type="submit">Confirmar Pedido</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        async function realizarPedido(event) {
+            event.preventDefault();
+
+            const idUsuario = document.getElementById("usuario-id").value;
+            const idProducto = document.getElementById("producto-id").value;
+            const fechaPedido = document.getElementById("fecha-pedido").value;
+            const cantidad = document.getElementById("cantidad").value;
+            const unidadDeMedida = document.getElementById("unidad-de-medida").value;
+            const caracteristicas = document.getElementById("caracteristicas").value;
+
+            try {
+                const response = await fetch("http://localhost:4100/pedido", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-access-token": token
+                    },
+                    body: JSON.stringify({ idPedido, idUsuario, idProducto, fechaPedido, cantidad, unidadDeMedida, caracteristicas })
+                });
+
+                const result = await response.json();
+                if (result.error) {
+                    alert("Error al realizar el pedido");
+                } else {
+                    alert("Pedido realizado con éxito");
+                    cerrarModal();
+                }
+            } catch (error) {
+                console.error("Error al realizar el pedido:", error);
+                alert("Error al realizar el pedido");
+            }
+        }
+    </script>
+    <script src="/js/principalcliente.js"></script>
 </body>
 </html>

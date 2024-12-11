@@ -6,38 +6,38 @@
   <title>Pedidos</title>
   <link rel="stylesheet" href="/css/pedidos.css">
 
-
-  <!-- Validacion del token -->
+  <!-- Validación del token -->
   <script>
     const token = sessionStorage.getItem("token");
     if (token == "" || token == null) {
-        window.location.href = "/"
+        window.location.href = "/";
     }
     const url = sessionStorage.getItem("urltiendaverduras") + "/usuario/oauth";
     if (url == "" || url == null) {
-        window.location.href = "/principalcliente"
+        window.location.href = "/principalcliente";
     }
     const options = {
-        method : "POST",
+        method: "POST",
         headers: {
             "content-Type": "application/json",
             "x-access-token": token
         }
-    }
+    };
     fetch(url, options)
     .then(res => res.json())
-    .then(data=>{
+    .then(data => {
         if (data.error == true) {
-            window.location.href = "/"
+            window.location.href = "/";
         }
     });
-</script>
-<script>
-  const CerrarSesion = () => {
-      sessionStorage.setItem("token", "");
-      window.location.href = "/"
-  }
-</script>
+  </script>
+
+  <script>
+    const CerrarSesion = () => {
+        sessionStorage.setItem("token", "");
+        window.location.href = "/";
+    }
+  </script>
 </head>
 <body>
   <header class="navbar">
@@ -46,31 +46,130 @@
     </div>
     <ul>
       <li><a href="/principalcliente">Tienda</a></li>
-      <!-- <li><a href="https://wa.me/+573188342212">Contáctanos</a></li> -->
-  </ul>
+    </ul>
     <button class="CerrarSesion-button" onclick="CerrarSesion()">Cerrar Sesión</button>
   </header>
+
+  <section class="search-bar">
+    <input type="text" id="searchBar" placeholder="Buscar...">
+  </section>
   
   <main class="main-content">
-      <div class="cart-content">
-        <div class="empty-cart" id="empty-cart">
-          <p>No tienes pedidos aún</p>
-        </div>
-        
-        <div class="product-list" id="product-list" style="display: block;">
-        </div>
-        
-        <div class="cart-details" id="cart-details" style="display: none;">
-          <h3>Productos en el carrito:</h3>
-          <ul id="cart-items-list"></ul>
+    <div class="cart-content">
+      <div class="empty-cart" id="empty-cart">
+        <p>No tienes pedidos aún</p>
+      </div>
+      
+      <div class="product-list" id="product-list" style="display: none;">
+        <div class="table-container">
+          <h2 class="table-title">Pedidos</h2> <!-- Título actualizado -->
+          <table>
+            <thead>
+              <tr>
+                <th>ID Pedido</th>
+                <th>Usuario</th>
+                <th>Producto</th>
+                <th>Fecha Pedido</th>
+                <th>Cantidad</th>
+                <th>Unidad de Medida</th>
+                <th>Características</th>
+              </tr>
+            </thead>
+            <tbody id="pedido-rows">
+              <!-- Los pedidos se cargarán aquí dinámicamente -->
+            </tbody>
+          </table>
         </div>
       </div>
+    </div>
   </main>
   
-  <script src="/js/pedidos.js"></script>
-
   <script>
-    
+    async function cargarPedidos() {
+      const apiURL = "http://localhost:4100/pedido"; // Endpoint de tu backend para obtener los pedidos
+
+      try {
+        const response = await fetch(apiURL, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-access-token": token
+          }
+        });
+
+        if (!response.ok) throw new Error("Error al cargar los pedidos");
+
+        const pedidos = await response.json();
+
+        const pedidoRows = document.getElementById("pedido-rows");
+        const productList = document.getElementById("product-list");
+        const emptyCart = document.getElementById("empty-cart");
+
+        if (pedidos.length === 0) {
+          emptyCart.style.display = "block";
+          productList.style.display = "none";
+        } else {
+          emptyCart.style.display = "none";
+          productList.style.display = "block";
+          
+          pedidos.forEach(pedido => {
+            const row = document.createElement("tr");
+            row.classList.add("pedido-row"); // Estilo personalizado para filas
+            row.innerHTML = `
+              <td>${pedido.id_pedido}</td>
+              <td>${pedido.nombre_usuario || "Desconocido"}</td>
+              <td>${pedido.nombre_producto || "Desconocido"}</td>
+              <td>${pedido.fecha_pedido || "No registrada"}</td>
+              <td>${pedido.cantidad}</td>
+              <td>${pedido.unidad_de_medida || "No definida"}</td>
+              <td>${pedido.caracteristicas || "No especificadas"}</td>
+            `;
+            pedidoRows.appendChild(row);
+          });
+        }
+      } catch (error) {
+        console.error("Error al cargar los pedidos:", error);
+        alert("No se pudieron cargar los pedidos.");
+      }
+    }
+
+    // Función para filtrar los pedidos en tiempo real
+    function filterPedidosRealtime() {
+      const searchInput = document.getElementById('searchBar').value.toLowerCase();
+      const pedidoRows = document.querySelectorAll('#pedido-rows tr'); // Filas de la tabla
+      let found = false;
+  
+      pedidoRows.forEach(row => {
+        const productName = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+        const userName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+        if (productName.includes(searchInput) || userName.includes(searchInput)) {
+            row.style.display = 'table-row';
+            found = true;
+        } else {
+            row.style.display = 'none';
+        }
+      });
+  
+      // Mostrar mensaje si no se encuentran resultados
+      if (!found) {
+        const noResultsMessage = document.getElementById('noResults');
+        if (!noResultsMessage) {
+            const message = document.createElement('p');
+            message.id = 'noResults';
+            message.textContent = 'No se encontraron pedidos';
+            message.style.textAlign = 'center';
+            document.querySelector('.table-container').appendChild(message);
+        }
+      } else {
+        const noResultsMessage = document.getElementById('noResults');
+        if (noResultsMessage) noResultsMessage.remove();
+      }
+    }
+
+    // Agregar evento en tiempo real a la barra de búsqueda
+    document.getElementById('searchBar').addEventListener('input', filterPedidosRealtime);
+
+    cargarPedidos();
   </script>
 </body>
 </html>
