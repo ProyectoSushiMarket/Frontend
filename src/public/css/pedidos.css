@@ -146,28 +146,3 @@ body {
     margin-bottom: 10px;
 }
 
-/* Cart details */
-.cart-details {
-    margin-top: 20px;
-    padding: 20px;
-    background-color: #e8f5e9; /* Verde muy claro */
-    border-radius: 10px;
-    border: 1px solid #a5d6a7;
-}
-
-.cart-details h3 {
-    color: #2e7d32; /* Verde profundo */
-    font-size: 20px;
-    margin-bottom: 10px;
-}
-
-.cart-details ul {
-    list-style: none;
-    padding: 0;
-}
-
-.cart-details ul li {
-    margin-bottom: 10px;
-    font-size: 16px;
-    color: #558b2f; /* Verde más intenso */
-}
