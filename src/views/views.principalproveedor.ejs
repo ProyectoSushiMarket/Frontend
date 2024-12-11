@@ -118,18 +118,10 @@
             <div class="add-product-modal-header">Agregar Producto</div>
             <div class="add-product-modal-body">
                 <form id="product-form">
+
                     <label for="product-name">Nombre del producto:</label>
                     <input type="text" id="product-name" name="product-name" placeholder="Ingresa el nombre del producto">
-            
-                    <label for="product-cantidad">Cantidad:</label>
-                    <input type="text" id="product-cantidad" name="product-cantidad" placeholder="Ingresa la cantidad">
-
-                    <label for="product-UnidadDeMedida">Unidad de medida:</label>
-                    <input type="text" id="product-UnidadDeMedida" name="product-UnidadDeMedida" placeholder="Ingresa la unidad de medida">
-                        
-                    <label for="product-caracteristicas">Caracteristicas:</label>
-                    <input type="text" id="product-caracteristicas" name="product-caracteristicas" placeholder="Caracteristicas">
-            
+                  
                     <label for="product-image">Imagen del producto:</label>
                     <input type="text" id="product-image" name="product-image" placeholder="Ingresa la URL de la imagen" style="width: 100%;">
                 </form>
@@ -157,17 +149,11 @@
             function guardarCambios() {
                 // Capturar los valores directamente desde el formulario
                 const nombre = document.getElementById("product-name").value;
-                const cantidad = document.getElementById("product-cantidad").value;
-                const unidadmedida = document.getElementById("product-UnidadDeMedida").value;
-                const caracteristicas = document.getElementById("product-caracteristicas").value;
                 const imagen = document.getElementById("product-image").value;
 
                 // Crear el objeto con los datos para enviar
                 const datos = {
                     nombre: nombre,
-                    cantidad: cantidad,
-                    unidadmedida: unidadmedida,
-                    caracteristicas: caracteristicas,
                     imagen: imagen
                 };
 
