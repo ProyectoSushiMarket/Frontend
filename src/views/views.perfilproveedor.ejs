@@ -5,14 +5,46 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Perfil del Proveedor</title>
   <link rel="stylesheet" href="/css/perfilproveedor.css">
+
+  
+  <!-- Validacion del token -->
+  <script>
+    const token = sessionStorage.getItem("token");
+    if (token == "" || token == null) {
+        window.location.href = "/"
+    }
+    const url = sessionStorage.getItem("urltiendaverduras") + "/usuario/oauth";
+    if (url == "" || url == null) {
+        window.location.href = "/principalcliente"
+    }
+    const options = {
+        method : "POST",
+        headers: {
+            "content-Type": "application/json",
+            "x-access-token": token
+        }
+    }
+    fetch(url, options)
+    .then(res => res.json())
+    .then(data=>{
+        if (data.error == true) {
+            window.location.href = "/"
+        }
+    });
+</script>
+  <script>
+    const CerrarSesion = () => {
+        sessionStorage.setItem("token", "");
+        window.location.href = "/"
+    }
+</script>
 </head>
 <body>
   <header>
     <nav>
       <ul>
-        <li><a href="/principalproveedor">Inicio</a></li>
-        <li><a href="/principalproveedor">Mis Productos</a></li>
-        <li><a href="/contactanos">Contáctenos</a></li>
+        <li><a href="/principalproveedor">Tienda</a></li>
+        <li><a href="https://wa.me/+573188342212">Contactanos</a></li>
         <li><a href="#" onclick="CerrarSesion()">Cerrar Sesión</a></li>
       </ul>
     </nav>
@@ -21,19 +53,16 @@
   <main class="profile-section">
     <div class="profile-container">
       <div class="profile-header">
-        <img src="/img/fondoverduras.png" alt="Foto de perfil" class="profile-image">
         <h1>Jhoan</h1>
-        <p><strong>Correo:</strong> jhoanmonsalve212@gmail.com</p>
+        <p><strong>Rol:</strong> PROVEEDOR</p>
       </div>
       <div class="profile-info">
         <h2>Información de la tienda</h2>
-        <p><strong>Nombre del Negocio:</strong> Verduras Proveedor</p>
+        <p><strong>Nombre del Negocio:</strong> Tienda Verduras</p>
         <p><strong>Teléfono:</strong> +57 3188342212</p>
-        <p><strong>Ubicación:</strong> Aun sin Ubicación</p>
       </div>
       <div class="profile-actions">
         <button class="edit-button" onclick="abrirModal()">Editar Perfil</button>
-        <!-- <button class="delete-button" onclick="confirmarEliminar()">Eliminar Cuenta</button> -->
       </div>
     </div>
   </main>
@@ -44,23 +73,17 @@
       <div class="modal-header">Editar Perfil</div>
       <div class="modal-body">
         <form id="edit-profile-form">
-          <label for="name">Nombre:</label>
-          <input type="text" id="name" name="name" value="Jhoan">
+          <label for="cliente-id">Id:</label>
+          <input type="text" id="cliente-id" name="cliente-id" placeholder="Ingresa tu id">
 
-          <label for="email">Correo Electrónico:</label>
-          <input type="email" id="email" name="email" value="jhoanmonsalve212@gmail.com">
+          <label for="cliente-nombre">Nombre:</label>
+          <input type="text" id="name" name="name" placeholder="Ingresa tu nombre">
 
-          <label for="password">Contraseña</label>
-          <input type="password" id="password" name="password" value="123456789">
+          <label for="cliente-usuario">Usuario:</label>
+          <input type="text" id="text" name="text" placeholder="Ingresa el usuario">
 
-          <label for="business-name">Nombre del Negocio:</label>
-          <input type="text" id="business-name" name="business-name" value="Verduras Proveedor">
-
-          <label for="phone">Teléfono:</label>
-          <input type="tel" id="telefono" name="telefono" value="+57 3188342212">
-
-          <label for="location">Ubicación:</label>
-          <input type="text" id="ubicacion" name="ubicacion" value="Aun sin Ubicación">
+          <label for="cliente-contrasena">Contraseña</label>
+          <input type="text" id="cliente-contrasena" name="cliente-contrasena" placeholder="Ingresa la contraseña">
         </form>
       </div>
       <div class="modal-actions">
@@ -69,8 +92,57 @@
       </div>
     </div>
   </div>
+  <script>
+     // Función para abrir el modal
+     function abrirModal() {
+                document.getElementById("modal").style.display = "flex";
+            }
 
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="/js/perfilproveedor.js"></script>
+            // Función para cerrar el modal
+            function cerrarModal() {
+                document.getElementById("modal").style.display = "none";
+            }
+            // Función para guardar el producto
+            function guardarCambios() {
+                // Capturar los valores directamente desde el formulario
+                const id = document.getElementById("cliente-id").value;
+                const nombre = document.getElementById("cliente-nombre").value;
+                const usuario = document.getElementById("cliente-usuario").value;
+                const contrasena = document.getElementById("cliente-contrasena").value;
+
+                
+                const datos = {
+                    id: id,
+                    nombre: nombre,
+                    usuario: usuario,
+                    contrasena: contrasena
+                };
+
+                // Enviar los datos al backend
+                fetch('http://localhost:4100/usuario', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(datos),
+                })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error('Error al guardar los datos');
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        console.log('Usuario modificado con éxito:', data)
+                        alert("Usuario Modificado")
+                        cerrarModal();
+                        location.reload(); // Recarga la página automáticamente
+                    })
+                    .catch((error) => {
+                        console.error('Error al modificar el usuario:', error);
+                        alert('No se pudo modificar el usuario');
+                    });
+            }
+  </script>
 </body>
 </html>

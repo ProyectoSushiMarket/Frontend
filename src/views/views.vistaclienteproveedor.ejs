@@ -21,7 +21,7 @@
         <h2>Lista de Clientes</h2>
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Buscar cliente..." />
-            <button class="crearcliente">Crear Cliente</button>
+            <button class="crearcliente" onclick="abrirModal()">Crear Cliente</button>
         </div>
         <table id="clientesTabla">
             <thead>
@@ -30,6 +30,7 @@
                     <th>Nombre</th>
                     <th>Usuario</th>
                     <th>Rol</th>
+                    <th>Editar/Eliminar</th>
                 </tr>
             </thead>
             <tbody>
@@ -78,6 +79,84 @@
             obtenerClientes();
             
         });
+    </script>
+    <!-- Modal para agregar cliente -->
+    <div id="add-cliente-modal" class="add-cliente-modal">
+        <div class="add-cliente-modal-content">
+            <div class="add-cliente-modal-header">Crear Cliente</div>
+            <div class="add-cliente-modal-body">
+                <form id="cliente-form">
+                    <label for="cliente-nombre">Nombre del cliente:</label>
+                    <input type="text" id="cliente-nombre" name="cliente-nombre" placeholder="Ingresa el nombre">
+            
+                    <label for="cliente-usuario">Usuario:</label>
+                    <input type="text" id="cliente-usuario" name="cliente-usuario" placeholder="Ingresa el usuario">
+
+                    <label for="cliente-contrasena">Contraseña:</label>
+                    <input type="password" id="cliente-contrasena" name="cliente-contrasena" placeholder="Ingresa la Contraseña">
+                        
+                    <label for="cliente-rol">Rol:</label>
+                    <input type="text" id="cliente-rol" name="cliente-rol" placeholder="Ingresa el rol">
+                </form>
+            </div>
+            <div class="add-cliente-modal-actions">
+                <button class="save-cliente-button" onclick="guardarCambios()">Guardar</button>
+                <button class="cancel-cliente-button" onclick="cerrarModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para abrir el modal
+        function abrirModal() {
+                document.getElementById("add-cliente-modal").style.display = "flex";
+            }
+
+            // Función para cerrar el modal
+            function cerrarModal() {
+                document.getElementById("add-cliente-modal").style.display = "none";
+            }
+            // Función para guardar el producto
+            function guardarCambios() {
+                // Capturar los valores directamente desde el formulario
+                const nombre = document.getElementById("cliente-nombre").value;
+                const usuario = document.getElementById("cliente-usuario").value;
+                const contrasena = document.getElementById("cliente-contrasena").value;
+                const rol = document.getElementById("cliente-rol").value;
+
+                
+                const datos = {
+                    nombre: nombre,
+                    usuario: usuario,
+                    contrasena: contrasena,
+                    rol: rol
+                };
+
+                // Enviar los datos al backend
+                fetch('http://localhost:4100/usuario', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(datos),
+                })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error('Error al guardar los datos');
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        console.log('Cliente creado con éxito:', data)
+                        alert("Cliente Agregado")
+                        cerrarModal();
+                        location.reload(); // Recarga la página automáticamente
+                    })
+                    .catch((error) => {
+                        console.error('Error al crear el usuario:', error);
+                        alert('No se pudo crear el usuario');
+                    });
+            }
     </script>
 
     <script src="/js/vistaclienteproveedor.js"></script>
