@@ -9,13 +9,15 @@
   <!-- Validación del token -->
   <script>
     const token = sessionStorage.getItem("token");
-    if (token == "" || token == null) {
-        window.location.href = "/";
+    if (!token) {
+        window.location.href = "/";  // Redirige si no hay token
     }
-    const url = sessionStorage.getItem("urltiendaverduras") + "/usuario/oauth";
-    if (url == "" || url == null) {
-        window.location.href = "/principalcliente";
+    
+    const url = sessionStorage.getItem("urltiendaverduras") + "/login/datosusuario";
+    if (!url) {
+        window.location.href = "/";  // Redirige si no se encuentra la URL
     }
+    
     const options = {
         method: "POST",
         headers: {
@@ -23,11 +25,12 @@
             "x-access-token": token
         }
     };
+
     fetch(url, options)
     .then(res => res.json())
     .then(data => {
         if (data.error == true) {
-            window.location.href = "/";
+            window.location.href = "/";  // Redirige si el token no es válido
         }
     });
   </script>
@@ -44,9 +47,6 @@
     <div class="logo">
       <div class="logo">Tienda Verduras</div>
     </div>
-    <ul>
-      <li><a href="/principalcliente">Tienda</a></li>
-    </ul>
     <button class="CerrarSesion-button" onclick="CerrarSesion()">Cerrar Sesión</button>
   </header>
 
@@ -89,7 +89,8 @@
   
   <script>
     async function cargarPedidos() {
-      const apiURL = "http://localhost:4100/pedido"; 
+      const token = sessionStorage.getItem("token");
+      const apiURL = "http://localhost:4100/pedido"; // URL de tu API
 
       try {
         const response = await fetch(apiURL, {
@@ -104,6 +105,10 @@
 
         const pedidos = await response.json();
 
+        const userData = JSON.parse(atob(token.split('.')[1]));
+        const userRole = userData.rol; 
+        const userId = userData.usuario;
+
         const pedidoRows = document.getElementById("pedido-rows");
         const productList = document.getElementById("product-list");
         const emptyCart = document.getElementById("empty-cart");
@@ -117,8 +122,17 @@
           emptyCart.style.display = "none";
           productList.style.display = "block";
           
-          pedidos.forEach(pedido => {
-            // Formatear la fecha a un formato legible (DD/MM/YYYY HH:mm)
+          let filteredPedidos = [];
+
+          // Filtrar pedidos según el rol
+          if (userRole === 'Proveedor') {
+            filteredPedidos = pedidos;  // Si es proveedor, mostrar todos los pedidos
+          } else if (userRole === 'Cliente') {
+            // Si es cliente, filtrar solo los pedidos del cliente
+            filteredPedidos = pedidos.filter(pedido => pedido.id_usuario === userId); // Filtramos por el id_usuario
+          }
+
+          filteredPedidos.forEach(pedido => {
             const fecha = new Date(pedido.fecha_pedido);
             const fechaFormateada = fecha.toLocaleString('es-ES', {
               weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit', 
@@ -126,11 +140,11 @@
 
             const row = document.createElement("tr");
             row.classList.add("pedido-row"); 
-            row.innerHTML = `
+            row.innerHTML = ` 
               <td>${pedido.id_pedido}</td>
               <td>${pedido.nombre_usuario || "Desconocido"}</td>
               <td>${pedido.nombre_producto || "Desconocido"}</td>
-              <td>${fechaFormateada || "No registrada"}</td> <!-- Aquí usamos la fecha formateada -->
+              <td>${fechaFormateada || "No registrada"}</td>
               <td>${pedido.cantidad || "No registrada"}</td>
               <td>${pedido.unidad_de_medida || "No definida"}</td>
               <td>${pedido.caracteristicas || "No especificadas"}</td>
@@ -161,7 +175,6 @@
         }
       });
   
-      // Mostrar mensaje si no se encuentran resultados
       if (!found) {
         const noResultsMessage = document.getElementById('noResults');
         if (!noResultsMessage) {
