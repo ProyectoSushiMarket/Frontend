@@ -126,8 +126,18 @@
                 document.getElementById("producto-nombre").value = nombreProducto;
 
                 // Establecer la fecha actual como texto
-                const fechaActual = new Date().toLocaleString(); // Establecemos la fecha como string legible
-                document.getElementById("fecha-pedido").textContent = fechaActual;
+                const fechaActual = new Date(); // Fecha actual
+                const fechaFormateada = fechaActual.toLocaleString('es-ES', { 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit'  
+                });
+
+                // Mostrar la fecha en el modal
+                document.getElementById("fecha-pedido").textContent = fechaFormateada;
+
+                // Guardar la fecha en un campo oculto para enviarla en el pedido
+                document.getElementById("fecha-pedido-hidden").value = fechaActual.toISOString();
             }
 
             function cerrarModal() {
@@ -156,6 +166,7 @@
 
                     <label for="fecha_pedido">Fecha del Pedido:</label>
                     <p id="fecha-pedido"></p>
+                    <input type="hidden" id="fecha-pedido-hidden" name="fecha_pedido">
 
                     <label for="cantidad">Cantidad:</label>
                     <input type="number" id="cantidad" name="cantidad" placeholder="Ingresa la cantidad que necesitas" required>
@@ -165,6 +176,7 @@
                         <option value="" disabled selected>Selecciona la unidad de medida</option>
                         <option value="KL">KL</option>
                         <option value="UND">UND</option>
+                        <option value="No aplica">No aplica</option>
                     </select>
 
                     <label for="caracteristicas">Características:</label>
@@ -172,6 +184,7 @@
                         <option value="" disabled selected>Selecciona las características</option>
                         <option value="Pinton">Pinton</option>
                         <option value="Maduro">Maduro</option>
+                        <option value="No aplica">No aplica</option>
                     </select>
 
                     <button type="submit">Confirmar Pedido</button>
@@ -190,15 +203,14 @@
                 return;
             }
 
-            // Obtener la fecha ya estática y convertirla en el formato adecuado
-            const fechaPedido = document.getElementById('fecha-pedido').textContent; // Fecha estática
-            const fechaFormateada = new Date(fechaPedido).toISOString().slice(0, 19).replace('T', ' ');  // Formato 'YYYY-MM-DD HH:MM:SS'
+            // Obtener la fecha desde el campo oculto (ya formateada)
+            const fechaPedido = document.getElementById('fecha-pedido-hidden').value;
 
             // Crear el objeto con los datos del pedido
             const pedidoData = {
                 id_usuario: sessionStorage.getItem("usuarioId"),
                 nombre_producto: productoNombre,
-                fecha_pedido: fechaFormateada,  // La fecha ya está formateada correctamente
+                fecha_pedido: fechaPedido,  // La fecha ya está formateada correctamente
                 cantidad: document.getElementById('cantidad').value,
                 unidad_de_medida: document.getElementById('unidad-de-medida').value,
                 caracteristicas: document.getElementById('caracteristicas').value
