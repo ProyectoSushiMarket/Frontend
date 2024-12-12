@@ -6,14 +6,12 @@
     <title>Tienda Verduras (proveedor)</title>
     <link rel="stylesheet" href="/css/principal.css">
 
-
     <script>
         const token = sessionStorage.getItem("token");
         if (!token) {
             window.location.href = "/";
         }
-    
-        
+
         async function obtenerDatosProveedor() {
             const url = sessionStorage.getItem("urltiendaverduras") + "/login/datosusuario";
             try {
@@ -24,18 +22,15 @@
                         "x-access-token": token
                     }
                 });
-    
+
                 if (!response.ok) throw new Error("No se pudo obtener la información del proveedor");
-    
+
                 const data = await response.json();
                 if (data.error) {
                     window.location.href = "/";
                 } else {
-                    
                     sessionStorage.setItem("proveedorId", data.id_usuario);
                     sessionStorage.setItem("proveedorNombre", data.nombre);
-    
-                    
                     document.getElementById("proveedor-nombre-header").textContent = data.nombre;
                 }
             } catch (error) {
@@ -43,18 +38,100 @@
                 window.location.href = "/";
             }
         }
-    
-        
+
         document.addEventListener("DOMContentLoaded", obtenerDatosProveedor);
+
+        // Función para abrir el modal de agregar producto
+        function abrirModalAgregar() {
+            document.getElementById("add-product-modal").style.display = "flex";
+        }
+
+        // Función para abrir el modal de eliminar producto
+        function abrirModalEliminar() {
+            document.getElementById("delete-product-modal").style.display = "flex";
+        }
+
+        // Función para cerrar los modales
+        function cerrarModal() {
+            document.getElementById("add-product-modal").style.display = "none";
+            document.getElementById("delete-product-modal").style.display = "none";
+        }
+
+        // Función para guardar el producto
+        function guardarCambios() {
+            const nombre = document.getElementById("product-name").value;
+            const imagen = document.getElementById("product-image").value;
+
+            const datos = {
+                nombre: nombre,
+                imagen: imagen
+            };
+
+            fetch('http://localhost:4100/producto', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(datos),
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Error al guardar los datos');
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log('Producto guardado con éxito:', data)
+                    alert("Producto Agregado")
+                    cerrarModal();
+                    location.reload(); // Recarga la página automáticamente
+                })
+                .catch((error) => {
+                    console.error('Error al guardar el producto:', error);
+                    alert('No se pudo guardar el producto');
+                });
+        }
+
+        // Función para eliminar el producto
+        async function eliminarProducto() {
+            const productName = document.getElementById("product-name-delete").value;
+
+            if (!productName) {
+                alert("Por favor, ingresa el nombre del producto.");
+                return;
+            }
+
+            const url = `http://localhost:4100/producto/${productName}`;
+            const options = {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': token
+                }
+            };
+
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    throw new Error('No se pudo eliminar el producto');
+                }
+
+                alert('Producto eliminado correctamente');
+                cerrarModal();
+                location.reload(); // Recargar la página para reflejar los cambios
+            } catch (error) {
+                console.error('Error al eliminar el producto:', error);
+                alert('Hubo un error al eliminar el producto');
+            }
+        }
     </script>
-    
+
 </head>
 <body>
     <header>
         <nav class="navbar">
             <div class="logo">Tienda Verduras</div>
             <ul>
-                
                 <li><a href="/principalproveedor">Tienda</a></li>
                 <li><a href="https://wa.me/+573188342212">Soporte</a></li>
                 <li><a href="/vistaclienteproveedor">Clientes</a></li>
@@ -72,65 +149,58 @@
     </section>
 
     <section class="filter-bar">
-        <button class="AgregarProducto-button" onclick="abrirModal()">Agregar Producto</button>
+        <button class="AgregarProducto-button" onclick="abrirModalAgregar()">Agregar Producto</button>
+        <button class="EliminarProducto-button" onclick="abrirModalEliminar()">Eliminar Producto</button>
     </section>
 
     <section class="products-grid">
-            <!-- Consumo mostrar productos -->
-            <script>
-                const apiURL = "http://localhost:4100/producto";
-            
-                // Función para cargar los productos desde el backend
-                async function cargarProductos() {
-                    try {
-                        const response = await fetch(apiURL);
-                        if (!response.ok) throw new Error("Error al cargar los productos");
-            
-                        const productos = await response.json();
-                        const productsGrid = document.querySelector(".products-grid");
-            
-                        // Limpiamos el grid
-                        productsGrid.innerHTML = "";
-            
-                        // Iteramos y renderizamos cada producto
-                        productos.forEach(producto => {
-                            const productCard = document.createElement("div");
-                            productCard.className = "product-card";
-            
-                            productCard.innerHTML = `
-                                <div class="product-image">
-                                    <img src="${producto.imagen}" alt="${producto.nombre}">
-                                </div>
-                                <div class="product-info" style="text-align: center;">
-                                    <h3>${producto.nombre}</h3>
-                                </div>
-                            `;
-            
-                            productsGrid.appendChild(productCard);
-                        });
-                    } catch (error) {
-                        console.error("Error:", error);
-                        alert("No se pudieron cargar los productos.");
-                    }
-                }
-                // Cargar productos al cargar la página
-                document.addEventListener("DOMContentLoaded", cargarProductos);
-                
-            </script>
-            
+        <script>
+            const apiURL = "http://localhost:4100/producto";
 
+            async function cargarProductos() {
+                try {
+                    const response = await fetch(apiURL);
+                    if (!response.ok) throw new Error("Error al cargar los productos");
+
+                    const productos = await response.json();
+                    const productsGrid = document.querySelector(".products-grid");
+
+                    productsGrid.innerHTML = "";
+
+                    productos.forEach(producto => {
+                        const productCard = document.createElement("div");
+                        productCard.className = "product-card";
+
+                        productCard.innerHTML = `
+                            <div class="product-image">
+                                <img src="${producto.imagen}" alt="${producto.nombre}">
+                            </div>
+                            <div class="product-info" style="text-align: center;">
+                                <h3>${producto.nombre}</h3>
+                            </div>
+                        `;
+
+                        productsGrid.appendChild(productCard);
+                    });
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("No se pudieron cargar los productos.");
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", cargarProductos);
+        </script>
     </section>
-    
-        <!-- Modal para agregar producto -->
+
+    <!-- Modal para agregar producto -->
     <div id="add-product-modal" class="add-product-modal">
         <div class="add-product-modal-content">
             <div class="add-product-modal-header">Agregar Producto</div>
             <div class="add-product-modal-body">
                 <form id="product-form">
-
                     <label for="product-name">Nombre del producto:</label>
                     <input type="text" id="product-name" name="product-name" placeholder="Ingresa el nombre del producto">
-                  
+
                     <label for="product-image">Imagen del producto:</label>
                     <input type="text" id="product-image" name="product-image" placeholder="Ingresa la URL de la imagen" style="width: 100%;">
                 </form>
@@ -142,59 +212,21 @@
         </div>
     </div>
 
-        
-    <script>
-            // Función para abrir el modal
-            function abrirModal() {
-                document.getElementById("add-product-modal").style.display = "flex";
-            }
-
-            // Función para cerrar el modal
-            function cerrarModal() {
-                document.getElementById("add-product-modal").style.display = "none";
-            }
-
-            // Función para guardar el producto
-            function guardarCambios() {
-                // Capturar los valores directamente desde el formulario
-                const nombre = document.getElementById("product-name").value;
-                const imagen = document.getElementById("product-image").value;
-
-                // Crear el objeto con los datos para enviar
-                const datos = {
-                    nombre: nombre,
-                    imagen: imagen
-                };
-
-                // Enviar los datos al backend
-                fetch('http://localhost:4100/producto', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(datos),
-                })
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error('Error al guardar los datos');
-                        }
-                        return response.json();
-                    })
-                    .then((data) => {
-                        console.log('Producto guardado con éxito:', data)
-                        alert("Producto Agregado")
-                        cerrarModal();
-                        location.reload(); // Recarga la página automáticamente
-                    })
-                    .catch((error) => {
-                        console.error('Error al guardar el producto:', error);
-                        alert('No se pudo guardar el producto');
-                    });
-            }
-
-    </script>
+    <!-- Modal para eliminar producto -->
+    <div id="delete-product-modal" class="delete-product-modal">
+        <div class="delete-product-modal-content">
+            <div class="delete-product-modal-header">Eliminar Producto</div>
+            <div class="delete-product-modal-body">
+                <label for="product-name-delete">Nombre del producto a eliminar:</label>
+                <input type="text" id="product-name-delete" name="product-name-delete" placeholder="Ingresa el nombre del producto">
+            </div>
+            <div class="delete-product-modal-actions">
+                <button class="delete-product-button" onclick="eliminarProducto()">Eliminar</button>
+                <button class="cancel-product-button" onclick="cerrarModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
 
     <script src="/js/principal.js"></script>
-    
 </body>
 </html>

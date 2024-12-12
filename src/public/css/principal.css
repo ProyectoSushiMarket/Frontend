@@ -83,6 +83,14 @@ body {
     border-radius: 4px;
     cursor: pointer;
 }
+.EliminarProducto-button {
+    background-color: #45a049;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
 
 
 .search-bar {
@@ -157,36 +165,9 @@ body {
     opacity: 1;
     transform: scale(1);
 }
- /* Estilo para el botón Añadir al carrito */
-.add-to-cart {
-    background-color: #4CAF50; /* Azul */
-    color: white; 
-    padding: 12px 20px; 
-    border: none; 
-    border-radius: 8px; 
-    font-size: 16px;
-    cursor: pointer; 
-    text-align: center;
-    display: block; 
-    margin: 10px auto; 
-    transition: all 0.3s ease; 
-}
-
-/* Efecto hover */
-.add-to-cart:hover {
-    background-color: #366e38; 
-    transform: scale(1.05); 
-}
-
-
-.add-to-cart:active {
-    background-color: #4CAF50; 
-    transform: scale(1); 
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
-}
-
-/* Modal */
-.add-product-modal {
+ 
+/* Modal general */
+.add-product-modal, .delete-product-modal {
     display: none;
     position: fixed;
     top: 0;
@@ -200,7 +181,7 @@ body {
     animation: fadeIn 0.3s ease-in-out;
 }
 
-.add-product-modal-content {
+.add-product-modal-content, .delete-product-modal-content {
     background: white;
     padding: 20px;
     border-radius: 8px;
@@ -209,7 +190,6 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     text-align: left;
 }
-
 
 /* Animaciones */
 @keyframes fadeIn {
@@ -231,7 +211,7 @@ body {
 }
 
 /* Cabecera del modal */
-.add-product-modal-header {
+.add-product-modal-header, .delete-product-modal-header {
     font-size: 1.5rem;
     margin-bottom: 10px;
     color: #4CAF50;
@@ -239,12 +219,16 @@ body {
     text-align: center;
 }
 
+.delete-product-modal-header {
+    color: #e74c3c;
+}
+
 /* Cuerpo del modal */
-.add-product-modal-body {
+.add-product-modal-body, .delete-product-modal-body {
     padding: 10px 0;
 }
 
-.add-product-modal-body label {
+.add-product-modal-body label, .delete-product-modal-body label {
     display: block;
     margin: 10px 0 5px;
     font-weight: bold;
@@ -252,7 +236,7 @@ body {
 }
 
 /* Campos de entrada del modal */
-.add-product-modal-body input {
+.add-product-modal-body input, .delete-product-modal-body input {
     width: 100%;
     padding: 12px;
     border: 1px solid #ccc;
@@ -261,15 +245,15 @@ body {
     font-size: 1rem;
     margin-bottom: 15px;
 }
+
 /* Acciones del modal */
-.add-product-modal-actions {
+.add-product-modal-actions, .delete-product-modal-actions {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
 }
 
-.save-product-button,
-.cancel-product-button {
+.save-product-button, .cancel-product-button, .delete-product-button {
     padding: 10px 20px;
     border-radius: 6px;
     border: none;
@@ -309,6 +293,26 @@ body {
 .cancel-product-button:active {
     transform: scale(0.98);
 }
+
+/* Estilo para el botón "Eliminar" */
+.delete-product-button {
+    background-color: #45a049;
+    color: white;
+}
+
+.delete-product-button:hover {
+    background-color: #1f6322;
+    transform: scale(1.05);
+}
+
+.delete-product-button:active {
+    transform: scale(0.98);
+}
+
+
+
+
+
 
 
 
