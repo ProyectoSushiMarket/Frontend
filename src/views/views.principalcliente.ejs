@@ -70,7 +70,6 @@
 
     <section class="search-bar">
         <input type="text" id="searchBar" placeholder="Buscar...">
-        <button class="make-order-button" onclick="mostrarModalDirecto()">Hacer Pedido</button>
     </section>
 
     <section class="products-grid">
@@ -86,8 +85,6 @@
                     const productsGrid = document.querySelector(".products-grid");
                     productsGrid.innerHTML = "";
 
-                    const selectProducto = document.getElementById("producto");
-
                     productos.forEach(producto => {
                         const productCard = document.createElement("div");
                         productCard.className = "product-card";
@@ -98,14 +95,10 @@
                             </div>
                             <div class="product-info" style="text-align: center;">
                                 <h3>${producto.nombre}</h3>
+                                <button class="make-order-button" onclick="selectProducto('${producto.nombre}')">Hacer Pedido</button>
                             </div>
                         `;
                         productsGrid.appendChild(productCard);
-
-                        const option = document.createElement("option");
-                        option.value = producto.id;
-                        option.textContent = producto.nombre;
-                        selectProducto.appendChild(option);
                     });
                 } catch (error) {
                     console.error("Error:", error);
@@ -113,15 +106,24 @@
                 }
             }
 
-            function mostrarModalDirecto() {
-                const modal = document.getElementById("order-modal");
+            // Función que selecciona el producto y lo coloca en el modal
+            function selectProducto(nombreProducto) {
+                // Mostrar el nombre del producto directamente en el modal
+                const productoElemento = document.getElementById("producto");
+                productoElemento.textContent = nombreProducto; // Nombre del producto estático
 
+                // Mostrar el modal
+                const modal = document.getElementById("order-modal");
+                modal.style.display = "flex";
+
+                // Establecer datos del usuario en el formulario
                 const usuarioNombre = sessionStorage.getItem("usuarioNombre");
                 const usuarioId = sessionStorage.getItem("usuarioId");
                 document.getElementById("nombre-usuario").value = usuarioNombre;
                 document.getElementById("usuario").value = usuarioId;
 
-                modal.style.display = "flex";
+                // Guardar el nombre del producto en el campo oculto
+                document.getElementById("producto-nombre").value = nombreProducto;
             }
 
             function cerrarModal() {
@@ -144,7 +146,9 @@
                     <input type="hidden" id="usuario" name="usuario">
 
                     <label for="producto">Producto:</label>
-                    <select name="producto" id="producto"></select>
+                    <p id="producto" style="font-weight: bold;"></p>
+
+                    <input type="hidden" id="producto-nombre" name="producto-nombre">
 
                     <label for="fecha_pedido">Fecha del Pedido:</label>
                     <input type="datetime-local" id="fecha-pedido" name="fecha_pedido" required>
@@ -154,25 +158,37 @@
 
                     <label for="unidad_de_medida">Unidad de medida:</label>
                     <select id="unidad-de-medida" name="unidad_de_medida" required>
+                        <option value="" disabled selected>Selecciona la unidad de medida</option>
                         <option value="KL">KL</option>
                         <option value="UND">UND</option>
                     </select>
 
                     <label for="caracteristicas">Características:</label>
-                    <input type="text" id="caracteristicas" name="caracteristicas" placeholder="Características del producto">
+                    <select name="caracteristicas" id="caracteristicas">
+                        <option value="" disabled selected>Selecciona las características</option>
+                        <option value="Pinton">Pinton</option>
+                        <option value="Maduro">Maduro</option>
+                    </select>
 
                     <button type="submit">Confirmar Pedido</button>
                 </div>
             </form>
         </div>
     </div>
+
     <script>
         async function realizarPedido(event) {
             event.preventDefault();
 
+            const productoNombre = document.getElementById('producto-nombre').value;
+            if (!productoNombre) {
+                alert("Por favor, selecciona un producto.");
+                return;
+            }
+
             const pedidoData = {
                 id_usuario: sessionStorage.getItem("usuarioId"),
-                id_producto: document.getElementById('producto').value,
+                nombre_producto: productoNombre,  // Usando nombre del producto
                 fecha_pedido: document.getElementById('fecha-pedido').value,
                 cantidad: document.getElementById('cantidad').value,
                 unidad_de_medida: document.getElementById('unidad-de-medida').value,
@@ -188,7 +204,11 @@
                     body: JSON.stringify(pedidoData)
                 });
 
-                if (!response.ok) throw new Error('Error al realizar el pedido');
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(errorData.error || 'Error al realizar el pedido');
+                    return;
+                }
 
                 const data = await response.json();
                 alert('Pedido realizado correctamente');
@@ -199,5 +219,6 @@
             }
         }
     </script>
+    <script src="/js/principalcliente.js"></script>
 </body>
 </html>
