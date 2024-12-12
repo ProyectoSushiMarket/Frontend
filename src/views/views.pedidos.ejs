@@ -79,7 +79,7 @@
               </tr>
             </thead>
             <tbody id="pedido-rows">
-             
+              <!-- Los pedidos se cargarán aquí -->
             </tbody>
           </table>
         </div>
@@ -118,13 +118,20 @@
           productList.style.display = "block";
           
           pedidos.forEach(pedido => {
+            // Formatear la fecha a un formato legible (DD/MM/YYYY HH:mm)
+            const fecha = new Date(pedido.fecha_pedido);
+            const fechaFormateada = fecha.toLocaleString('es-ES', {
+              weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit', 
+              hour: '2-digit', minute: '2-digit'
+            });
+
             const row = document.createElement("tr");
             row.classList.add("pedido-row"); 
             row.innerHTML = `
               <td>${pedido.id_pedido}</td>
               <td>${pedido.nombre_usuario || "Desconocido"}</td>
               <td>${pedido.nombre_producto || "Desconocido"}</td>
-              <td>${pedido.fecha_pedido || "No registrada"}</td>
+              <td>${fechaFormateada || "No registrada"}</td> <!-- Aquí usamos la fecha formateada -->
               <td>${pedido.cantidad || "No registrada"}</td>
               <td>${pedido.unidad_de_medida || "No definida"}</td>
               <td>${pedido.caracteristicas || "No especificadas"}</td>
@@ -171,71 +178,66 @@
       }
     }
 
-    
     document.getElementById('searchBar').addEventListener('input', filterPedidosRealtime);
 
     cargarPedidos();
   </script>
 
-          <!-- Modal para eliminar pedido -->
-      <div id="modalEliminar" class="modal">
-        <div class="modal-content">
-          <span class="close" onclick="cerrarModalEliminar()">&times;</span>
-          <h2>Eliminar Pedido</h2>
-          <p>Ingrese el ID del pedido que desea eliminar:</p>
-          <input type="text" id="idPedido" placeholder="ID del pedido">
-          <div class="modal-actions">
-            <button class="cancelar" onclick="eliminarPedido()">Aceptar</button>
-            <button class="confirmar" onclick="cerrarModalEliminar()">Cancelar</button>
-          </div>
-        </div>
+  <!-- Modal para eliminar pedido -->
+  <div id="modalEliminar" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarModalEliminar()">&times;</span>
+      <h2>Eliminar Pedido</h2>
+      <p>Ingrese el ID del pedido que desea eliminar:</p>
+      <input type="text" id="idPedido" placeholder="ID del pedido">
+      <div class="modal-actions">
+        <button class="cancelar" onclick="eliminarPedido()">Aceptar</button>
+        <button class="confirmar" onclick="cerrarModalEliminar()">Cancelar</button>
       </div>
-      <script>
-          function abrirModalEliminar() {
-            document.getElementById('modalEliminar').style.display = 'block';
+    </div>
+  </div>
+  
+  <script>
+      function abrirModalEliminar() {
+        document.getElementById('modalEliminar').style.display = 'block';
+      }
+
+      function cerrarModalEliminar() {
+        document.getElementById('modalEliminar').style.display = 'none';
+      }
+
+      async function eliminarPedido() {
+        const idPedido = document.getElementById('idPedido').value.trim();
+
+        if (!idPedido) {
+          alert('Por favor, ingrese un ID válido.');
+          return;
+        }
+
+        const apiURL = `http://localhost:4100/pedido/${idPedido}`;
+
+        try {
+          const response = await fetch(apiURL, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-access-token': sessionStorage.getItem('token'),
+            },
+          });
+
+          if (response.ok) {
+            alert('Pedido eliminado exitosamente.');
+            cerrarModalEliminar();
+            cargarPedidos();
+          } else {
+            const error = await response.json();
+            alert(`Error al eliminar el pedido: ${error.message}`);
           }
-
-          function cerrarModalEliminar() {
-            document.getElementById('modalEliminar').style.display = 'none';
-          }
-
-          async function eliminarPedido() {
-            const idPedido = document.getElementById('idPedido').value.trim();
-
-            if (!idPedido) {
-              alert('Por favor, ingrese un ID válido.');
-              return;
-            }
-
-            const apiURL = `http://localhost:4100/pedido/${idPedido}`;
-
-            try {
-              const response = await fetch(apiURL, {
-                method: 'DELETE',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'x-access-token': sessionStorage.getItem('token'),
-                },
-              });
-
-              if (response.ok) {
-                alert('Pedido eliminado exitosamente.');
-                cerrarModalEliminar();
-                cargarPedidos();
-              } else {
-                const error = await response.json();
-                alert(`Error al eliminar el pedido: ${error.message}`);
-              }
-            } catch (error) {
-              console.error('Error al eliminar el pedido:', error);
-              alert('No se pudo eliminar el pedido.');
-            }
-          }
-
-
+        } catch (error) {
+          console.error('Error al eliminar el pedido:', error);
+          alert('No se pudo eliminar el pedido.');
+        }
+      }
   </script>
-   
-
-</script>
 </body>
 </html>

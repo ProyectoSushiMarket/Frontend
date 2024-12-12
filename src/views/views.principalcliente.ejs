@@ -124,6 +124,10 @@
 
                 // Guardar el nombre del producto en el campo oculto
                 document.getElementById("producto-nombre").value = nombreProducto;
+
+                // Establecer la fecha actual como texto
+                const fechaActual = new Date().toLocaleString(); // Establecemos la fecha como string legible
+                document.getElementById("fecha-pedido").textContent = fechaActual;
             }
 
             function cerrarModal() {
@@ -141,17 +145,17 @@
             <h2>Realizar Pedido</h2>
             <form id="pedido-form" onsubmit="realizarPedido(event)">
                 <div class="modal-info">
+
                     <label for="usuario-nombre">Usuario:</label>
                     <input type="text" id="nombre-usuario" name="nombre-usuario" disabled>
                     <input type="hidden" id="usuario" name="usuario">
 
                     <label for="producto">Producto:</label>
-                    <p id="producto" style="font-weight: bold;"></p>
-
+                    <p id="producto"></p>
                     <input type="hidden" id="producto-nombre" name="producto-nombre">
 
                     <label for="fecha_pedido">Fecha del Pedido:</label>
-                    <input type="datetime-local" id="fecha-pedido" name="fecha_pedido" required>
+                    <p id="fecha-pedido"></p>
 
                     <label for="cantidad">Cantidad:</label>
                     <input type="number" id="cantidad" name="cantidad" placeholder="Ingresa la cantidad que necesitas" required>
@@ -186,10 +190,15 @@
                 return;
             }
 
+            // Obtener la fecha ya estática y convertirla en el formato adecuado
+            const fechaPedido = document.getElementById('fecha-pedido').textContent; // Fecha estática
+            const fechaFormateada = new Date(fechaPedido).toISOString().slice(0, 19).replace('T', ' ');  // Formato 'YYYY-MM-DD HH:MM:SS'
+
+            // Crear el objeto con los datos del pedido
             const pedidoData = {
                 id_usuario: sessionStorage.getItem("usuarioId"),
-                nombre_producto: productoNombre,  // Usando nombre del producto
-                fecha_pedido: document.getElementById('fecha-pedido').value,
+                nombre_producto: productoNombre,
+                fecha_pedido: fechaFormateada,  // La fecha ya está formateada correctamente
                 cantidad: document.getElementById('cantidad').value,
                 unidad_de_medida: document.getElementById('unidad-de-medida').value,
                 caracteristicas: document.getElementById('caracteristicas').value
