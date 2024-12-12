@@ -62,7 +62,10 @@
       
       <div class="product-list" id="product-list" style="display: none;">
         <div class="table-container">
-          <h2 class="table-title">Pedidos</h2> <!-- Título actualizado -->
+          <h2 class="table-title">Pedidos
+            <Button class="eliminarpedido" onclick="abrirModalEliminar()">Eliminar Pedido</Button>
+          </h2>
+          
           <table>
             <thead>
               <tr>
@@ -76,7 +79,7 @@
               </tr>
             </thead>
             <tbody id="pedido-rows">
-              <!-- Los pedidos se cargarán aquí dinámicamente -->
+             
             </tbody>
           </table>
         </div>
@@ -86,7 +89,7 @@
   
   <script>
     async function cargarPedidos() {
-      const apiURL = "http://localhost:4100/pedido"; // Endpoint de tu backend para obtener los pedidos
+      const apiURL = "http://localhost:4100/pedido"; 
 
       try {
         const response = await fetch(apiURL, {
@@ -105,6 +108,8 @@
         const productList = document.getElementById("product-list");
         const emptyCart = document.getElementById("empty-cart");
 
+        pedidoRows.innerHTML = "";
+
         if (pedidos.length === 0) {
           emptyCart.style.display = "block";
           productList.style.display = "none";
@@ -114,13 +119,13 @@
           
           pedidos.forEach(pedido => {
             const row = document.createElement("tr");
-            row.classList.add("pedido-row"); // Estilo personalizado para filas
+            row.classList.add("pedido-row"); 
             row.innerHTML = `
               <td>${pedido.id_pedido}</td>
               <td>${pedido.nombre_usuario || "Desconocido"}</td>
               <td>${pedido.nombre_producto || "Desconocido"}</td>
               <td>${pedido.fecha_pedido || "No registrada"}</td>
-              <td>${pedido.cantidad}</td>
+              <td>${pedido.cantidad || "No registrada"}</td>
               <td>${pedido.unidad_de_medida || "No definida"}</td>
               <td>${pedido.caracteristicas || "No especificadas"}</td>
             `;
@@ -136,7 +141,7 @@
     // Función para filtrar los pedidos en tiempo real
     function filterPedidosRealtime() {
       const searchInput = document.getElementById('searchBar').value.toLowerCase();
-      const pedidoRows = document.querySelectorAll('#pedido-rows tr'); // Filas de la tabla
+      const pedidoRows = document.querySelectorAll('#pedido-rows tr'); 
       let found = false;
   
       pedidoRows.forEach(row => {
@@ -166,10 +171,71 @@
       }
     }
 
-    // Agregar evento en tiempo real a la barra de búsqueda
+    
     document.getElementById('searchBar').addEventListener('input', filterPedidosRealtime);
 
     cargarPedidos();
   </script>
+
+          <!-- Modal para eliminar pedido -->
+      <div id="modalEliminar" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="cerrarModalEliminar()">&times;</span>
+          <h2>Eliminar Pedido</h2>
+          <p>Ingrese el ID del pedido que desea eliminar:</p>
+          <input type="text" id="idPedido" placeholder="ID del pedido">
+          <div class="modal-actions">
+            <button class="cancelar" onclick="eliminarPedido()">Aceptar</button>
+            <button class="confirmar" onclick="cerrarModalEliminar()">Cancelar</button>
+          </div>
+        </div>
+      </div>
+      <script>
+          function abrirModalEliminar() {
+            document.getElementById('modalEliminar').style.display = 'block';
+          }
+
+          function cerrarModalEliminar() {
+            document.getElementById('modalEliminar').style.display = 'none';
+          }
+
+          async function eliminarPedido() {
+            const idPedido = document.getElementById('idPedido').value.trim();
+
+            if (!idPedido) {
+              alert('Por favor, ingrese un ID válido.');
+              return;
+            }
+
+            const apiURL = `http://localhost:4100/pedido/${idPedido}`;
+
+            try {
+              const response = await fetch(apiURL, {
+                method: 'DELETE',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'x-access-token': sessionStorage.getItem('token'),
+                },
+              });
+
+              if (response.ok) {
+                alert('Pedido eliminado exitosamente.');
+                cerrarModalEliminar();
+                cargarPedidos();
+              } else {
+                const error = await response.json();
+                alert(`Error al eliminar el pedido: ${error.message}`);
+              }
+            } catch (error) {
+              console.error('Error al eliminar el pedido:', error);
+              alert('No se pudo eliminar el pedido.');
+            }
+          }
+
+
+  </script>
+   
+
+</script>
 </body>
 </html>
