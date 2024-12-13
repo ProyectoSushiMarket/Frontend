@@ -125,6 +125,12 @@
             }
         }
     </script>
+    <script>
+        const CerrarSesion = () => {
+            sessionStorage.clear();
+            window.location.href = "/";
+        };
+    </script>
 
 </head>
 <body>
@@ -140,7 +146,7 @@
             <div class="icons">
                 <div class="login-icon">Perfil 👤: <span id="proveedor-nombre-header">PROVEEDOR</span></div>
                 <button class="CerrarSesion-button" onclick="CerrarSesion()">Cerrar Sesión</button>
-            </div>            
+            </div>
         </nav>
     </header>
 
