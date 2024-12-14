@@ -4,8 +4,8 @@ import { pedidos, login, principal, principalcliente, vistaclienteproveedor } fr
 const rutaprincipal = Router();
 
 rutaprincipal.get("/", login);
-rutaprincipal.get("/principalproveedor", principal)
-rutaprincipal.get("/principalcliente", principalcliente)
+rutaprincipal.get("/proveedor", principal)
+rutaprincipal.get("/cliente", principalcliente)
 rutaprincipal.get("/pedidos", pedidos)
 rutaprincipal.get("/vistaclienteproveedor", vistaclienteproveedor)
 

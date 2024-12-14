@@ -9,38 +9,38 @@
   <!-- Validación del token -->
   <script>
     const token = sessionStorage.getItem("token");
-        if (!token) {
+    if (!token) {
+        window.location.href = "/";
+    }
+
+    async function obtenerDatosProveedor() {
+        const url = sessionStorage.getItem("urltiendaverduras") + "/login/datosusuario";
+        try {
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-access-token": token
+                }
+            });
+
+            if (!response.ok) throw new Error("No se pudo obtener la información del proveedor");
+
+            const data = await response.json();
+            if (data.error) {
+                window.location.href = "/";
+            } else {
+                sessionStorage.setItem("proveedorId", data.id_usuario);
+                sessionStorage.setItem("proveedorNombre", data.nombre);
+                document.getElementById("proveedor-nombre-header").textContent = data.nombre;
+            }
+        } catch (error) {
+            console.error("Error al obtener los datos del proveedor:", error);
             window.location.href = "/";
         }
+    }
 
-        async function obtenerDatosProveedor() {
-            const url = sessionStorage.getItem("urltiendaverduras") + "/login/datosusuario";
-            try {
-                const response = await fetch(url, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "x-access-token": token
-                    }
-                });
-
-                if (!response.ok) throw new Error("No se pudo obtener la información del proveedor");
-
-                const data = await response.json();
-                if (data.error) {
-                    window.location.href = "/";
-                } else {
-                    sessionStorage.setItem("proveedorId", data.id_usuario);
-                    sessionStorage.setItem("proveedorNombre", data.nombre);
-                    document.getElementById("proveedor-nombre-header").textContent = data.nombre;
-                }
-            } catch (error) {
-                console.error("Error al obtener los datos del proveedor:", error);
-                window.location.href = "/";
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", obtenerDatosProveedor);
+    document.addEventListener("DOMContentLoaded", obtenerDatosProveedor);
   </script>
 
   <script>
@@ -95,8 +95,9 @@
   </main>
   
   <script>
+    // Función para obtener los pedidos por usuario usando el token
     async function cargarPedidos() {
-      const apiURL = "http://localhost:4100/pedido";
+      const apiURL = "http://localhost:4100/pedido/pedidousuario"; // Cambié a la URL que devuelve los pedidos de un usuario
       const token = sessionStorage.getItem("token");
 
       try {
@@ -110,7 +111,9 @@
 
         if (!response.ok) throw new Error("Error al cargar los pedidos");
 
-        const pedidos = await response.json();
+        const data = await response.json();
+        
+        // Verificar si el token contiene la información del rol y usuario
         const userData = JSON.parse(atob(token.split('.')[1]));
         const userRole = userData.rol;
         const userId = userData.usuario;
@@ -121,31 +124,25 @@
 
         pedidoRows.innerHTML = "";
 
-        if (pedidos.length === 0) {
+        if (data.pedidos.length === 0) {
           emptyCart.style.display = "block";
           productList.style.display = "none";
         } else {
           emptyCart.style.display = "none";
           productList.style.display = "block";
 
-          // Filtrar pedidos según el rol del usuario (Proveedor o cliente)
-          let filteredPedidos = userRole === "Proveedor"
-            ? pedidos
-            : pedidos.filter(pedido => pedido.id_usuario === userId);
-
-          filteredPedidos.forEach(pedido => {
+          data.pedidos.forEach(pedido => {
             const fecha = new Date(pedido.fecha_pedido);
             const fechaFormateada = fecha.toLocaleString("es-ES", {
               year: "numeric", month: "2-digit", day: "2-digit"
             });
 
-            // Crear fila de pedido en la tabla
             const row = document.createElement("tr");
-            row.innerHTML = `
+            row.innerHTML = `  
               <td>${pedido.id_pedido}</td>
               <td>${pedido.nombre_usuario || "Desconocido"}</td>
               <td>${pedido.responsable || "Sin responsable"}</td>
-              <td>${pedido.nombre_producto || "Desconocido"}</td>
+              <td>${pedido.nombre_producto || "Desconocido"}</td> <!-- Nombre del producto -->
               <td>${fechaFormateada}</td>
               <td>${pedido.cantidad}</td>
               <td>${pedido.unidad_de_medida}</td>
@@ -160,6 +157,7 @@
       }
     }
 
+    // Función de búsqueda en tiempo real
     function filterPedidosRealtime() {
       const searchInput = document.getElementById("searchBar").value.toLowerCase();
       const pedidoRows = document.querySelectorAll("#pedido-rows tr");
@@ -193,7 +191,7 @@
 
     document.getElementById("searchBar").addEventListener("input", filterPedidosRealtime);
 
-        async function eliminarPedido() {
+    async function eliminarPedido() {
       const idPedido = document.getElementById("idPedido").value.trim();
 
       if (!idPedido) {
@@ -216,9 +214,6 @@
           alert("Pedido eliminado exitosamente.");
           cerrarModalEliminar();
           cargarPedidos();
-          
-          // Limpiar el campo de ID después de eliminar
-          document.getElementById("idPedido").value = '';  // Reinicia el campo ID
         } else {
           const error = await response.json();
           alert(`Error al eliminar el pedido: ${error.message}`);
@@ -228,7 +223,6 @@
         alert("No se pudo eliminar el pedido.");
       }
     }
-
 
     function abrirModalEliminar() {
       document.getElementById("modalEliminar").style.display = "block";
@@ -241,7 +235,6 @@
     cargarPedidos();
   </script>
 
-  <!-- Modal para eliminar pedido -->
   <div id="modalEliminar" class="modal">
     <div class="modal-content">
       <span class="close" onclick="cerrarModalEliminar()">&times;</span>
