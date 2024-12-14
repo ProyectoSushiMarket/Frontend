@@ -24,6 +24,12 @@ body {
     font-weight: bold;
     color: #333;
 }
+.login-icon {
+    margin-right: 20px;
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+}
 
 .navbar ul {
     display: flex;

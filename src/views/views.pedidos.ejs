@@ -9,30 +9,38 @@
   <!-- Validación del token -->
   <script>
     const token = sessionStorage.getItem("token");
-    if (!token) {
-        window.location.href = "/";  // Redirige si no hay token
-    }
-    
-    const url = sessionStorage.getItem("urltiendaverduras") + "/login/datosusuario";
-    if (!url) {
-        window.location.href = "/";  // Redirige si no se encuentra la URL
-    }
-    
-    const options = {
-        method: "POST",
-        headers: {
-            "content-Type": "application/json",
-            "x-access-token": token
+        if (!token) {
+            window.location.href = "/";
         }
-    };
 
-    fetch(url, options)
-    .then(res => res.json())
-    .then(data => {
-        if (data.error == true) {
-            window.location.href = "/";  // Redirige si el token no es válido
+        async function obtenerDatosProveedor() {
+            const url = sessionStorage.getItem("urltiendaverduras") + "/login/datosusuario";
+            try {
+                const response = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-access-token": token
+                    }
+                });
+
+                if (!response.ok) throw new Error("No se pudo obtener la información del proveedor");
+
+                const data = await response.json();
+                if (data.error) {
+                    window.location.href = "/";
+                } else {
+                    sessionStorage.setItem("proveedorId", data.id_usuario);
+                    sessionStorage.setItem("proveedorNombre", data.nombre);
+                    document.getElementById("proveedor-nombre-header").textContent = data.nombre;
+                }
+            } catch (error) {
+                console.error("Error al obtener los datos del proveedor:", error);
+                window.location.href = "/";
+            }
         }
-    });
+
+        document.addEventListener("DOMContentLoaded", obtenerDatosProveedor);
   </script>
 
   <script>
@@ -44,9 +52,8 @@
 </head>
 <body>
   <header class="navbar">
-    <div class="logo">
-      <div class="logo">Tienda Verduras</div>
-    </div>
+    <div class="logo">Tienda Verduras</div>
+    <div class="login-icon">Perfil 👤: <span id="proveedor-nombre-header">PROVEEDOR</span></div>
     <button class="CerrarSesion-button" onclick="CerrarSesion()">Cerrar Sesión</button>
   </header>
 
@@ -63,7 +70,7 @@
       <div class="product-list" id="product-list" style="display: none;">
         <div class="table-container">
           <h2 class="table-title">Pedidos
-            <Button class="eliminarpedido" onclick="abrirModalEliminar()">Eliminar Pedido</Button>
+            <button class="eliminarpedido" onclick="abrirModalEliminar()">Eliminar Pedido</button>
           </h2>
           
           <table>
@@ -71,6 +78,7 @@
               <tr>
                 <th>ID Pedido</th>
                 <th>Usuario</th>
+                <th>Responsable</th>
                 <th>Producto</th>
                 <th>Fecha Pedido</th>
                 <th>Cantidad</th>
@@ -79,7 +87,6 @@
               </tr>
             </thead>
             <tbody id="pedido-rows">
-              <!-- Los pedidos se cargarán aquí -->
             </tbody>
           </table>
         </div>
@@ -89,8 +96,8 @@
   
   <script>
     async function cargarPedidos() {
+      const apiURL = "http://localhost:4100/pedido";
       const token = sessionStorage.getItem("token");
-      const apiURL = "http://localhost:4100/pedido"; // URL de tu API
 
       try {
         const response = await fetch(apiURL, {
@@ -104,9 +111,8 @@
         if (!response.ok) throw new Error("Error al cargar los pedidos");
 
         const pedidos = await response.json();
-
         const userData = JSON.parse(atob(token.split('.')[1]));
-        const userRole = userData.rol; 
+        const userRole = userData.rol;
         const userId = userData.usuario;
 
         const pedidoRows = document.getElementById("pedido-rows");
@@ -121,32 +127,28 @@
         } else {
           emptyCart.style.display = "none";
           productList.style.display = "block";
-          
-          let filteredPedidos = [];
 
-          // Filtrar pedidos según el rol
-          if (userRole === 'Proveedor') {
-            filteredPedidos = pedidos;  // Si es proveedor, mostrar todos los pedidos
-          } else if (userRole === 'Cliente') {
-            // Si es cliente, filtrar solo los pedidos del cliente
-            filteredPedidos = pedidos.filter(pedido => pedido.id_usuario === userId); // Filtramos por el id_usuario
-          }
+          // Filtrar pedidos según el rol del usuario (Proveedor o cliente)
+          let filteredPedidos = userRole === "Proveedor"
+            ? pedidos
+            : pedidos.filter(pedido => pedido.id_usuario === userId);
 
           filteredPedidos.forEach(pedido => {
             const fecha = new Date(pedido.fecha_pedido);
-            const fechaFormateada = fecha.toLocaleString('es-ES', {
-              weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit', 
+            const fechaFormateada = fecha.toLocaleString("es-ES", {
+              year: "numeric", month: "2-digit", day: "2-digit"
             });
 
+            // Crear fila de pedido en la tabla
             const row = document.createElement("tr");
-            row.classList.add("pedido-row"); 
-            row.innerHTML = ` 
+            row.innerHTML = `
               <td>${pedido.id_pedido}</td>
               <td>${pedido.nombre_usuario || "Desconocido"}</td>
+              <td>${pedido.responsable || "Sin responsable"}</td>
               <td>${pedido.nombre_producto || "Desconocido"}</td>
-              <td>${fechaFormateada || "No registrada"}</td>
-              <td>${pedido.cantidad || "No registrada"}</td>
-              <td>${pedido.unidad_de_medida || "No definida"}</td>
+              <td>${fechaFormateada}</td>
+              <td>${pedido.cantidad}</td>
+              <td>${pedido.unidad_de_medida}</td>
               <td>${pedido.caracteristicas || "No especificadas"}</td>
             `;
             pedidoRows.appendChild(row);
@@ -158,39 +160,83 @@
       }
     }
 
-    // Función para filtrar los pedidos en tiempo real
     function filterPedidosRealtime() {
-      const searchInput = document.getElementById('searchBar').value.toLowerCase();
-      const pedidoRows = document.querySelectorAll('#pedido-rows tr'); 
+      const searchInput = document.getElementById("searchBar").value.toLowerCase();
+      const pedidoRows = document.querySelectorAll("#pedido-rows tr");
       let found = false;
-  
+
       pedidoRows.forEach(row => {
-        const productName = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
-        const userName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+        const productName = row.querySelector("td:nth-child(4)").textContent.toLowerCase();
+        const userName = row.querySelector("td:nth-child(2)").textContent.toLowerCase();
         if (productName.includes(searchInput) || userName.includes(searchInput)) {
-            row.style.display = 'table-row';
-            found = true;
+          row.style.display = "table-row";
+          found = true;
         } else {
-            row.style.display = 'none';
+          row.style.display = "none";
         }
       });
-  
+
       if (!found) {
-        const noResultsMessage = document.getElementById('noResults');
+        const noResultsMessage = document.getElementById("noResults");
         if (!noResultsMessage) {
-            const message = document.createElement('p');
-            message.id = 'noResults';
-            message.textContent = 'No se encontraron pedidos';
-            message.style.textAlign = 'center';
-            document.querySelector('.table-container').appendChild(message);
+          const message = document.createElement("p");
+          message.id = "noResults";
+          message.textContent = "No se encontraron pedidos";
+          message.style.textAlign = "center";
+          document.querySelector(".table-container").appendChild(message);
         }
       } else {
-        const noResultsMessage = document.getElementById('noResults');
+        const noResultsMessage = document.getElementById("noResults");
         if (noResultsMessage) noResultsMessage.remove();
       }
     }
 
-    document.getElementById('searchBar').addEventListener('input', filterPedidosRealtime);
+    document.getElementById("searchBar").addEventListener("input", filterPedidosRealtime);
+
+        async function eliminarPedido() {
+      const idPedido = document.getElementById("idPedido").value.trim();
+
+      if (!idPedido) {
+        alert("Por favor, ingrese un ID válido.");
+        return;
+      }
+
+      const apiURL = `http://localhost:4100/pedido/${idPedido}`;
+
+      try {
+        const response = await fetch(apiURL, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "x-access-token": sessionStorage.getItem("token")
+          }
+        });
+
+        if (response.ok) {
+          alert("Pedido eliminado exitosamente.");
+          cerrarModalEliminar();
+          cargarPedidos();
+          
+          // Limpiar el campo de ID después de eliminar
+          document.getElementById("idPedido").value = '';  // Reinicia el campo ID
+        } else {
+          const error = await response.json();
+          alert(`Error al eliminar el pedido: ${error.message}`);
+        }
+      } catch (error) {
+        console.error("Error al eliminar el pedido:", error);
+        alert("No se pudo eliminar el pedido.");
+      }
+    }
+
+
+    function abrirModalEliminar() {
+      document.getElementById("modalEliminar").style.display = "block";
+    }
+
+    function cerrarModalEliminar() {
+      document.getElementById("modalEliminar").style.display = "none";
+    }
 
     cargarPedidos();
   </script>
@@ -208,48 +254,5 @@
       </div>
     </div>
   </div>
-  
-  <script>
-      function abrirModalEliminar() {
-        document.getElementById('modalEliminar').style.display = 'block';
-      }
-
-      function cerrarModalEliminar() {
-        document.getElementById('modalEliminar').style.display = 'none';
-      }
-
-      async function eliminarPedido() {
-        const idPedido = document.getElementById('idPedido').value.trim();
-
-        if (!idPedido) {
-          alert('Por favor, ingrese un ID válido.');
-          return;
-        }
-
-        const apiURL = `http://localhost:4100/pedido/${idPedido}`;
-
-        try {
-          const response = await fetch(apiURL, {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-access-token': sessionStorage.getItem('token'),
-            },
-          });
-
-          if (response.ok) {
-            alert('Pedido eliminado exitosamente.');
-            cerrarModalEliminar();
-            cargarPedidos();
-          } else {
-            const error = await response.json();
-            alert(`Error al eliminar el pedido: ${error.message}`);
-          }
-        } catch (error) {
-          console.error('Error al eliminar el pedido:', error);
-          alert('No se pudo eliminar el pedido.');
-        }
-      }
-  </script>
 </body>
 </html>

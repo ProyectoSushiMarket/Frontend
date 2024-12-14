@@ -6,14 +6,12 @@
     <title>Tienda Verduras (cliente)</title>
     <link rel="stylesheet" href="/css/principalcliente.css">
 
-    <!-- Validación del token y obtención de usuario -->
     <script>
         const token = sessionStorage.getItem("token");
         if (!token) {
             window.location.href = "/";
         }
 
-        // Obtener datos del usuario
         async function obtenerDatosUsuario() {
             const url = sessionStorage.getItem("urltiendaverduras") + "/login/datosusuario";
             try {
@@ -30,11 +28,8 @@
                 if (data.error) {
                     window.location.href = "/";
                 } else {
-                    // Guardar datos en sessionStorage
                     sessionStorage.setItem("usuarioId", data.id_usuario);
                     sessionStorage.setItem("usuarioNombre", data.nombre);
-
-                    // Mostrar nombre del usuario en el encabezado
                     document.getElementById("usuario-nombre-header").textContent = data.nombre;
                 }
             } catch (error) {
@@ -48,8 +43,124 @@
             window.location.href = "/";
         };
 
-        // Cargar datos del usuario al cargar la página
         document.addEventListener("DOMContentLoaded", obtenerDatosUsuario);
+
+        async function cargarProductos() {
+            const apiURL = "http://localhost:4100/producto";
+            try {
+                const response = await fetch(apiURL);
+                if (!response.ok) throw new Error("Error al cargar los productos");
+
+                const productos = await response.json();
+                const productsGrid = document.querySelector(".products-grid");
+                productsGrid.innerHTML = "";
+
+                productos.forEach(producto => {
+                    const productCard = document.createElement("div");
+                    productCard.className = "product-card";
+
+                    productCard.innerHTML = `
+                        <div class="product-image">
+                            <img src="${producto.imagen}" alt="${producto.nombre}">
+                        </div>
+                        <div class="product-info">
+                            <h3>${producto.nombre}</h3>
+                            <p>Unidad de medida: ${producto.unidad_de_medida}</p>
+                            <button class="make-order-button" onclick="selectProducto('${producto.nombre}', '${producto.unidad_de_medida}')">Hacer Pedido</button>
+                        </div>
+                    `;
+                    productsGrid.appendChild(productCard);
+                });
+            } catch (error) {
+                console.error("Error:", error);
+                alert("No se pudieron cargar los productos.");
+            }
+        }
+
+        function selectProducto(nombreProducto, unidadDeMedida) {
+            document.getElementById("producto").textContent = nombreProducto;
+            const modal = document.getElementById("order-modal");
+            modal.style.display = "flex";
+
+            const usuarioNombre = sessionStorage.getItem("usuarioNombre");
+            const usuarioId = sessionStorage.getItem("usuarioId");
+            document.getElementById("nombre-usuario").value = usuarioNombre;
+            document.getElementById("usuario").value = usuarioId;
+            document.getElementById("producto-nombre").value = nombreProducto;
+
+            const fechaActual = new Date();
+            const fechaFormateada = fechaActual.toLocaleString('es-ES', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+            document.getElementById("fecha-pedido").textContent = fechaFormateada;
+            document.getElementById("fecha-pedido-hidden").value = fechaActual.toISOString();
+
+            document.getElementById("unidad-de-medida").value = unidadDeMedida;
+        }
+
+        function cerrarModal() {
+            // Limpiar los campos del formulario al cerrar el modal
+            document.getElementById("pedido-form").reset();
+            document.getElementById("order-modal").style.display = "none";
+        }
+
+
+    // Validar el formulario antes de enviarlo
+        async function realizarPedido(event) {
+            event.preventDefault(); // Evitar el envío del formulario de forma predeterminada
+
+            // Obtener los valores de los campos del formulario
+            const responsable = document.getElementById("responsable").value.trim();
+            const cantidad = document.getElementById("cantidad").value.trim();
+            const caracteristicas = document.getElementById("caracteristicas").value;
+
+            // Comprobar si los campos obligatorios están completos
+            if (!responsable || !cantidad || !caracteristicas) {
+            alert("Por favor, llena todos los campos obligatorios.");
+            return; // No continuar si falta algún campo
+            }
+
+            // Si todos los campos obligatorios están llenos, crear el objeto del pedido
+            const url = "http://localhost:4100/pedido";
+            const token = sessionStorage.getItem("token");
+
+            const pedido = {
+            id_usuario: document.getElementById("usuario").value,
+            responsable: responsable,
+            nombre_producto: document.getElementById("producto-nombre").value,
+            fecha_pedido: document.getElementById("fecha-pedido-hidden").value,
+            cantidad: cantidad,
+            unidad_de_medida: document.getElementById("unidad-de-medida").value,
+            caracteristicas: caracteristicas
+            };
+
+            try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-access-token": token
+                },
+                body: JSON.stringify(pedido)
+            });
+
+            if (response.ok) {
+                alert("Pedido realizado con éxito.");
+                cerrarModal();  // Cerrar y limpiar el modal al realizar el pedido
+                } else {
+                const errorData = await response.json();
+                alert(`Error al realizar el pedido: ${errorData.message}`);
+                }
+            } catch (error) {
+            console.error("Error al realizar el pedido:", error);
+            alert("No se pudo realizar el pedido.");
+            }
+        }
+
+
+        document.addEventListener("DOMContentLoaded", cargarProductos);
     </script>
 </head>
 <body>
@@ -72,82 +183,7 @@
         <input type="text" id="searchBar" placeholder="Buscar...">
     </section>
 
-    <section class="products-grid">
-        <script>
-            async function cargarProductos() {
-                const apiURL = "http://localhost:4100/producto";
-                try {
-                    const response = await fetch(apiURL);
-                    if (!response.ok) throw new Error("Error al cargar los productos");
-
-                    const productos = await response.json();
-
-                    const productsGrid = document.querySelector(".products-grid");
-                    productsGrid.innerHTML = "";
-
-                    productos.forEach(producto => {
-                        const productCard = document.createElement("div");
-                        productCard.className = "product-card";
-
-                        productCard.innerHTML = `
-                            <div class="product-image">
-                                <img src="${producto.imagen}" alt="${producto.nombre}">
-                            </div>
-                            <div class="product-info" style="text-align: center;">
-                                <h3>${producto.nombre}</h3>
-                                <button class="make-order-button" onclick="selectProducto('${producto.nombre}')">Hacer Pedido</button>
-                            </div>
-                        `;
-                        productsGrid.appendChild(productCard);
-                    });
-                } catch (error) {
-                    console.error("Error:", error);
-                    alert("No se pudieron cargar los productos.");
-                }
-            }
-
-            // Función que selecciona el producto y lo coloca en el modal
-            function selectProducto(nombreProducto) {
-                // Mostrar el nombre del producto directamente en el modal
-                const productoElemento = document.getElementById("producto");
-                productoElemento.textContent = nombreProducto; // Nombre del producto estático
-
-                // Mostrar el modal
-                const modal = document.getElementById("order-modal");
-                modal.style.display = "flex";
-
-                // Establecer datos del usuario en el formulario
-                const usuarioNombre = sessionStorage.getItem("usuarioNombre");
-                const usuarioId = sessionStorage.getItem("usuarioId");
-                document.getElementById("nombre-usuario").value = usuarioNombre;
-                document.getElementById("usuario").value = usuarioId;
-
-                // Guardar el nombre del producto en el campo oculto
-                document.getElementById("producto-nombre").value = nombreProducto;
-
-                // Establecer la fecha actual como texto
-                const fechaActual = new Date(); // Fecha actual
-                const fechaFormateada = fechaActual.toLocaleString('es-ES', { 
-                    year: 'numeric', 
-                    month: '2-digit', 
-                    day: '2-digit'  
-                });
-
-                // Mostrar la fecha en el modal
-                document.getElementById("fecha-pedido").textContent = fechaFormateada;
-
-                // Guardar la fecha en un campo oculto para enviarla en el pedido
-                document.getElementById("fecha-pedido-hidden").value = fechaActual.toISOString();
-            }
-
-            function cerrarModal() {
-                const modal = document.getElementById("order-modal");
-                modal.style.display = "none";
-            }
-
-            cargarProductos();
-        </script>
-    </section>
+    <section class="products-grid"></section>
 
     <div id="order-modal" class="modal">
         <div class="modal-content-container">
@@ -155,10 +191,12 @@
             <h2>Realizar Pedido</h2>
             <form id="pedido-form" onsubmit="realizarPedido(event)">
                 <div class="modal-info">
-
                     <label for="usuario-nombre">Usuario:</label>
                     <input type="text" id="nombre-usuario" name="nombre-usuario" disabled>
                     <input type="hidden" id="usuario" name="usuario">
+
+                    <label for="responsable">Responsable:</label>
+                    <input type="text" id="responsable" name="responsable" placeholder="Ingresa el responsable del pedido">
 
                     <label for="producto">Producto:</label>
                     <p id="producto"></p>
@@ -172,12 +210,7 @@
                     <input type="number" id="cantidad" name="cantidad" placeholder="Ingresa la cantidad que necesitas" required>
 
                     <label for="unidad_de_medida">Unidad de medida:</label>
-                    <select id="unidad-de-medida" name="unidad_de_medida" required>
-                        <option value="" disabled selected>Selecciona la unidad de medida</option>
-                        <option value="KL">KL</option>
-                        <option value="UND">UND</option>
-                        <option value="No aplica">No aplica</option>
-                    </select>
+                    <input type="text" id="unidad-de-medida" name="unidad_de_medida" disabled>
 
                     <label for="caracteristicas">Características:</label>
                     <select name="caracteristicas" id="caracteristicas">
@@ -192,54 +225,5 @@
             </form>
         </div>
     </div>
-
-    <script>
-        async function realizarPedido(event) {
-            event.preventDefault();
-
-            const productoNombre = document.getElementById('producto-nombre').value;
-            if (!productoNombre) {
-                alert("Por favor, selecciona un producto.");
-                return;
-            }
-
-            // Obtener la fecha desde el campo oculto (ya formateada)
-            const fechaPedido = document.getElementById('fecha-pedido-hidden').value;
-
-            // Crear el objeto con los datos del pedido
-            const pedidoData = {
-                id_usuario: sessionStorage.getItem("usuarioId"),
-                nombre_producto: productoNombre,
-                fecha_pedido: fechaPedido,  // La fecha ya está formateada correctamente
-                cantidad: document.getElementById('cantidad').value,
-                unidad_de_medida: document.getElementById('unidad-de-medida').value,
-                caracteristicas: document.getElementById('caracteristicas').value
-            };
-
-            try {
-                const response = await fetch('http://localhost:4100/pedido', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(pedidoData)
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    alert(errorData.error || 'Error al realizar el pedido');
-                    return;
-                }
-
-                const data = await response.json();
-                alert('Pedido realizado correctamente');
-                cerrarModal();
-            } catch (error) {
-                console.error('Hubo un error al realizar el pedido:', error);
-                alert('Error al realizar el pedido');
-            }
-        }
-    </script>
-    <script src="/js/principalcliente.js"></script>
 </body>
 </html>

@@ -46,24 +46,32 @@
             document.getElementById("add-product-modal").style.display = "flex";
         }
 
+        // Función para abrir el modal de editar producto
+        function abrirModalEditar() {
+            document.getElementById("edit-product-modal").style.display = "flex";
+        }
+
         // Función para abrir el modal de eliminar producto
         function abrirModalEliminar() {
             document.getElementById("delete-product-modal").style.display = "flex";
         }
 
-        // Función para cerrar los modales
+        
         function cerrarModal() {
             document.getElementById("add-product-modal").style.display = "none";
+            document.getElementById("edit-product-modal").style.display = "none";
             document.getElementById("delete-product-modal").style.display = "none";
         }
 
-        // Función para guardar el producto
+                
         function guardarCambios() {
             const nombre = document.getElementById("product-name").value;
+            const unidadDeMedida = document.getElementById("unidaddemedida").value;
             const imagen = document.getElementById("product-image").value;
 
             const datos = {
                 nombre: nombre,
+                unidad_de_medida: unidadDeMedida,
                 imagen: imagen
             };
 
@@ -81,15 +89,65 @@
                     return response.json();
                 })
                 .then((data) => {
-                    console.log('Producto guardado con éxito:', data)
-                    alert("Producto Agregado")
-                    cerrarModal();
-                    location.reload(); // Recarga la página automáticamente
+                    console.log('Producto guardado con éxito:', data);
+                    cerrarModal();  
+                    location.reload();
                 })
                 .catch((error) => {
                     console.error('Error al guardar el producto:', error);
-                    alert('No se pudo guardar el producto');
+                    
                 });
+        }
+
+        
+        function cerrarModal() {
+            document.getElementById("add-product-modal").style.display = "none";
+            document.getElementById("edit-product-modal").style.display = "none";
+            document.getElementById("delete-product-modal").style.display = "none";
+        }
+
+
+        function editarProducto() {
+            const nombreOriginal = document.getElementById("product-name-edit").value;
+            const nuevoNombre = document.getElementById("new-product-name").value;
+            const nuevaUnidadDeMedida = document.getElementById("new-unidaddemedida").value;
+            const nuevaImagen = document.getElementById("new-product-image").value;
+
+            if (!nombreOriginal || !nuevoNombre || !nuevaUnidadDeMedida || !nuevaImagen) {
+                return;
+            }
+
+            const datos = {
+                nombre: nombreOriginal,
+                nombre_nuevo: nuevoNombre,
+                unidad_de_medida: nuevaUnidadDeMedida,
+                imagen: nuevaImagen
+            };
+
+            fetch(`http://localhost:4100/producto/${nombreOriginal}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': token
+                },
+                body: JSON.stringify(datos),
+            })
+            .then((response) => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || 'Error al actualizar los datos');
+                    });
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log('Producto actualizado con éxito:', data);
+                cerrarModal();
+                setTimeout(() => location.reload(), 500);
+            })
+            .catch((error) => {
+                console.error('Error al editar el producto:', error);
+            });
         }
 
         // Función para eliminar el producto
@@ -97,7 +155,6 @@
             const productName = document.getElementById("product-name-delete").value;
 
             if (!productName) {
-                alert("Por favor, ingresa el nombre del producto.");
                 return;
             }
 
@@ -115,23 +172,20 @@
                 if (!response.ok) {
                     throw new Error('No se pudo eliminar el producto');
                 }
-
-                alert('Producto eliminado correctamente');
                 cerrarModal();
                 location.reload(); // Recargar la página para reflejar los cambios
             } catch (error) {
                 console.error('Error al eliminar el producto:', error);
-                alert('Hubo un error al eliminar el producto');
             }
         }
-    </script>
-    <script>
+
+        // Función para cerrar sesión
         const CerrarSesion = () => {
-            sessionStorage.clear();
-            window.location.href = "/";
+            sessionStorage.clear(); 
+            history.replaceState(null, '', '/'); 
+            window.location.href = "/"; 
         };
     </script>
-
 </head>
 <body>
     <header>
@@ -156,6 +210,7 @@
 
     <section class="filter-bar">
         <button class="AgregarProducto-button" onclick="abrirModalAgregar()">Agregar Producto</button>
+        <button class="AgregarProducto-button" onclick="abrirModalEditar()">Editar Producto</button>
         <button class="EliminarProducto-button" onclick="abrirModalEliminar()">Eliminar Producto</button>
     </section>
 
@@ -183,6 +238,7 @@
                             </div>
                             <div class="product-info" style="text-align: center;">
                                 <h3>${producto.nombre}</h3>
+                                <p>Unidad de medida: ${producto.unidad_de_medida}</p>
                             </div>
                         `;
 
@@ -190,7 +246,6 @@
                     });
                 } catch (error) {
                     console.error("Error:", error);
-                    alert("No se pudieron cargar los productos.");
                 }
             }
 
@@ -207,6 +262,9 @@
                     <label for="product-name">Nombre del producto:</label>
                     <input type="text" id="product-name" name="product-name" placeholder="Ingresa el nombre del producto">
 
+                    <label for="unidaddemedida">Unidad de medida:</label>
+                    <input type="text" id="unidaddemedida" name="unidaddemedida" placeholder="Ingresa la unidad de medida del producto">
+
                     <label for="product-image">Imagen del producto:</label>
                     <input type="text" id="product-image" name="product-image" placeholder="Ingresa la URL de la imagen" style="width: 100%;">
                 </form>
@@ -218,13 +276,37 @@
         </div>
     </div>
 
+    <!-- Modal para editar producto -->
+    <div id="edit-product-modal" class="edit-product-modal" style="display: none;">
+        <div class="edit-product-modal-content">
+            <div class="edit-product-modal-header">Editar Producto</div>
+            <div class="edit-product-modal-body">
+                <label for="product-name-edit">Nombre original del producto:</label>
+                <input type="text" id="product-name-edit" name="product-name-edit" placeholder="Ingresa el nombre del producto original">
+
+                <label for="new-product-name">Nuevo nombre del producto:</label>
+                <input type="text" id="new-product-name" name="new-product-name" placeholder="Ingresa el nuevo nombre del producto">
+
+                <label for="new-unidaddemedida">Nueva unidad de medida:</label>
+                <input type="text" id="new-unidaddemedida" name="new-unidaddemedida" placeholder="Ingresa la nueva unidad de medida">
+
+                <label for="new-product-image">Nueva imagen del producto:</label>
+                <input type="text" id="new-product-image" name="new-product-image" placeholder="Ingresa la nueva URL de la imagen" style="width: 100%;">
+            </div>
+            <div class="edit-product-modal-actions">
+                <button class="edit-product-button" onclick="editarProducto()">Guardar cambios</button>
+                <button class="cancel-product-button" onclick="cerrarModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal para eliminar producto -->
     <div id="delete-product-modal" class="delete-product-modal">
         <div class="delete-product-modal-content">
             <div class="delete-product-modal-header">Eliminar Producto</div>
             <div class="delete-product-modal-body">
                 <label for="product-name-delete">Nombre del producto a eliminar:</label>
-                <input type="text" id="product-name-delete" name="product-name-delete" placeholder="Ingresa el nombre del producto">
+                <input type="text" id="product-name-delete" name="product-name-delete" placeholder="Ingresa el nombre del producto a eliminar">
             </div>
             <div class="delete-product-modal-actions">
                 <button class="delete-product-button" onclick="eliminarProducto()">Eliminar</button>
@@ -232,7 +314,6 @@
             </div>
         </div>
     </div>
-
     <script src="/js/principal.js"></script>
 </body>
 </html>

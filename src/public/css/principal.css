@@ -9,6 +9,7 @@ body {
     background-color: #f5f5f5;
     /* overflow: hidden; Esto es para paralizar la pantalla para que no se mueva, funciona igual para el modal */ 
 }
+
 .usuario {
     padding-top: 10px;
     font-weight: bold;
@@ -75,23 +76,15 @@ body {
     border-radius: 4px;
     cursor: pointer;
 }
-.AgregarProducto-button {
-    background-color: #45a049;
-    color: white;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-.EliminarProducto-button {
-    background-color: #45a049;
-    color: white;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
 
+.AgregarProducto-button, .EliminarProducto-button, .EditarProducto-button {
+    background-color: #45a049;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
 
 .search-bar {
     display: flex;
@@ -148,6 +141,7 @@ body {
     display: block;
     margin: 0 auto; 
 }
+
 .product-info {
     color: #000000; 
     font-family: 'Arial', sans-serif; 
@@ -160,14 +154,15 @@ body {
     max-width: 100%;
     word-wrap: break-word; 
 }
+
 .product-card:hover .add-to-cart {
     display: block;
     opacity: 1;
     transform: scale(1);
 }
- 
+
 /* Modal general */
-.add-product-modal, .delete-product-modal {
+.add-product-modal, .delete-product-modal, .new-modal, .edit-product-modal {
     display: none;
     position: fixed;
     top: 0;
@@ -181,7 +176,7 @@ body {
     animation: fadeIn 0.3s ease-in-out;
 }
 
-.add-product-modal-content, .delete-product-modal-content {
+.add-product-modal-content, .delete-product-modal-content, .new-modal-content, .edit-product-modal-content {
     background: white;
     padding: 20px;
     border-radius: 8px;
@@ -211,7 +206,7 @@ body {
 }
 
 /* Cabecera del modal */
-.add-product-modal-header, .delete-product-modal-header {
+.add-product-modal-header, .delete-product-modal-header, .new-modal-header, .edit-product-modal-header {
     font-size: 1.5rem;
     margin-bottom: 10px;
     color: #4CAF50;
@@ -223,12 +218,20 @@ body {
     color: #e74c3c;
 }
 
+.new-modal-header {
+    color: #3498db;
+}
+
+.edit-product-modal-header {
+    color: #e68c0e;;
+}
+
 /* Cuerpo del modal */
-.add-product-modal-body, .delete-product-modal-body {
+.add-product-modal-body, .delete-product-modal-body, .new-modal-body, .edit-product-modal-body {
     padding: 10px 0;
 }
 
-.add-product-modal-body label, .delete-product-modal-body label {
+.add-product-modal-body label, .delete-product-modal-body label, .new-modal-body label, .edit-product-modal-body label {
     display: block;
     margin: 10px 0 5px;
     font-weight: bold;
@@ -236,7 +239,7 @@ body {
 }
 
 /* Campos de entrada del modal */
-.add-product-modal-body input, .delete-product-modal-body input {
+.add-product-modal-body input, .delete-product-modal-body input, .new-modal-body input, .edit-product-modal-body input {
     width: 100%;
     padding: 12px;
     border: 1px solid #ccc;
@@ -247,13 +250,13 @@ body {
 }
 
 /* Acciones del modal */
-.add-product-modal-actions, .delete-product-modal-actions {
+.add-product-modal-actions, .delete-product-modal-actions, .new-modal-actions, .edit-product-modal-actions {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
 }
 
-.save-product-button, .cancel-product-button, .delete-product-button {
+.save-product-button, .cancel-product-button, .delete-product-button, .new-modal-button, .edit-product-button {
     padding: 10px 20px;
     border-radius: 6px;
     border: none;
@@ -295,26 +298,51 @@ body {
 }
 
 /* Estilo para el botón "Eliminar" */
-.delete-product-button {
+.delete-product-button, .EliminarProducto-button {
     background-color: #45a049;
     color: white;
 }
 
-.delete-product-button:hover {
+.delete-product-button:hover, .EliminarProducto-button:hover {
     background-color: #1f6322;
     transform: scale(1.05);
 }
 
-.delete-product-button:active {
+.delete-product-button:active, .EliminarProducto-button:active {
     transform: scale(0.98);
 }
 
+/* Estilo para el botón "Editar" */
+.edit-product-button {
+    background-color: #45a049;
+    color: white;
+}
 
+.edit-product-button:hover {
+    background-color: #1f6322;
+    transform: scale(1.05);
+}
 
+.edit-product-button:active {
+    transform: scale(0.98);
+}
 
+/* Estilo para el nuevo modal */
+.new-modal {
+    background-color: rgba(0, 0, 0, 0.7);
+}
 
+.new-modal-button {
+    background-color: #3498db;
+    color: white;
+}
 
+.new-modal-button:hover {
+    background-color: #2980b9;
+    transform: scale(1.05);
+}
 
-
-
+.new-modal-button:active {
+    transform: scale(0.98);
+}
 
