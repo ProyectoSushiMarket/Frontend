@@ -67,11 +67,13 @@
         function guardarCambios() {
             const nombre = document.getElementById("product-name").value;
             const unidadDeMedida = document.getElementById("unidaddemedida").value;
+            const precio = document.getElementById("precio").value;
             const imagen = document.getElementById("product-image").value;
 
             const datos = {
                 nombre: nombre,
                 unidad_de_medida: unidadDeMedida,
+                precio: precio,
                 imagen: imagen
             };
 
@@ -238,7 +240,8 @@
                             </div>
                             <div class="product-info" style="text-align: center;">
                                 <h3>${producto.nombre}</h3>
-                                <p>Unidad de medida: ${producto.unidad_de_medida}</p>
+                                <p class="sombras">Precio: ${producto.precio}</p>
+                                <p class="sombras">Unidad de medida: ${producto.unidad_de_medida}</p>
                             </div>
                         `;
 
@@ -264,6 +267,9 @@
 
                     <label for="unidaddemedida">Unidad de medida:</label>
                     <input type="text" id="unidaddemedida" name="unidaddemedida" placeholder="Ingresa la unidad de medida del producto">
+
+                    <label for="precio">Ingresa el precio del producto:</label>
+                    <input type="text" id="precio" name="precio" placeholder="Ingresa la unidad de medida del producto">
 
                     <label for="product-image">Imagen del producto:</label>
                     <input type="text" id="product-image" name="product-image" placeholder="Ingresa la URL de la imagen" style="width: 100%;">

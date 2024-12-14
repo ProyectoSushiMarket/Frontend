@@ -2,3 +2,22 @@ Poner responsable para hacer el pedido es decir el pedido se va hacer en viva pa
 la opcion de crear pedido y listar pedidos(responsable)
 
 poner la unidad de medida fija dependiendo del producto
+
+
+
+trigger actualizar precio:
+BEGIN
+    SET NEW.precio = (SELECT precio FROM productos WHERE productos.id_producto = NEW.id_producto);
+END
+
+trigger establecer precio al hacer el pedido:
+BEGIN
+    
+    DECLARE producto_precio DECIMAL(10, 3);
+
+    SELECT precio INTO producto_precio
+    FROM productos
+    WHERE id_producto = NEW.id_producto;
+
+    SET NEW.precio = producto_precio;
+END
