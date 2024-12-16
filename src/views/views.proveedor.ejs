@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tienda Verduras (proveedor)</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs/build/css/alertify.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs/build/css/themes/default.min.css">
     <link rel="stylesheet" href="/css/principal.css">
 
     <script>
@@ -41,22 +43,18 @@
 
         document.addEventListener("DOMContentLoaded", obtenerDatosProveedor);
 
-        // Función para abrir el modal de agregar producto
         function abrirModalAgregar() {
             document.getElementById("add-product-modal").style.display = "flex";
         }
 
-        // Función para abrir el modal de editar producto
         function abrirModalEditar() {
             document.getElementById("edit-product-modal").style.display = "flex";
         }
 
-        // Función para abrir el modal de eliminar producto
         function abrirModalEliminar() {
             document.getElementById("delete-product-modal").style.display = "flex";
         }
 
-        
         function cerrarModal() {
             document.getElementById("add-product-modal").style.display = "none";
             document.getElementById("edit-product-modal").style.display = "none";
@@ -69,6 +67,12 @@
             const unidadDeMedida = document.getElementById("unidaddemedida").value;
             const precio = document.getElementById("precio").value;
             const imagen = document.getElementById("product-image").value;
+
+            
+            if (!nombre || !unidadDeMedida || !precio || !imagen) {
+                alertify.error("Por favor, complete todos los campos.");
+                return;
+            }
 
             const datos = {
                 nombre: nombre,
@@ -84,29 +88,38 @@
                 },
                 body: JSON.stringify(datos),
             })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error('Error al guardar los datos');
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    console.log('Producto guardado con éxito:', data);
-                    cerrarModal();  
-                    location.reload();
-                })
-                .catch((error) => {
-                    console.error('Error al guardar el producto:', error);
-                    
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Error al guardar los datos');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                Swal.fire({
+                    position: "center", 
+                    icon: "success",
+                    title: "Producto guardado con éxito",
+                    showConfirmButton: false,
+                    timer: 1500
                 });
+                console.log('Producto guardado con éxito:', data);
+                cerrarModal();  
+                setTimeout(() => {
+                    location.reload();  
+                }, 1500); 
+            })
+            .catch((error) => {
+                console.error('Error al guardar el producto:', error);
+                alertify.error("Hubo un error al guardar el producto.");
+            });
         }
 
-        
         function cerrarModal() {
             document.getElementById("add-product-modal").style.display = "none";
             document.getElementById("edit-product-modal").style.display = "none";
             document.getElementById("delete-product-modal").style.display = "none";
         }
+
 
 
         function editarProducto() {
@@ -143,16 +156,22 @@
                 return response.json();
             })
             .then((data) => {
+                Swal.fire({
+                    position: "center", 
+                    icon: "success",
+                    title: "Producto modificado con éxito",
+                    showConfirmButton: false,
+                    timer: 5000
+                });
                 console.log('Producto actualizado con éxito:', data);
                 cerrarModal();
-                setTimeout(() => location.reload(), 500);
+                setTimeout(() => location.reload(), 1500);
             })
             .catch((error) => {
                 console.error('Error al editar el producto:', error);
             });
         }
 
-        // Función para eliminar el producto
         async function eliminarProducto() {
             const productName = document.getElementById("product-name-delete").value;
 
@@ -174,19 +193,71 @@
                 if (!response.ok) {
                     throw new Error('No se pudo eliminar el producto');
                 }
+                Swal.fire({
+                    position: "center",  
+                    icon: "success",
+                    title: "Producto eliminado con éxito",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
                 cerrarModal();
-                location.reload(); // Recargar la página para reflejar los cambios
+                setTimeout(() => {
+                    location.reload(); 
+                }, 1500);  
+
             } catch (error) {
                 console.error('Error al eliminar el producto:', error);
+
+                
+                Swal.fire({
+                    position: "center",  
+                    icon: "error",
+                    title: "Error al eliminar el producto",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
             }
         }
-
-        // Función para cerrar sesión
+        
         const CerrarSesion = () => {
-            sessionStorage.clear(); 
-            history.replaceState(null, '', '/'); 
-            window.location.href = "/"; 
+            
+            const swalWithCustomButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'swal2-confirm',
+                    cancelButton: 'swal2-cancel'    
+                },
+                buttonsStyling: false  
+            });
+            swalWithCustomButtons.fire({
+                title: "¿Quieres cerrar sesión?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, cerrar sesión",
+                cancelButtonText: "No, cancelar",
+                reverseButtons: true  
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    swalWithCustomButtons.fire({
+                        title: "¡Sesión cerrada!",
+                        text: "Has cerrado sesión correctamente.",
+                        icon: "success"
+                    }).then(() => {
+                        
+                        sessionStorage.clear();  
+                        history.replaceState(null, '', '/');  
+                        window.location.href = "/";
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithCustomButtons.fire({
+                        title: "Cancelado",
+                        text: "Tu sesión sigue activa.",
+                        icon: "error"
+                    });
+                }
+            });
         };
+
     </script>
 </head>
 <body>
@@ -320,6 +391,8 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alertifyjs/build/alertify.min.js"></script>
     <script src="/js/principal.js"></script>
 </body>
 </html>
