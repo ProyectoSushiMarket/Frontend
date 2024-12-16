@@ -307,3 +307,14 @@ tr:hover {
 .cancel-delete-button:active {
     transform: scale(0.98);
 }
+.edit-cliente-modal-body select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #fff;
+    cursor: pointer;
+}
+

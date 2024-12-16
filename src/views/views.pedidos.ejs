@@ -193,38 +193,37 @@
     document.getElementById("searchBar").addEventListener("input", filterPedidosRealtime);
 
     async function eliminarPedido() {
-      const idPedido = document.getElementById("idPedido").value.trim();
+    const idPedido = document.getElementById("idPedido").value.trim();
 
-      if (!idPedido) {
-        alert("Por favor, ingrese un ID válido.");
-        return;
-      }
-
-      const apiURL = `http://localhost:4100/pedido/${idPedido}`;
-
-      try {
-        const response = await fetch(apiURL, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            "x-access-token": sessionStorage.getItem("token")
-          }
-        });
-
-        if (response.ok) {
-          alert("Pedido eliminado exitosamente.");
-          cerrarModalEliminar();
-          cargarPedidos();
-        } else {
-          const error = await response.json();
-          alert(`Error al eliminar el pedido: ${error.message}`);
-        }
-      } catch (error) {
-        console.error("Error al eliminar el pedido:", error);
-        alert("No se pudo eliminar el pedido.");
-      }
+    if (!idPedido) {
+        return; // No hacer nada si el ID del pedido no es válido
     }
 
+    const apiURL = `http://localhost:4100/pedido/${idPedido}`;
+
+    try {
+        const response = await fetch(apiURL, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "x-access-token": sessionStorage.getItem("token")
+            }
+        });
+
+        // Verificar si la respuesta fue exitosa
+        if (response.ok) {
+            
+            cerrarModalEliminar();
+            cargarPedidos();
+        } else {
+            // Si el código de estado no es exitoso (por ejemplo, 404)
+            const error = await response.json();
+            console.log("Error al eliminar el pedido:", error); // Solo se loguea el error en consola
+        }
+    } catch (error) {
+        console.error("Error al eliminar el pedido:", error); // Solo se loguea el error en consola
+    }
+}
     function abrirModalEliminar() {
       document.getElementById("modalEliminar").style.display = "block";
     }
@@ -274,7 +273,9 @@
       </div>
     </div>
   </div>
+  <script src="/js/pedidos.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </body>
 </html>

@@ -114,7 +114,11 @@
                     <input type="password" id="edit-cliente-contrasena" name="edit-cliente-contrasena" placeholder="Ingresa la contraseña nueva">
 
                     <label for="edit-cliente-rol">Rol:</label>
-                    <input type="text" id="edit-cliente-rol" name="edit-cliente-rol" placeholder="Ingresa el nuevo rol">
+                    <select name="edit-cliente-rol" id="edit-cliente-rol">
+                        <option value="" disabled selected>Selecciona el rol</option>
+                        <option value="Cliente">Cliente</option>
+                        <option value="Proveedor">Proveedor</option>
+                    </select>
                 </form>
             </div>
             <div class="edit-cliente-modal-actions">
@@ -213,14 +217,32 @@
                 body: JSON.stringify(datos),
             })
             .then((response) => response.json())
-            .then(() => {
+            .then((data) => {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Usuario creado con éxito',
+                    showConfirmButton: false,
+                    timer: 1500 
+                });
                 cerrarModal("add-cliente-modal");
-                location.reload();
+
+                setTimeout(() => {
+                    location.reload();
+                }, 1500); 
             })
-            .catch((error) => console.error('Error al crear el usuario:', error));
+            .catch((error) => {
+                console.error('Error al crear el usuario:', error);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Error al crear el usuario',
+                    text: 'Hubo un problema al crear el usuario. Intenta de nuevo.',
+                    showConfirmButton: true,
+                });
+            });
         }
 
-        
         function guardarEdicion() {
             const id = document.getElementById("edit-cliente-id").value;
             const nombre = document.getElementById("edit-cliente-nombre").value;
@@ -244,14 +266,36 @@
                 body: JSON.stringify(datos),
             })
             .then((response) => response.json())
-            .then(() => {
+            .then((data) => {
+                // Mostrar la alerta de éxito
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Usuario modificado con éxito',
+                    showConfirmButton: false,
+                    timer: 1500 
+                });
+
+                // Cerrar el modal
                 cerrarModal("edit-cliente-modal");
-                location.reload();
+
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 1500); 
             })
-            .catch((error) => console.error('Error al editar el usuario:', error));
+            .catch((error) => {
+                console.error('Error al editar el usuario:', error);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Error al modificar el usuario',
+                    text: 'Hubo un problema al modificar el usuario. Intenta de nuevo.',
+                    showConfirmButton: true,
+                });
+            });
         }
 
-        
         function eliminarUsuario() {
             const id = document.getElementById("delete-cliente-id").value;
 
@@ -267,5 +311,6 @@
     </script>
 
     <script src="/js/vistaclienteproveedor.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
