@@ -39,8 +39,40 @@
         }
 
         const CerrarSesion = () => {
-            sessionStorage.clear();
-            window.location.href = "/";
+            const swalWithCustomButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'swal2-confirm',
+                    cancelButton: 'swal2-cancel'    
+                },
+                buttonsStyling: false  
+            });
+            swalWithCustomButtons.fire({
+                title: "¿Quieres cerrar sesión?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, cerrar sesión",
+                cancelButtonText: "No, cancelar",
+                reverseButtons: true  
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    swalWithCustomButtons.fire({
+                        title: "¡Sesión cerrada!",
+                        text: "Has cerrado sesión correctamente.",
+                        icon: "success"
+                    }).then(() => {
+                        
+                        sessionStorage.clear();  
+                        history.replaceState(null, '', '/');  
+                        window.location.href = "/";
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithCustomButtons.fire({
+                        title: "Cancelado",
+                        text: "Tu sesión sigue activa.",
+                        icon: "error"
+                    });
+                }
+            });
         };
 
         document.addEventListener("DOMContentLoaded", obtenerDatosUsuario);
@@ -147,8 +179,14 @@
                 });
 
                 if (response.ok) {
-                    alert("Pedido realizado con éxito.");
-                    cerrarModal();  // Cerrar y limpiar el modal al realizar el pedido
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Pedido enviado con éxito",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
+                    cerrarModal();
                 } else {
                     const errorData = await response.json();
                     alert(`Error al realizar el pedido: ${errorData.message}`);
@@ -226,5 +264,6 @@
         </div>
     </div>
     <script src="/js/principalcliente.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
