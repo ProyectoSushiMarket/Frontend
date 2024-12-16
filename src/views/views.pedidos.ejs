@@ -71,6 +71,7 @@
         <div class="table-container">
           <h2 class="table-title">Pedidos
             <button class="eliminarpedido" onclick="abrirModalEliminar()">Eliminar Pedido</button>
+            <button class="eliminarpedido" onclick="exportarExcel()">Exportar a Excel</button>
           </h2>
           
           <table>
@@ -95,9 +96,9 @@
   </main>
   
   <script>
-    // Función para obtener los pedidos por usuario usando el token
+    
     async function cargarPedidos() {
-      const apiURL = "http://localhost:4100/pedido/pedidousuario"; // Cambié a la URL que devuelve los pedidos de un usuario
+      const apiURL = "http://localhost:4100/pedido/pedidousuario"; 
       const token = sessionStorage.getItem("token");
 
       try {
@@ -142,7 +143,7 @@
               <td>${pedido.id_pedido}</td>
               <td>${pedido.nombre_usuario || "Desconocido"}</td>
               <td>${pedido.responsable || "Sin responsable"}</td>
-              <td>${pedido.nombre_producto || "Desconocido"}</td> <!-- Nombre del producto -->
+              <td>${pedido.nombre_producto || "Desconocido"}</td>
               <td>${fechaFormateada}</td>
               <td>${pedido.cantidad}</td>
               <td>${pedido.unidad_de_medida}</td>
@@ -231,6 +232,32 @@
     function cerrarModalEliminar() {
       document.getElementById("modalEliminar").style.display = "none";
     }
+    function exportarExcel() {
+      
+      const tabla = document.querySelector("#product-list table");
+      if (!tabla) {
+        alert("No se encontró la tabla para exportar.");
+        return;
+      }
+
+      const wb = XLSX.utils.book_new(); 
+      const ws = XLSX.utils.table_to_sheet(tabla); 
+
+      
+      const range = XLSX.utils.decode_range(ws["!ref"]);
+      for (let R = range.s.r; R <= range.e.r; R++) {
+        for (let C = range.s.c; C <= range.e.c; C++) {
+            const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+            const cell = ws[cellAddress] || {};
+
+            ws[cellAddress] = cell; 
+        }
+    }
+
+    XLSX.utils.book_append_sheet(wb, ws, "Pedidos"); 
+    XLSX.writeFile(wb, "Pedidos.xlsx"); 
+  }
+
 
     cargarPedidos();
   </script>
@@ -247,5 +274,7 @@
       </div>
     </div>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 </body>
 </html>
