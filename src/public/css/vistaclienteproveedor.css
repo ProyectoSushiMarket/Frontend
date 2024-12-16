@@ -317,4 +317,45 @@ tr:hover {
     background-color: #fff;
     cursor: pointer;
 }
+/* Estilo para los botones de alert2 */
+.swal2-confirm, .swal2-cancel {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.swal2-confirm {
+    background-color: #28a745;  
+    color: white;
+}
+
+.swal2-confirm:hover {
+    background-color: #218838; 
+}
+
+.swal2-cancel {
+    background-color: #dc3545;  
+    color: white;
+}
+
+.swal2-cancel:hover {
+    background-color: #c82333;  
+}
+.swal2-button {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    padding: 10px 26px;
+}
+.CerrarSesion-button {
+    background-color: #45a049;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
 

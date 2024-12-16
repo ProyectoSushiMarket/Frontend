@@ -33,9 +33,41 @@
     </script>
     <script>
         const CerrarSesion = () => {
-            sessionStorage.setItem("token", "");
-            window.location.href = "/"
-        }
+            const swalWithCustomButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'swal2-confirm',
+                    cancelButton: 'swal2-cancel'    
+                },
+                buttonsStyling: false  
+            });
+            swalWithCustomButtons.fire({
+                title: "¿Quieres cerrar sesión?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, cerrar sesión",
+                cancelButtonText: "No, cancelar",
+                reverseButtons: true  
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    swalWithCustomButtons.fire({
+                        title: "¡Sesión cerrada!",
+                        text: "Has cerrado sesión correctamente.",
+                        icon: "success"
+                    }).then(() => {
+                        
+                        sessionStorage.clear();  
+                        history.replaceState(null, '', '/');  
+                        window.location.href = "/";
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithCustomButtons.fire({
+                        title: "Cancelado",
+                        text: "Tu sesión sigue activa.",
+                        icon: "error"
+                    });
+                }
+            });
+        };
     </script>
 </head>
 <body>
@@ -46,6 +78,7 @@
                 <a href="/principalproveedor">Tienda</a>
                 <a href="https://wa.me/+573188342212">Soporte</a>
                 <span class="perfil">👤 Perfil: <strong>PROVEEDOR</strong></span>
+                <button class="CerrarSesion-button" onclick="CerrarSesion()">Cerrar Sesión</button>
             </nav>
         </div>
     </header>
@@ -267,7 +300,7 @@
             })
             .then((response) => response.json())
             .then((data) => {
-                // Mostrar la alerta de éxito
+                
                 Swal.fire({
                     position: 'center',
                     icon: 'success',
@@ -276,10 +309,8 @@
                     timer: 1500 
                 });
 
-                // Cerrar el modal
                 cerrarModal("edit-cliente-modal");
 
-                
                 setTimeout(() => {
                     location.reload();
                 }, 1500); 
