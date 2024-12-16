@@ -1,7 +1,7 @@
-Poner responsable para hacer el pedido es decir el pedido se va hacer en viva palmas y el responsable se tiene que copiar, editar
-la opcion de crear pedido y listar pedidos(responsable)
+Reinicia los ID de las tablas
+ALTER TABLE nombre_de_la_tabla AUTO_INCREMENT = 1;
 
-poner la unidad de medida fija dependiendo del producto
+
 
 
 
