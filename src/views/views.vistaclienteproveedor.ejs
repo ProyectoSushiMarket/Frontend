@@ -117,7 +117,11 @@
                     <label for="cliente-contrasena">Contraseña:</label>
                     <input type="password" id="cliente-contrasena" name="cliente-contrasena" placeholder="Ingresa la Contraseña">
                     <label for="cliente-rol">Rol:</label>
-                    <input type="text" id="cliente-rol" name="cliente-rol" placeholder="Ingresa el rol">
+                    <select name="cliente-rol" id="cliente-rol">
+                        <option value="" disabled selected>Selecciona el rol</option>
+                        <option value="Cliente">Cliente</option>
+                        <option value="Proveedor">Proveedor</option>
+                    </select>
                 </form>
             </div>
             <div class="add-cliente-modal-actions">

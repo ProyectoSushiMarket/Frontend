@@ -266,7 +266,7 @@ tr:hover {
     width: 45%;
 }
 
-/* Estilo para el botón "Guardar" */
+/* Estilo para el botón Guardar */
 .save-cliente-button,
 .save-edit-button,
 .save-delete-button {
@@ -287,7 +287,7 @@ tr:hover {
     transform: scale(0.98);
 }
 
-/* Estilo para el botón "Cancelar" */
+/* Estilo para el botón Cancelar */
 .cancel-cliente-button,
 .cancel-edit-button,
 .cancel-delete-button {
@@ -314,7 +314,17 @@ tr:hover {
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 14px;
-    background-color: #fff;
+    background-color: #ffffff;
+    cursor: pointer;
+}
+.add-cliente-modal-body select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #ffffff;
     cursor: pointer;
 }
 /* Estilo para los botones de alert2 */
