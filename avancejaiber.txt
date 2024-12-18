@@ -13,6 +13,8 @@ crear los clientes ya fijos (esto se hace cuando ya la pagina este terminada)
 poner si un producto no esta disponible (listo)
 hacer carrito de compras para listar los pedidos y despues enviarlo
 
+<script src="/js/principalcliente.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 trigger actualizar precio:
 BEGIN
