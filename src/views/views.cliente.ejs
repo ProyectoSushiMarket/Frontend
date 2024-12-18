@@ -97,9 +97,9 @@
                         </div>
                         <div class="product-info">
                             <h3>${producto.nombre}</h3>
-                            <p class="sombras">Precio: ${producto.precio}</p>
+                            <h3 class="sombras">Disponibilidad: ${producto.disponibilidad}</h3>
                             <p class="sombras">Unidad de medida: ${producto.unidad_de_medida}</p>
-                            <button class="make-order-button" onclick="selectProducto('${producto.nombre}', '${producto.unidad_de_medida}')">Hacer Pedido</button>
+                            <button class="make-order-button" onclick="selectProducto('${producto.nombre}', '${producto.unidad_de_medida}', '${producto.disponibilidad}')">Hacer Pedido</button>
                         </div>
                     `;
                     productsGrid.appendChild(productCard);
@@ -110,8 +110,13 @@
             }
         }
 
-        function selectProducto(nombreProducto, unidadDeMedida, precio) {
+        function selectProducto(nombreProducto, unidadDeMedida, disponibilidad) {
             document.getElementById("producto").textContent = nombreProducto;
+            document.getElementById("producto-nombre").value = nombreProducto;
+
+            document.getElementById("disponibilidad").textContent = disponibilidad;
+            document.getElementById("producto-disponibilidad").value = disponibilidad;
+
             const modal = document.getElementById("order-modal");
             modal.style.display = "flex";
 
@@ -119,7 +124,6 @@
             const usuarioId = sessionStorage.getItem("usuarioId");
             document.getElementById("nombre-usuario").value = usuarioNombre;
             document.getElementById("usuario").value = usuarioId;
-            document.getElementById("producto-nombre").value = nombreProducto;
 
             const fechaActual = new Date();
             const fechaFormateada = fechaActual.toLocaleString('es-ES', {
@@ -130,10 +134,10 @@
             document.getElementById("fecha-pedido").textContent = fechaFormateada;
             document.getElementById("fecha-pedido-hidden").value = fechaActual.toISOString();
 
-            
-
             document.getElementById("unidad-de-medida").value = unidadDeMedida;
         }
+
+
 
         function cerrarModal() {
             
@@ -146,10 +150,24 @@
             event.preventDefault(); 
 
             
+            const disponibilidad = document.getElementById("producto-disponibilidad").value;
+
+            
+            if (disponibilidad === "AGOTADO") {
+                Swal.fire({
+                    position: "center",
+                    icon: "error",
+                    title: "PRODUCTO AGOTADO",
+                    text: "Este producto no está disponible para realizar el pedido.",
+                    showConfirmButton: true,
+                });
+                return;  
+            }
+
             const responsable = document.getElementById("responsable").value.trim();
             const cantidad = document.getElementById("cantidad").value.trim();
             const caracteristicas = document.getElementById("caracteristicas").value;
-            
+
             if (!responsable || !cantidad || !caracteristicas) {
                 alert("Por favor, llena todos los campos obligatorios.");
                 return; 
@@ -196,8 +214,7 @@
                 alert("No se pudo realizar el pedido.");
             }
         }
-
-        document.addEventListener("DOMContentLoaded", cargarProductos);
+            document.addEventListener("DOMContentLoaded", cargarProductos);
     </script>
 </head>
 <body>
@@ -232,6 +249,10 @@
                     <label for="producto">Producto:</label>
                     <p id="producto"></p>
                     <input type="hidden" id="producto-nombre" name="producto-nombre">
+
+                    <label for="disponibilidad">Disponibilidad:</label>
+                    <p id="disponibilidad"></p>
+                    <input type="hidden" id="producto-disponibilidad" name="producto-disponibilidad">
 
                     <label for="usuario-nombre">Usuario:</label>
                     <input type="text" id="nombre-usuario" name="nombre-usuario" disabled>

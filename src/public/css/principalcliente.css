@@ -318,3 +318,39 @@ body {
     font-size: 14px;
     padding: 10px 26px;
 }
+.product-image {
+    position: relative;
+}
+
+.product-image img {
+    width: 100%;
+    height: auto;
+}
+
+.product-image .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    visibility: hidden; /* Oculta por defecto */
+}
+
+.product-card button[disabled] + .overlay {
+    visibility: visible; /* Muestra si el botón está deshabilitado */
+}
+
+.make-order-button:disabled {
+    background-color: gray;
+    color: white;
+    cursor: not-allowed;
+}
+
+

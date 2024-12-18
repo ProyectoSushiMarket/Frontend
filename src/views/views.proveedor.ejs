@@ -126,9 +126,11 @@
             const nombreOriginal = document.getElementById("product-name-edit").value;
             const nuevoNombre = document.getElementById("new-product-name").value;
             const nuevaUnidadDeMedida = document.getElementById("new-unidaddemedida").value;
-            const nuevaImagen = document.getElementById("new-product-image").value;
+            const precio = document.getElementById("new-precio").value;
+            const disponibilidad = document.getElementById("new-disponibilidad").value;
+            
 
-            if (!nombreOriginal || !nuevoNombre || !nuevaUnidadDeMedida || !nuevaImagen) {
+            if (!nombreOriginal || !nuevoNombre || !nuevaUnidadDeMedida || !precio || !disponibilidad) {
                 return;
             }
 
@@ -136,7 +138,8 @@
                 nombre: nombreOriginal,
                 nombre_nuevo: nuevoNombre,
                 unidad_de_medida: nuevaUnidadDeMedida,
-                imagen: nuevaImagen
+                precio: precio,
+                disponibilidad: disponibilidad
             };
 
             fetch(`http://localhost:4100/producto/${nombreOriginal}`, {
@@ -310,6 +313,7 @@
                             </div>
                             <div class="product-info" style="text-align: center;">
                                 <h3>${producto.nombre}</h3>
+                                <h1 class="sombras">Disponibilidad: ${producto.disponibilidad}</h1>
                                 <p class="sombras">Precio: ${producto.precio}</p>
                                 <p class="sombras">Unidad de medida: ${producto.unidad_de_medida}</p>
                             </div>
@@ -366,8 +370,17 @@
                 <label for="new-unidaddemedida">Nueva unidad de medida:</label>
                 <input type="text" id="new-unidaddemedida" name="new-unidaddemedida" placeholder="Ingresa la nueva unidad de medida">
 
-                <label for="new-product-image">Nueva imagen del producto:</label>
-                <input type="text" id="new-product-image" name="new-product-image" placeholder="Ingresa la nueva URL de la imagen" style="width: 100%;">
+                <label for="new-precio">Nuevo Precio:</label>
+                <input type="text" id="new-precio" name="new-precio" placeholder="Ingresa el nuevo precio">
+
+                <label for="new-disponibilidad">Disponibilidad:</label>
+                <select name="new-disponibilidad" id="new-disponibilidad">
+                    <option value="" disabled selected>Seleccione si el producto esta disponible</option>
+                    <option value="AGOTADO">AGOTADO</option>
+                    <option value="DISPONIBLE">DISPONIBLE</option>
+                </select>
+
+                
             </div>
             <div class="edit-product-modal-actions">
                 <button class="edit-product-button" onclick="editarProducto()">Guardar cambios</button>
