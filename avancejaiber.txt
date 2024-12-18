@@ -2,33 +2,8 @@ Reinicia los ID de las tablas
 ALTER TABLE nombre_de_la_tabla AUTO_INCREMENT = 1;
 
 
-precios clientes: <p class="sombras">Precio: ${producto.precio}</p>
-editar imagen:
-<label for="new-product-image">Nueva imagen del producto:</label>
-                <input type="text" id="new-product-image" name="new-product-image" placeholder="Ingresa la nueva URL de la imagen" style="width: 100%;">
-
 clientes que no aparezca el precio (listo)
 organizar el orden de la tabla de los pedidos
 crear los clientes ya fijos (esto se hace cuando ya la pagina este terminada)
 poner si un producto no esta disponible (listo)
-hacer carrito de compras para listar los pedidos y despues enviarlo
-
-<script src="/js/principalcliente.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-trigger actualizar precio:
-BEGIN
-    SET NEW.precio = (SELECT precio FROM productos WHERE productos.id_producto = NEW.id_producto);
-END
-
-trigger establecer precio al hacer el pedido:
-BEGIN
-    
-    DECLARE producto_precio DECIMAL(10, 3);
-
-    SELECT precio INTO producto_precio
-    FROM productos
-    WHERE id_producto = NEW.id_producto;
-
-    SET NEW.precio = producto_precio;
-END
+hacer carrito de compras para listar los pedidos y despues enviarlo(listo por fin)
