@@ -7,3 +7,6 @@ organizar el orden de la tabla de los pedidos (esto se hace cuando jaiber me pas
 crear los clientes ya fijos (esto se hace cuando ya la pagina este terminada)
 poner si un producto no esta disponible (listo)
 hacer carrito de compras para listar los pedidos y despues enviarlo(listo por fin)
+
+PENDIENTES:
+modificar la tabla de los pedidos ya que cuando se llega a un limite de pedidos no aparecen mas pedidos.

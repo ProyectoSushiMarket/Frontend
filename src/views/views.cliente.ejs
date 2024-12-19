@@ -203,11 +203,15 @@
             carritoModal.innerHTML = `
                 <div class="modal-content-container-carrito">
                     <span class="close" onclick="cerrarCarritoModal()">&times;</span>
-                    <h2>Carrito de Compras</h2>
+                    <h2>Lista de pedidos</h2>
                     <ul>
                         ${carrito.map((producto, index) => `
                             <li>
-                                ${producto.nombre_producto} - ${producto.responsable} - ${producto.cantidad} - ${producto.unidad_de_medida} - ${producto.caracteristicas}
+                                Producto: ${producto.nombre_producto} -
+                                Responsable: ${producto.responsable} -
+                                Cantidad: ${producto.cantidad} -
+                                Unidad de medida: ${producto.unidad_de_medida} -
+                                Caracteristicas: ${producto.caracteristicas}
                                 <button onclick="eliminarDelCarrito(${index})">Eliminar</button>
                             </li>
                         `).join('')}
@@ -288,8 +292,8 @@
                 <li><a href="/pedidos">Pedidos</a></li>
             </ul>
             <div class="icons">
-                <button class="cart-button" onclick="mostrarCarrito()">🛒</button>                
-                <div class="usuario">Perfil 👤: <span id="usuario-nombre-header">CLIENTE</span></div>
+                <button class="cart-button" onclick="mostrarCarrito()"> 🛒</button>
+                <div class="usuario">Perfil 👤: <span id="usuario-nombre-header"> CLIENTE</span></div>
                 <button class="CerrarSesion-button" onclick="CerrarSesion()">Cerrar Sesión</button>
             </div>
         </nav>
@@ -341,7 +345,7 @@
                     <p id="fecha-pedido"></p>
                     <input type="hidden" id="fecha-pedido-hidden" name="fecha_pedido">
 
-                    <button type="submit">Confirmar Pedido</button>
+                    <button type="submit">Enviar al carrito</button>
                 </div>
             </form>
         </div>
