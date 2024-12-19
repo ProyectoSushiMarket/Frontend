@@ -65,19 +65,40 @@
         function guardarCambios() {
             const nombre = document.getElementById("product-name").value;
             const unidadDeMedida = document.getElementById("unidaddemedida").value;
-            const precio = document.getElementById("precio").value;
+            const disponibilidad = document.getElementById("new-disponibilidad").value;
             const imagen = document.getElementById("product-image").value;
 
             
-            if (!nombre || !unidadDeMedida || !precio || !imagen) {
-                alertify.error("Por favor, complete todos los campos.");
+            if (!nombre || !unidadDeMedida || !disponibilidad || !imagen) {
+                let timerInterval;
+                    Swal.fire({
+                    title: "Por favor llena todos los campos!",
+                    html: "<b></b> milliseconds.",
+                    timer: 1500,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        const timer = Swal.getPopup().querySelector("b");
+                        timerInterval = setInterval(() => {
+                        timer.textContent = `${Swal.getTimerLeft()}`;
+                        }, 100);
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval);
+                    }
+                    }).then((result) => {
+                    /* Read more about handling dismissals below */
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        console.log("I was closed by the timer");
+                    }
+                    });
                 return;
             }
 
             const datos = {
                 nombre: nombre,
                 unidad_de_medida: unidadDeMedida,
-                precio: precio,
+                disponibilidad: disponibilidad,
                 imagen: imagen
             };
 
@@ -120,17 +141,36 @@
             document.getElementById("delete-product-modal").style.display = "none";
         }
 
-
-
         function editarProducto() {
             const nombreOriginal = document.getElementById("product-name-edit").value;
             const nuevoNombre = document.getElementById("new-product-name").value;
             const nuevaUnidadDeMedida = document.getElementById("new-unidaddemedida").value;
-            const precio = document.getElementById("new-precio").value;
-            const disponibilidad = document.getElementById("new-disponibilidad").value;
-            
+            const disponibilidad = document.getElementById("new-disponibilidad-editar").value;
 
-            if (!nombreOriginal || !nuevoNombre || !nuevaUnidadDeMedida || !precio || !disponibilidad) {
+
+            if (!nombreOriginal || !nuevoNombre || !nuevaUnidadDeMedida || !disponibilidad) {
+                let timerInterval;
+                    Swal.fire({
+                    title: "Por favor llena todos los campos!",
+                    html: "<b></b> milliseconds.",
+                    timer: 1500,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        const timer = Swal.getPopup().querySelector("b");
+                        timerInterval = setInterval(() => {
+                        timer.textContent = `${Swal.getTimerLeft()}`;
+                        }, 100);
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval);
+                    }
+                    }).then((result) => {
+                    /* Read more about handling dismissals below */
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        console.log("I was closed by the timer");
+                    }
+                    });
                 return;
             }
 
@@ -138,7 +178,6 @@
                 nombre: nombreOriginal,
                 nombre_nuevo: nuevoNombre,
                 unidad_de_medida: nuevaUnidadDeMedida,
-                precio: precio,
                 disponibilidad: disponibilidad
             };
 
@@ -160,7 +199,7 @@
             })
             .then((data) => {
                 Swal.fire({
-                    position: "center", 
+                    position: "center",
                     icon: "success",
                     title: "Producto modificado con éxito",
                     showConfirmButton: false,
@@ -314,7 +353,6 @@
                             <div class="product-info" style="text-align: center;">
                                 <h3>${producto.nombre}</h3>
                                 <h1 class="sombras">Disponibilidad: ${producto.disponibilidad}</h1>
-                                <p class="sombras">Precio: ${producto.precio}</p>
                                 <p class="sombras">Unidad de medida: ${producto.unidad_de_medida}</p>
                             </div>
                         `;
@@ -340,10 +378,18 @@
                     <input type="text" id="product-name" name="product-name" placeholder="Ingresa el nombre del producto">
 
                     <label for="unidaddemedida">Unidad de medida:</label>
-                    <input type="text" id="unidaddemedida" name="unidaddemedida" placeholder="Ingresa la unidad de medida del producto">
+                        <select name="unidaddemedida" id="unidaddemedida">
+                        <option value="" disabled selected>Seleccione la unidad de medida</option>
+                        <option value="GR">GR</option>
+                        <option value="UND">UND</option>
+                        </select>
 
-                    <label for="precio">Ingresa el precio del producto:</label>
-                    <input type="text" id="precio" name="precio" placeholder="Ingresa la unidad de medida del producto">
+                    <label for="new-disponibilidad">Disponibilidad:</label>
+                        <select name="new-disponibilidad" id="new-disponibilidad">
+                        <option value="" disabled selected>Seleccione si el producto esta disponible</option>
+                        <option value="AGOTADO">AGOTADO</option>
+                        <option value="DISPONIBLE">DISPONIBLE</option>unidaddemedida
+                        </select>
 
                     <label for="product-image">Imagen del producto:</label>
                     <input type="text" id="product-image" name="product-image" placeholder="Ingresa la URL de la imagen" style="width: 100%;">
@@ -361,26 +407,26 @@
         <div class="edit-product-modal-content">
             <div class="edit-product-modal-header">Editar Producto</div>
             <div class="edit-product-modal-body">
+
                 <label for="product-name-edit">Nombre original del producto:</label>
                 <input type="text" id="product-name-edit" name="product-name-edit" placeholder="Ingresa el nombre del producto original">
 
                 <label for="new-product-name">Nuevo nombre del producto:</label>
                 <input type="text" id="new-product-name" name="new-product-name" placeholder="Ingresa el nuevo nombre del producto">
 
-                <label for="new-unidaddemedida">Nueva unidad de medida:</label>
-                <input type="text" id="new-unidaddemedida" name="new-unidaddemedida" placeholder="Ingresa la nueva unidad de medida">
-
-                <label for="new-precio">Nuevo Precio:</label>
-                <input type="text" id="new-precio" name="new-precio" placeholder="Ingresa el nuevo precio">
-
-                <label for="new-disponibilidad">Disponibilidad:</label>
-                <select name="new-disponibilidad" id="new-disponibilidad">
-                    <option value="" disabled selected>Seleccione si el producto esta disponible</option>
-                    <option value="AGOTADO">AGOTADO</option>
-                    <option value="DISPONIBLE">DISPONIBLE</option>
+                <label for="new-unidaddemedida">Unidad de medida:</label>
+                <select name="new-unidaddemedida" id="new-unidaddemedida">
+                    <option value="" disabled selected>Seleccione la unidad de medida</option>
+                    <option value="GR">GR</option>
+                    <option value="UND">UND</option>
                 </select>
 
-                
+                <label for="new-disponibilidad-editar">Disponibilidad:</label>
+                <select name="new-disponibilidad-editar" id="new-disponibilidad-editar">
+                    <option value="" disabled selected>Seleccione si el producto esta disponible</option>
+                    <option value="AGOTADO">AGOTADO</option>
+                    <option value="DISPONIBLE">DISPONIBLE</option>new-unidaddemedida
+                </select>
             </div>
             <div class="edit-product-modal-actions">
                 <button class="edit-product-button" onclick="editarProducto()">Guardar cambios</button>

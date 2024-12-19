@@ -338,6 +338,16 @@ body {
     background-color: #ffffff;
     cursor: pointer;
 }
+.add-product-modal-body select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #ffffff;
+    cursor: pointer;
+}
 
 /* Estilo para el nuevo modal */
 .new-modal {
