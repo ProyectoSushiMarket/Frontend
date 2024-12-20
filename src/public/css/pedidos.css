@@ -146,6 +146,18 @@ body {
     max-width: 2000px; 
     padding-top: 20px; 
 }
+/* Encabezado del cliente */
+#pedido-rows tr td[colspan="8"] {
+    background-color: #e0ffe0; /* Fondo verde claro */
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    padding: 15px;
+    border: 2px solid #4CAF50; /* Borde acorde al diseño */
+    color: #333; /* Texto más oscuro */
+    border-radius: 10px; /* Bordes redondeados */
+}
+
 
 
 table {
@@ -265,6 +277,39 @@ button.confirmar:hover {
 #idPedido:focus, #idPedido:hover {
     border-color: #45a049; 
     box-shadow: 0 0 5px rgba(69, 160, 73, 0.5);
+}
+/* Estilo para los botones de alert2 */
+.swal2-confirm, .swal2-cancel {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.swal2-confirm {
+    background-color: #28a745;  
+    color: white;
+}
+
+.swal2-confirm:hover {
+    background-color: #218838; 
+}
+
+.swal2-cancel {
+    background-color: #dc3545;  
+    color: white;
+}
+
+.swal2-cancel:hover {
+    background-color: #c82333;  
+}
+.swal2-button {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    padding: 10px 26px;
 }
 
   

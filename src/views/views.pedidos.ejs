@@ -45,9 +45,41 @@
 
   <script>
     const CerrarSesion = () => {
-        sessionStorage.setItem("token", "");
-        window.location.href = "/";
-    }
+            const swalWithCustomButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'swal2-confirm',
+                    cancelButton: 'swal2-cancel'    
+                },
+                buttonsStyling: false  
+            });
+            swalWithCustomButtons.fire({
+                title: "¿Quieres cerrar sesión?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, cerrar sesión",
+                cancelButtonText: "No, cancelar",
+                reverseButtons: true  
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    swalWithCustomButtons.fire({
+                        title: "¡Sesión cerrada!",
+                        text: "Has cerrado sesión correctamente.",
+                        icon: "success"
+                    }).then(() => {
+                        
+                        sessionStorage.clear();  
+                        history.replaceState(null, '', '/');  
+                        window.location.href = "/";
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithCustomButtons.fire({
+                        title: "Cancelado",
+                        text: "Tu sesión sigue activa.",
+                        icon: "error"
+                    });
+                }
+            });
+        };
   </script>
 </head>
 <body>
@@ -98,27 +130,21 @@
   <script>
     
     async function cargarPedidos() {
-      const apiURL = "http://localhost:4100/pedido/pedidousuario"; 
-      const token = sessionStorage.getItem("token");
+    const apiURL = "http://localhost:4100/pedido/pedidousuario"; 
+    const token = sessionStorage.getItem("token");
 
-      try {
+    try {
         const response = await fetch(apiURL, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "x-access-token": token
-          }
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "x-access-token": token
+            }
         });
 
         if (!response.ok) throw new Error("Error al cargar los pedidos");
 
         const data = await response.json();
-        
-        // Verificar si el token contiene la información del rol y usuario
-        const userData = JSON.parse(atob(token.split('.')[1]));
-        const userRole = userData.rol;
-        const userId = userData.usuario;
-
         const pedidoRows = document.getElementById("pedido-rows");
         const productList = document.getElementById("product-list");
         const emptyCart = document.getElementById("empty-cart");
@@ -126,139 +152,161 @@
         pedidoRows.innerHTML = "";
 
         if (data.pedidos.length === 0) {
-          emptyCart.style.display = "block";
-          productList.style.display = "none";
+            emptyCart.style.display = "block";
+            productList.style.display = "none";
         } else {
-          emptyCart.style.display = "none";
-          productList.style.display = "block";
+            emptyCart.style.display = "none";
+            productList.style.display = "block";
 
-          data.pedidos.forEach(pedido => {
-            const fecha = new Date(pedido.fecha_pedido);
-            const fechaFormateada = fecha.toLocaleString("es-ES", {
-              year: "numeric", month: "2-digit", day: "2-digit"
+            let lastUser = null;
+
+            data.pedidos.forEach(pedido => {
+                const fecha = new Date(pedido.fecha_pedido);
+                const fechaFormateada = fecha.toLocaleString("es-ES", {
+                    year: "numeric", month: "2-digit", day: "2-digit"
+                });
+
+                // Detectar cambio de cliente para agrupar
+                if (pedido.nombre_usuario !== lastUser) {
+                    const userHeaderRow = document.createElement("tr");
+                    userHeaderRow.innerHTML = `  
+                        <td colspan="8" style="background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: 1.2em; padding: 10px;">
+                            Cliente: ${pedido.nombre_usuario || "Desconocido"}
+                        </td>
+                    `;
+                    pedidoRows.appendChild(userHeaderRow);
+                    lastUser = pedido.nombre_usuario;
+                }
+
+                const row = document.createElement("tr");
+                row.innerHTML = `  
+                    <td>${pedido.id_pedido}</td>
+                    <td>${pedido.nombre_usuario || "Desconocido"}</td>
+                    <td>${pedido.responsable || "Sin responsable"}</td>
+                    <td>${pedido.nombre_producto || "Desconocido"}</td>
+                    <td>${fechaFormateada}</td>
+                    <td>${pedido.cantidad}</td>
+                    <td>${pedido.unidad_de_medida}</td>
+                    <td>${pedido.caracteristicas || "No especificadas"}</td>
+                `;
+                pedidoRows.appendChild(row);
             });
 
-            const row = document.createElement("tr");
-            row.innerHTML = `  
-              <td>${pedido.id_pedido}</td>
-              <td>${pedido.nombre_usuario || "Desconocido"}</td>
-              <td>${pedido.responsable || "Sin responsable"}</td>
-              <td>${pedido.nombre_producto || "Desconocido"}</td>
-              <td>${fechaFormateada}</td>
-              <td>${pedido.cantidad}</td>
-              <td>${pedido.unidad_de_medida}</td>
-              <td>${pedido.caracteristicas || "No especificadas"}</td>
-            `;
-            pedidoRows.appendChild(row);
-          });
+            // Llamamos a la función de búsqueda en tiempo real
+            document.getElementById("searchBar").addEventListener("input", filterPedidosRealtime);
         }
-      } catch (error) {
+    } catch (error) {
         console.error("Error al cargar los pedidos:", error);
         alert("No se pudieron cargar los pedidos.");
-      }
     }
+}
 
-    // Función de búsqueda en tiempo real
-    function filterPedidosRealtime() {
-      const searchInput = document.getElementById("searchBar").value.toLowerCase();
-      const pedidoRows = document.querySelectorAll("#pedido-rows tr");
-      let found = false;
+// Función de búsqueda en tiempo real
+function filterPedidosRealtime() {
+    const searchInput = document.getElementById("searchBar").value.toLowerCase();
+    const pedidoRows = document.querySelectorAll("#pedido-rows tr");
+    let found = false;
 
-      pedidoRows.forEach(row => {
-        const productName = row.querySelector("td:nth-child(4)").textContent.toLowerCase();
-        const userName = row.querySelector("td:nth-child(2)").textContent.toLowerCase();
+    pedidoRows.forEach(row => {
+        const productName = row.querySelector("td:nth-child(4)") ? row.querySelector("td:nth-child(4)").textContent.toLowerCase() : "";
+        const userName = row.querySelector("td:nth-child(2)") ? row.querySelector("td:nth-child(2)").textContent.toLowerCase() : "";
+
+        // Verifica si alguno de los valores incluye la búsqueda
         if (productName.includes(searchInput) || userName.includes(searchInput)) {
-          row.style.display = "table-row";
-          found = true;
+            row.style.display = "table-row";
+            found = true;
         } else {
-          row.style.display = "none";
+            row.style.display = "none";
         }
-      });
+    });
 
-      if (!found) {
-        const noResultsMessage = document.getElementById("noResults");
+    // Mostrar mensaje si no se encuentran resultados
+    const noResultsMessage = document.getElementById("noResults");
+    if (!found) {
         if (!noResultsMessage) {
-          const message = document.createElement("p");
-          message.id = "noResults";
-          message.textContent = "No se encontraron pedidos";
-          message.style.textAlign = "center";
-          document.querySelector(".table-container").appendChild(message);
+            const message = document.createElement("p");
+            message.id = "noResults";
+            message.textContent = "No se encontraron pedidos";
+            message.style.textAlign = "center";
+            document.querySelector(".table-container").appendChild(message);
         }
-      } else {
-        const noResultsMessage = document.getElementById("noResults");
+    } else {
         if (noResultsMessage) noResultsMessage.remove();
-      }
     }
+}
+
 
     document.getElementById("searchBar").addEventListener("input", filterPedidosRealtime);
 
-    async function eliminarPedido() {
-    const idPedido = document.getElementById("idPedido").value.trim();
+    
 
-    if (!idPedido) {
-        return; // No hacer nada si el ID del pedido no es válido
-    }
+      async function eliminarPedido() {
+        const idPedido = document.getElementById("idPedido").value.trim();
 
-    const apiURL = `http://localhost:4100/pedido/${idPedido}`;
-
-    try {
-        const response = await fetch(apiURL, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                "x-access-token": sessionStorage.getItem("token")
-            }
-        });
-
-        // Verificar si la respuesta fue exitosa
-        if (response.ok) {
-            
-            cerrarModalEliminar();
-            cargarPedidos();
-        } else {
-            // Si el código de estado no es exitoso (por ejemplo, 404)
-            const error = await response.json();
-            console.log("Error al eliminar el pedido:", error); // Solo se loguea el error en consola
+        if (!idPedido) {
+            return;
         }
-    } catch (error) {
-        console.error("Error al eliminar el pedido:", error); // Solo se loguea el error en consola
-    }
-}
-    function abrirModalEliminar() {
-      document.getElementById("modalEliminar").style.display = "block";
-    }
 
-    function cerrarModalEliminar() {
-      document.getElementById("modalEliminar").style.display = "none";
-    }
-    function exportarExcel() {
-      
-      const tabla = document.querySelector("#product-list table");
-      if (!tabla) {
-        alert("No se encontró la tabla para exportar.");
-        return;
+        const apiURL = `http://localhost:4100/pedido/${idPedido}`;
+
+        try {
+          const response = await fetch(apiURL, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-access-token": sessionStorage.getItem("token")
+                }
+            });
+
+            
+            if (response.ok) {
+                
+                cerrarModalEliminar();
+                cargarPedidos();
+            } else {
+                
+                const error = await response.json();
+                console.log("Error al eliminar el pedido:", error); 
+            }
+            } catch (error) {
+            console.error("Error al eliminar el pedido:", error); 
+            }
+          }
+        function abrirModalEliminar() {
+          document.getElementById("modalEliminar").style.display = "block";
+        }
+
+        function cerrarModalEliminar() {
+          document.getElementById("modalEliminar").style.display = "none";
+        }
+        function exportarExcel() {
+          
+          const tabla = document.querySelector("#product-list table");
+          if (!tabla) {
+            alert("No se encontró la tabla para exportar.");
+            return;
+          }
+
+          const wb = XLSX.utils.book_new(); 
+          const ws = XLSX.utils.table_to_sheet(tabla); 
+
+          
+          const range = XLSX.utils.decode_range(ws["!ref"]);
+          for (let R = range.s.r; R <= range.e.r; R++) {
+            for (let C = range.s.c; C <= range.e.c; C++) {
+                const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+                const cell = ws[cellAddress] || {};
+
+                ws[cellAddress] = cell; 
+            }
+        }
+
+        XLSX.utils.book_append_sheet(wb, ws, "Pedidos"); 
+        XLSX.writeFile(wb, "Pedidos.xlsx"); 
       }
 
-      const wb = XLSX.utils.book_new(); 
-      const ws = XLSX.utils.table_to_sheet(tabla); 
 
-      
-      const range = XLSX.utils.decode_range(ws["!ref"]);
-      for (let R = range.s.r; R <= range.e.r; R++) {
-        for (let C = range.s.c; C <= range.e.c; C++) {
-            const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
-            const cell = ws[cellAddress] || {};
-
-            ws[cellAddress] = cell; 
-        }
-    }
-
-    XLSX.utils.book_append_sheet(wb, ws, "Pedidos"); 
-    XLSX.writeFile(wb, "Pedidos.xlsx"); 
-  }
-
-
-    cargarPedidos();
+        cargarPedidos();
   </script>
 
   <div id="modalEliminar" class="modal">

@@ -143,11 +143,22 @@
         }
 
         
-        const carrito = [];
+        let carrito = [];
 
-        
+        function cargarCarritoDesdeLocalStorage() {
+            const carritoGuardado = localStorage.getItem("carrito");
+            if (carritoGuardado) {
+                carrito = JSON.parse(carritoGuardado);
+            }
+        }
+
+        function guardarCarritoEnLocalStorage() {
+            localStorage.setItem("carrito", JSON.stringify(carrito));
+        }
+
         function agregarAlCarrito(pedido) {
             carrito.push(pedido);
+            guardarCarritoEnLocalStorage();
             Swal.fire({
                 position: "center",
                 icon: "success",
@@ -155,7 +166,7 @@
                 showConfirmButton: false,
                 timer: 1500,
             });
-            cerrarModal(); 
+            cerrarModal();
         }
 
         function realizarPedido(event) {
@@ -179,25 +190,41 @@
             const caracteristicas = document.getElementById("caracteristicas").value;
 
             if (!responsable || !cantidad || !caracteristicas) {
-                alert("Por favor, llena todos los campos obligatorios.");
+                let timerInterval;
+                Swal.fire({
+                    title: "Por favor complete todos los campos",
+                    html: "<b></b> milliseconds.",
+                    timer: 1500,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        const timer = Swal.getPopup().querySelector("b");
+                        timerInterval = setInterval(() => {
+                            timer.textContent = `${Swal.getTimerLeft()}`;
+                        }, 100);
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval);
+                    }
+                });
                 return;
             }
 
             const pedido = {
-                id_usuario: document.getElementById("usuario").value, 
-                responsable: responsable,  
-                nombre_producto: document.getElementById("producto-nombre").value, 
-                fecha_pedido: document.getElementById("fecha-pedido-hidden").value, 
-                cantidad: cantidad, 
-                unidad_de_medida: document.getElementById("unidad-de-medida").value, 
-                caracteristicas: caracteristicas 
+                id_usuario: document.getElementById("usuario").value,
+                responsable: responsable,
+                nombre_producto: document.getElementById("producto-nombre").value,
+                fecha_pedido: document.getElementById("fecha-pedido-hidden").value,
+                cantidad: cantidad,
+                unidad_de_medida: document.getElementById("unidad-de-medida").value,
+                caracteristicas: caracteristicas
             };
 
-            agregarAlCarrito(pedido); 
+            agregarAlCarrito(pedido);
         }
 
-        
         function mostrarCarrito() {
+            cerrarCarritoModal();
             const carritoModal = document.createElement("div");
             carritoModal.className = "carrito-modal";
             carritoModal.innerHTML = `
@@ -222,16 +249,15 @@
             document.body.appendChild(carritoModal);
         }
 
-        
         function cerrarCarritoModal() {
             const carritoModal = document.querySelector(".carrito-modal");
             if (carritoModal) carritoModal.remove();
         }
 
-        
         function eliminarDelCarrito(index) {
             carrito.splice(index, 1);
-            mostrarCarrito(); 
+            guardarCarritoEnLocalStorage();
+            mostrarCarrito();
         }
 
         async function enviarPedidos() {
@@ -242,10 +268,10 @@
                     title: "No hay productos en el carrito",
                     showConfirmButton: true
                 });
-                return;  
+                return;
             }
 
-            console.log("Enviando los siguientes pedidos:", carrito);  
+            console.log("Enviando los siguientes pedidos:", carrito);
 
             const url = "http://localhost:4100/pedido";
             const token = sessionStorage.getItem("token");
@@ -269,10 +295,11 @@
                         timer: 1500,
                     });
                     carrito.length = 0;
+                    guardarCarritoEnLocalStorage();
                     cerrarCarritoModal();
                 } else {
                     const errorData = await response.json();
-                    console.log("Respuesta del servidor:", errorData);  
+                    console.log("Respuesta del servidor:", errorData);
                     alert(`Error al enviar los pedidos: ${errorData.message || "Error desconocido"}`);
                 }
             } catch (error) {
@@ -280,6 +307,10 @@
                 alert("No se pudieron enviar los pedidos.");
             }
         }
+
+        window.onload = () => {
+            cargarCarritoDesdeLocalStorage();
+        };
     </script>
 </head>
 <body>

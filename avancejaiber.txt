@@ -2,11 +2,15 @@ Reinicia los ID de las tablas
 ALTER TABLE nombre_de_la_tabla AUTO_INCREMENT = 1;
 
 
+
+REALIZADOS:
 clientes que no aparezca el precio (listo)
-organizar el orden de la tabla de los pedidos (esto se hace cuando jaiber me pase el excel actualizado)
-crear los clientes ya fijos (esto se hace cuando ya la pagina este terminada)
+organizar el orden de la tabla de los pedidos (listo)
+crear los clientes ya fijos (listo)
 poner si un producto no esta disponible (listo)
-hacer carrito de compras para listar los pedidos y despues enviarlo(listo por fin)
+hacer carrito de compras para listar los pedidos y despues enviarlo(listo)
+modificar la tabla de los pedidos ya que cuando se llega a un limite de pedidos no aparecen mas pedidos. (listo/mejorado)
 
 PENDIENTES:
-modificar la tabla de los pedidos ya que cuando se llega a un limite de pedidos no aparecen mas pedidos.
+
+
