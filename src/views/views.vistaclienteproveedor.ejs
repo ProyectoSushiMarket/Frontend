@@ -8,28 +8,39 @@
 
     <!-- Validacion del token -->
     <script>
-        const token = sessionStorage.getItem("token");
-        if (token == "" || token == null) {
-            window.location.href = "/"
+            const token = sessionStorage.getItem("token");
+        if (!token) {
+            window.location.href = "/";
         }
-        const url = sessionStorage.getItem("urltiendaverduras") + "/usuario/oauth";
-        if (url == "" || url == null) {
-            window.location.href = "/principalproveedor"
-        }
-        const options = {
-            method : "POST",
-            headers: {
-                "content-Type": "application/json",
-                "x-access-token": token
+
+        async function obtenerDatosProveedor() {
+            const url = sessionStorage.getItem("urltiendaverduras") + "/login/datosusuario";
+            try {
+                const response = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-access-token": token
+                    }
+                });
+
+                if (!response.ok) throw new Error("No se pudo obtener la información del proveedor");
+
+                const data = await response.json();
+                if (data.error) {
+                    window.location.href = "/";
+                } else {
+                    sessionStorage.setItem("proveedorId", data.id_usuario);
+                    sessionStorage.setItem("proveedorNombre", data.nombre);
+                    document.getElementById("proveedor-nombre-header").textContent = data.nombre;
+                }
+            } catch (error) {
+                console.error("Error al obtener los datos del proveedor:", error);
+                window.location.href = "/";
             }
         }
-        fetch(url, options)
-        .then(res => res.json())
-        .then(data=>{
-            if (data.error == true) {
-                window.location.href = "/"
-            }
-        });
+
+        document.addEventListener("DOMContentLoaded", obtenerDatosProveedor);
     </script>
     <script>
         const CerrarSesion = () => {
@@ -77,7 +88,7 @@
             <nav>
                 <a href="/principalproveedor">Tienda</a>
                 <a href="https://wa.me/+573188342212">Soporte</a>
-                <span class="perfil">👤 Perfil: <strong>PROVEEDOR</strong></span>
+                <div class="login-icon">Perfil 👤: <span id="proveedor-nombre-header">PROVEEDOR</span></div>
                 <button class="CerrarSesion-button" onclick="CerrarSesion()">Cerrar Sesión</button>
             </nav>
         </div>
