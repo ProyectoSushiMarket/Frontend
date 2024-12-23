@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedidos</title>
+  <link rel="stylesheet" href="/css/pedidos.css">
+
+  <!-- Validación del token -->
+  <script>
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+        window.location.href = "/";
+    }
+
+    async function obtenerDatosProveedor() {
+        const url = sessionStorage.getItem("urltiendaverduras") + "/login/datosusuario";
+        try {
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-access-token": token
+                }
+            });
+
+            if (!response.ok) throw new Error("No se pudo obtener la información del proveedor");
+
+            const data = await response.json();
+            if (data.error) {
+                window.location.href = "/";
+            } else {
+                sessionStorage.setItem("proveedorId", data.id_usuario);
+                sessionStorage.setItem("proveedorNombre", data.nombre);
+                document.getElementById("proveedor-nombre-header").textContent = data.nombre;
+            }
+        } catch (error) {
+            console.error("Error al obtener los datos del proveedor:", error);
+            window.location.href = "/";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", obtenerDatosProveedor);
+  </script>
+
+  <script>
+    const CerrarSesion = () => {
+            const swalWithCustomButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'swal2-confirm',
+                    cancelButton: 'swal2-cancel'    
+                },
+                buttonsStyling: false  
+            });
+            swalWithCustomButtons.fire({
+                title: "¿Quieres cerrar sesión?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, cerrar sesión",
+                cancelButtonText: "No, cancelar",
+                reverseButtons: true  
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    swalWithCustomButtons.fire({
+                        title: "¡Sesión cerrada!",
+                        text: "Has cerrado sesión correctamente.",
+                        icon: "success"
+                    }).then(() => {
+                        
+                        sessionStorage.clear();  
+                        history.replaceState(null, '', '/');  
+                        window.location.href = "/";
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithCustomButtons.fire({
+                        title: "Cancelado",
+                        text: "Tu sesión sigue activa.",
+                        icon: "error"
+                    });
+                }
+            });
+        };
+  </script>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">Siembra Fresca</div>
+    <div class="login-icon">Perfil 👤: <span id="proveedor-nombre-header">PROVEEDOR</span></div>
+    <button class="CerrarSesion-button" onclick="CerrarSesion()">Cerrar Sesión</button>
+  </header>
+
+  <section class="search-bar">
+    <input type="text" id="searchBar" placeholder="Buscar...">
+  </section>
+  
+  <main class="main-content">
+    <div class="cart-content">
+      <div class="empty-cart" id="empty-cart">
+        <p>No tienes pedidos aún</p>
+      </div>
+      
+      <div class="product-list" id="product-list" style="display: none;">
+        <div class="table-container">
+          <h2 class="table-title">Pedidos
+            <button class="eliminarpedido" onclick="abrirModalEliminar()">Eliminar Pedido</button>
+            <button class="eliminarpedido" onclick="exportarExcel()">Exportar a Excel</button>
+          </h2>
+          
+          <table>
+            <thead>
+              <tr>
+                <th>ID Pedido</th>
+                <th>Usuario</th>
+                <th>Responsable</th>
+                <th>Producto</th>
+                <th>Fecha Pedido</th>
+                <th>Cantidad</th>
+                <th>Unidad de Medida</th>
+                <th>Características</th>
+              </tr>
+            </thead>
+            <tbody id="pedido-rows">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <script>
+    
+    async function cargarPedidos() {
+    const apiURL = "http://localhost:4100/pedido/pedidousuario"; 
+    const token = sessionStorage.getItem("token");
+
+    try {
+        const response = await fetch(apiURL, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "x-access-token": token
+            }
+        });
+
+        if (!response.ok) throw new Error("Error al cargar los pedidos");
+
+        const data = await response.json();
+        const pedidoRows = document.getElementById("pedido-rows");
+        const productList = document.getElementById("product-list");
+        const emptyCart = document.getElementById("empty-cart");
+
+        pedidoRows.innerHTML = "";
+
+        if (data.pedidos.length === 0) {
+            emptyCart.style.display = "block";
+            productList.style.display = "none";
+        } else {
+            emptyCart.style.display = "none";
+            productList.style.display = "block";
+
+            let lastUser = null;
+
+            data.pedidos.forEach(pedido => {
+                const fecha = new Date(pedido.fecha_pedido);
+                const fechaFormateada = fecha.toLocaleString("es-ES", {
+                    year: "numeric", month: "2-digit", day: "2-digit"
+                });
+
+                // Detectar cambio de cliente para agrupar
+                if (pedido.nombre_usuario !== lastUser) {
+                    const userHeaderRow = document.createElement("tr");
+                    userHeaderRow.innerHTML = `  
+                        <td colspan="8" style="background-color: #f0f0f0; text-align: center; font-weight: bold; font-size: 1.2em; padding: 10px;">
+                            Cliente: ${pedido.nombre_usuario || "Desconocido"}
+                        </td>
+                    `;
+                    pedidoRows.appendChild(userHeaderRow);
+                    lastUser = pedido.nombre_usuario;
+                }
+
+                const row = document.createElement("tr");
+                row.innerHTML = `  
+                    <td>${pedido.id_pedido}</td>
+                    <td>${pedido.nombre_usuario || "Desconocido"}</td>
+                    <td>${pedido.responsable || "Sin responsable"}</td>
+                    <td>${pedido.nombre_producto || "Desconocido"}</td>
+                    <td>${fechaFormateada}</td>
+                    <td>${pedido.cantidad}</td>
+                    <td>${pedido.unidad_de_medida}</td>
+                    <td>${pedido.caracteristicas || "No especificadas"}</td>
+                `;
+                pedidoRows.appendChild(row);
+            });
+
+            // Llamamos a la función de búsqueda en tiempo real
+            document.getElementById("searchBar").addEventListener("input", filterPedidosRealtime);
+        }
+    } catch (error) {
+        console.error("Error al cargar los pedidos:", error);
+        alert("No se pudieron cargar los pedidos.");
+    }
+}
+
+// Función de búsqueda en tiempo real
+function filterPedidosRealtime() {
+    const searchInput = document.getElementById("searchBar").value.toLowerCase();
+    const pedidoRows = document.querySelectorAll("#pedido-rows tr");
+    let found = false;
+
+    pedidoRows.forEach(row => {
+        const productName = row.querySelector("td:nth-child(4)") ? row.querySelector("td:nth-child(4)").textContent.toLowerCase() : "";
+        const userName = row.querySelector("td:nth-child(2)") ? row.querySelector("td:nth-child(2)").textContent.toLowerCase() : "";
+
+        // Verifica si alguno de los valores incluye la búsqueda
+        if (productName.includes(searchInput) || userName.includes(searchInput)) {
+            row.style.display = "table-row";
+            found = true;
+        } else {
+            row.style.display = "none";
+        }
+    });
+
+    // Mostrar mensaje si no se encuentran resultados
+    const noResultsMessage = document.getElementById("noResults");
+    if (!found) {
+        if (!noResultsMessage) {
+            const message = document.createElement("p");
+            message.id = "noResults";
+            message.textContent = "No se encontraron pedidos";
+            message.style.textAlign = "center";
+            document.querySelector(".table-container").appendChild(message);
+        }
+    } else {
+        if (noResultsMessage) noResultsMessage.remove();
+    }
+}
+
+
+    document.getElementById("searchBar").addEventListener("input", filterPedidosRealtime);
+
+    
+
+      async function eliminarPedido() {
+        const idPedido = document.getElementById("idPedido").value.trim();
+
+        if (!idPedido) {
+            return;
+        }
+
+        const apiURL = `http://localhost:4100/pedido/${idPedido}`;
+
+        try {
+          const response = await fetch(apiURL, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-access-token": sessionStorage.getItem("token")
+                }
+            });
+
+            
+            if (response.ok) {
+                
+                cerrarModalEliminar();
+                cargarPedidos();
+            } else {
+                
+                const error = await response.json();
+                console.log("Error al eliminar el pedido:", error); 
+            }
+            } catch (error) {
+            console.error("Error al eliminar el pedido:", error); 
+            }
+          }
+        function abrirModalEliminar() {
+          document.getElementById("modalEliminar").style.display = "block";
+        }
+
+        function cerrarModalEliminar() {
+          document.getElementById("modalEliminar").style.display = "none";
+        }
+        function exportarExcel() {
+          
+          const tabla = document.querySelector("#product-list table");
+          if (!tabla) {
+            alert("No se encontró la tabla para exportar.");
+            return;
+          }
+
+          const wb = XLSX.utils.book_new(); 
+          const ws = XLSX.utils.table_to_sheet(tabla); 
+
+          
+          const range = XLSX.utils.decode_range(ws["!ref"]);
+          for (let R = range.s.r; R <= range.e.r; R++) {
+            for (let C = range.s.c; C <= range.e.c; C++) {
+                const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+                const cell = ws[cellAddress] || {};
+
+                ws[cellAddress] = cell; 
+            }
+        }
+
+        XLSX.utils.book_append_sheet(wb, ws, "Pedidos"); 
+        XLSX.writeFile(wb, "Pedidos.xlsx"); 
+      }
+
+
+        cargarPedidos();
+  </script>
+
+  <div id="modalEliminar" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarModalEliminar()">&times;</span>
+      <h2>Eliminar Pedido</h2>
+      <p>Ingrese el ID del pedido que desea eliminar:</p>
+      <input type="text" id="idPedido" placeholder="ID del pedido">
+      <div class="modal-actions">
+        <button class="cancelar" onclick="eliminarPedido()">Aceptar</button>
+        <button class="confirmar" onclick="cerrarModalEliminar()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  <script src="/js/pedidos.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</body>
+</html>

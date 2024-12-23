@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siempre Fresca</title>
+    <link rel="stylesheet" href="/css/vistaclienteproveedor.css">
+
+    <!-- Validacion del token -->
+    <script>
+            const token = sessionStorage.getItem("token");
+        if (!token) {
+            window.location.href = "/";
+        }
+
+        async function obtenerDatosProveedor() {
+            const url = sessionStorage.getItem("urltiendaverduras") + "/login/datosusuario";
+            try {
+                const response = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-access-token": token
+                    }
+                });
+
+                if (!response.ok) throw new Error("No se pudo obtener la información del proveedor");
+
+                const data = await response.json();
+                if (data.error) {
+                    window.location.href = "/";
+                } else {
+                    sessionStorage.setItem("proveedorId", data.id_usuario);
+                    sessionStorage.setItem("proveedorNombre", data.nombre);
+                    document.getElementById("proveedor-nombre-header").textContent = data.nombre;
+                }
+            } catch (error) {
+                console.error("Error al obtener los datos del proveedor:", error);
+                window.location.href = "/";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", obtenerDatosProveedor);
+    </script>
+    <script>
+        const CerrarSesion = () => {
+            const swalWithCustomButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'swal2-confirm',
+                    cancelButton: 'swal2-cancel'    
+                },
+                buttonsStyling: false  
+            });
+            swalWithCustomButtons.fire({
+                title: "¿Quieres cerrar sesión?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, cerrar sesión",
+                cancelButtonText: "No, cancelar",
+                reverseButtons: true  
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    swalWithCustomButtons.fire({
+                        title: "¡Sesión cerrada!",
+                        text: "Has cerrado sesión correctamente.",
+                        icon: "success"
+                    }).then(() => {
+                        
+                        sessionStorage.clear();  
+                        history.replaceState(null, '', '/');  
+                        window.location.href = "/";
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithCustomButtons.fire({
+                        title: "Cancelado",
+                        text: "Tu sesión sigue activa.",
+                        icon: "error"
+                    });
+                }
+            });
+        };
+    </script>
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <h1>Siembra Fresca</h1>
+            <nav>
+                <a href="/proveedor">Tienda</a>
+                <a href="https://wa.me/+573188342212">Soporte</a>
+                <div class="login-icon">Perfil 👤: <span id="proveedor-nombre-header">PROVEEDOR</span></div>
+                <button class="CerrarSesion-button" onclick="CerrarSesion()">Cerrar Sesión</button>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <h2>Lista de Clientes</h2>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Buscar cliente..." />
+            <button class="crearcliente" onclick="abrirModalCrear()">Crear Cliente</button>
+            <button class="editarusuario" onclick="abrirModalEditar()">Editar Usuario</button>
+            <button class="eliminarusuario" onclick="abrirModalEliminar()">Eliminar Usuario</button>
+        </div>
+        <table id="clientesTabla">
+            <thead>
+                <tr>
+                    <th>ID Usuario</th>
+                    <th>Nombre</th>
+                    <th>Usuario</th>
+                    <th>Rol</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </main>
+
+    <!-- Modal para agregar cliente -->
+    <div id="add-cliente-modal" class="add-cliente-modal">
+        <div class="add-cliente-modal-content">
+            <div class="add-cliente-modal-header">Crear Cliente</div>
+            <div class="add-cliente-modal-body">
+                <form id="cliente-form">
+                    <label for="cliente-nombre">Nombre del cliente:</label>
+                    <input type="text" id="cliente-nombre" name="cliente-nombre" placeholder="Ingresa el nombre">
+                    <label for="cliente-usuario">Usuario:</label>
+                    <input type="text" id="cliente-usuario" name="cliente-usuario" placeholder="Ingresa el usuario">
+                    <label for="cliente-contrasena">Contraseña:</label>
+                    <input type="password" id="cliente-contrasena" name="cliente-contrasena" placeholder="Ingresa la Contraseña">
+                    <label for="cliente-rol">Rol:</label>
+                    <select name="cliente-rol" id="cliente-rol">
+                        <option value="" disabled selected>Selecciona el rol</option>
+                        <option value="Cliente">Cliente</option>
+                        <option value="Proveedor">Proveedor</option>
+                    </select>
+                </form>
+            </div>
+            <div class="add-cliente-modal-actions">
+                <button class="save-cliente-button" onclick="guardarCliente()">Guardar</button>
+                <button class="cancel-cliente-button" onclick="cerrarModal('add-cliente-modal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar usuario -->
+    <div id="edit-cliente-modal" class="edit-cliente-modal">
+        <div class="edit-cliente-modal-content">
+            <div class="edit-cliente-modal-header">Editar Usuario</div>
+            <div class="edit-cliente-modal-body">
+                <form id="edit-usuario-form">
+
+                    <label for="edit-cliente-id">Id del usuario:</label>
+                    <input type="text" id="edit-cliente-id" name="edit-cliente-id" placeholder="Ingresa el id">
+
+                    <label for="edit-cliente-nombre">Nombre del cliente:</label>
+                    <input type="text" id="edit-cliente-nombre" name="edit-cliente-nombre" placeholder="Ingresa el nombre">
+
+                    <label for="edit-cliente-usuario">Usuario:</label>
+                    <input type="text" id="edit-cliente-usuario" name="edit-cliente-usuario" placeholder="Ingresa el usuario">
+
+                    <label for="edit-cliente-contrasena">Contraseña:</label>
+                    <input type="password" id="edit-cliente-contrasena" name="edit-cliente-contrasena" placeholder="Ingresa la contraseña nueva">
+
+                    <label for="edit-cliente-rol">Rol:</label>
+                    <select name="edit-cliente-rol" id="edit-cliente-rol">
+                        <option value="" disabled selected>Selecciona el rol</option>
+                        <option value="Cliente">Cliente</option>
+                        <option value="Proveedor">Proveedor</option>
+                    </select>
+                </form>
+            </div>
+            <div class="edit-cliente-modal-actions">
+                <button class="save-edit-button" onclick="guardarEdicion()">Guardar Cambios</button>
+                <button class="cancel-edit-button" onclick="cerrarModal('edit-cliente-modal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para eliminar usuario -->
+    <div id="delete-cliente-modal" class="delete-cliente-modal">
+        <div class="delete-cliente-modal-content">
+            <div class="delete-cliente-modal-header">Eliminar Usuario</div>
+            <div class="delete-cliente-modal-body">
+                <p>¿Estás seguro de que deseas eliminar un usuario?</p>
+                <input type="text" id="delete-cliente-id" placeholder="Ingresa ID del usuario">
+            </div>
+            <div class="delete-cliente-modal-actions">
+                <button class="save-delete-button" onclick="eliminarUsuario()">Eliminar</button>
+                <button class="cancel-delete-button" onclick="cerrarModal('delete-cliente-modal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const apiUrl = "http://localhost:4100/usuario";
+            const tbody = document.querySelector("#clientesTabla tbody");
+
+            async function obtenerClientes() {
+                try {
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) {
+                        throw new Error("Error al obtener los datos");
+                    }
+                    const clientes = await response.json();
+                    tbody.innerHTML = "";
+
+                    clientes.forEach(cliente => {
+                        const fila = document.createElement("tr");
+                        fila.innerHTML = `
+                            <td>${cliente.id_usuario}</td>
+                            <td>${cliente.nombre}</td>
+                            <td>${cliente.usuario}</td>
+                            <td>${cliente.rol}</td>
+                        `;
+                        tbody.appendChild(fila);
+                    });
+                } catch (error) {
+                    console.error("Error al cargar los clientes:", error);
+                }
+            }
+
+            obtenerClientes();
+        });
+
+        
+        function abrirModalCrear() {
+            document.getElementById("add-cliente-modal").style.display = "flex";
+        }
+
+        
+        function abrirModalEditar() {
+            document.getElementById("edit-cliente-modal").style.display = "flex";
+        }
+
+        
+        function abrirModalEliminar() {
+            document.getElementById("delete-cliente-modal").style.display = "flex";
+        }
+
+
+        function cerrarModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+
+        
+        function guardarCliente() {
+            const nombre = document.getElementById("cliente-nombre").value;
+            const usuario = document.getElementById("cliente-usuario").value;
+            const contrasena = document.getElementById("cliente-contrasena").value;
+            const rol = document.getElementById("cliente-rol").value;
+
+            const datos = {
+                nombre: nombre,
+                usuario: usuario,
+                contrasena: contrasena,
+                rol: rol
+            };
+
+            fetch('http://localhost:4100/usuario', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(datos),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Usuario creado con éxito',
+                    showConfirmButton: false,
+                    timer: 1500 
+                });
+                cerrarModal("add-cliente-modal");
+
+                setTimeout(() => {
+                    location.reload();
+                }, 1500); 
+            })
+            .catch((error) => {
+                console.error('Error al crear el usuario:', error);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Error al crear el usuario',
+                    text: 'Hubo un problema al crear el usuario. Intenta de nuevo.',
+                    showConfirmButton: true,
+                });
+            });
+        }
+
+        function guardarEdicion() {
+            const id = document.getElementById("edit-cliente-id").value;
+            const nombre = document.getElementById("edit-cliente-nombre").value;
+            const usuario = document.getElementById("edit-cliente-usuario").value;
+            const contrasena = document.getElementById("edit-cliente-contrasena").value;
+            const rol = document.getElementById("edit-cliente-rol").value;
+
+            const datos = {
+                id: id,
+                nombre: nombre,
+                usuario: usuario,
+                contrasena: contrasena,
+                rol: rol
+            };
+
+            fetch(`http://localhost:4100/usuario/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(datos),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Usuario modificado con éxito',
+                    showConfirmButton: false,
+                    timer: 1500 
+                });
+
+                cerrarModal("edit-cliente-modal");
+
+                setTimeout(() => {
+                    location.reload();
+                }, 1500); 
+            })
+            .catch((error) => {
+                console.error('Error al editar el usuario:', error);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Error al modificar el usuario',
+                    text: 'Hubo un problema al modificar el usuario. Intenta de nuevo.',
+                    showConfirmButton: true,
+                });
+            });
+        }
+
+        function eliminarUsuario() {
+            const id = document.getElementById("delete-cliente-id").value;
+
+            fetch(`http://localhost:4100/usuario/${id}`, {
+                method: 'DELETE',
+            })
+            .then(() => {
+                cerrarModal("delete-cliente-modal");
+                location.reload();
+            })
+            .catch((error) => console.error('Error al eliminar el usuario:', error));
+        }
+    </script>
+
+    <script src="/js/vistaclienteproveedor.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

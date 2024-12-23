@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siembra Fresca</title>
+    <link rel="stylesheet" href="/css/principalcliente.css">
+
+    <script>
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+            window.location.href = "/";
+        }
+
+        async function obtenerDatosUsuario() {
+            const url = sessionStorage.getItem("urltiendaverduras") + "/login/datosusuario";
+            try {
+                const response = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-access-token": token
+                    }
+                });
+                if (!response.ok) throw new Error("No se pudo obtener la información del usuario");
+
+                const data = await response.json();
+                if (data.error) {
+                    window.location.href = "/";
+                } else {
+                    sessionStorage.setItem("usuarioId", data.id_usuario);
+                    sessionStorage.setItem("usuarioNombre", data.nombre);
+                    document.getElementById("usuario-nombre-header").textContent = data.nombre;
+                }
+            } catch (error) {
+                console.error("Error al obtener el usuario:", error);
+                window.location.href = "/";
+            }
+        }
+
+        const CerrarSesion = () => {
+            const swalWithCustomButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'swal2-confirm',
+                    cancelButton: 'swal2-cancel'    
+                },
+                buttonsStyling: false  
+            });
+            swalWithCustomButtons.fire({
+                title: "¿Quieres cerrar sesión?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, cerrar sesión",
+                cancelButtonText: "No, cancelar",
+                reverseButtons: true  
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    swalWithCustomButtons.fire({
+                        title: "¡Sesión cerrada!",
+                        text: "Has cerrado sesión correctamente.",
+                        icon: "success"
+                    }).then(() => {
+                        
+                        sessionStorage.clear();  
+                        history.replaceState(null, '', '/');  
+                        window.location.href = "/";
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithCustomButtons.fire({
+                        title: "Cancelado",
+                        text: "Tu sesión sigue activa.",
+                        icon: "error"
+                    });
+                }
+            });
+        };
+
+        document.addEventListener("DOMContentLoaded", obtenerDatosUsuario);
+
+        async function cargarProductos() {
+            const apiURL = "http://localhost:4100/producto";
+            try {
+                const response = await fetch(apiURL);
+                if (!response.ok) throw new Error("Error al cargar los productos");
+
+                const productos = await response.json();
+                const productsGrid = document.querySelector(".products-grid");
+                productsGrid.innerHTML = "";
+
+                productos.forEach(producto => {
+                    const productCard = document.createElement("div");
+                    productCard.className = "product-card";
+
+                    productCard.innerHTML = `
+                        <div class="product-image">
+                            <img src="${producto.imagen}" alt="${producto.nombre}">
+                        </div>
+                        <div class="product-info">
+                            <h3>${producto.nombre}</h3>
+                            <h3 class="sombras">Disponibilidad: ${producto.disponibilidad}</h3>
+                            <p class="sombras">Unidad de medida: ${producto.unidad_de_medida}</p>
+                            <button class="make-order-button" onclick="selectProducto('${producto.nombre}', '${producto.unidad_de_medida}', '${producto.disponibilidad}')">Hacer Pedido</button>
+                        </div>
+                    `;
+                    productsGrid.appendChild(productCard);
+                });
+            } catch (error) {
+                console.error("Error:", error);
+                alert("No se pudieron cargar los productos.");
+            }
+        }
+
+        function selectProducto(nombreProducto, unidadDeMedida, disponibilidad) {
+            document.getElementById("producto").textContent = nombreProducto;
+            document.getElementById("producto-nombre").value = nombreProducto;
+
+            document.getElementById("disponibilidad").textContent = disponibilidad;
+            document.getElementById("producto-disponibilidad").value = disponibilidad;
+
+            const modal = document.getElementById("order-modal");
+            modal.style.display = "flex";
+
+            const usuarioNombre = sessionStorage.getItem("usuarioNombre");
+            const usuarioId = sessionStorage.getItem("usuarioId");
+            document.getElementById("nombre-usuario").value = usuarioNombre;
+            document.getElementById("usuario").value = usuarioId;
+
+            const fechaActual = new Date();
+            const fechaFormateada = fechaActual.toLocaleString('es-ES', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+            document.getElementById("fecha-pedido").textContent = fechaFormateada;
+            document.getElementById("fecha-pedido-hidden").value = fechaActual.toISOString();
+
+            document.getElementById("unidad-de-medida").value = unidadDeMedida;
+        }
+
+        function cerrarModal() {
+            document.getElementById("pedido-form").reset();
+            document.getElementById("order-modal").style.display = "none";
+        }
+
+        
+        let carrito = [];
+
+        function cargarCarritoDesdeLocalStorage() {
+            const carritoGuardado = localStorage.getItem("carrito");
+            if (carritoGuardado) {
+                carrito = JSON.parse(carritoGuardado);
+            }
+        }
+
+        function guardarCarritoEnLocalStorage() {
+            localStorage.setItem("carrito", JSON.stringify(carrito));
+        }
+
+        function agregarAlCarrito(pedido) {
+            carrito.push(pedido);
+            guardarCarritoEnLocalStorage();
+            Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Producto agregado al carrito",
+                showConfirmButton: false,
+                timer: 1500,
+            });
+            cerrarModal();
+        }
+
+        function realizarPedido(event) {
+            event.preventDefault();
+
+            const disponibilidad = document.getElementById("producto-disponibilidad").value;
+
+            if (disponibilidad === "AGOTADO") {
+                Swal.fire({
+                    position: "center",
+                    icon: "error",
+                    title: "PRODUCTO AGOTADO",
+                    text: "Este producto no está disponible para realizar el pedido.",
+                    showConfirmButton: true,
+                });
+                return;
+            }
+
+            const responsable = document.getElementById("responsable").value.trim();
+            const cantidad = document.getElementById("cantidad").value.trim();
+            const caracteristicas = document.getElementById("caracteristicas").value;
+
+            if (!responsable || !cantidad || !caracteristicas) {
+                let timerInterval;
+                Swal.fire({
+                    title: "Por favor complete todos los campos",
+                    html: "<b></b> milliseconds.",
+                    timer: 1500,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        const timer = Swal.getPopup().querySelector("b");
+                        timerInterval = setInterval(() => {
+                            timer.textContent = `${Swal.getTimerLeft()}`;
+                        }, 100);
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval);
+                    }
+                });
+                return;
+            }
+
+            const pedido = {
+                id_usuario: document.getElementById("usuario").value,
+                responsable: responsable,
+                nombre_producto: document.getElementById("producto-nombre").value,
+                fecha_pedido: document.getElementById("fecha-pedido-hidden").value,
+                cantidad: cantidad,
+                unidad_de_medida: document.getElementById("unidad-de-medida").value,
+                caracteristicas: caracteristicas
+            };
+
+            agregarAlCarrito(pedido);
+        }
+
+        function mostrarCarrito() {
+            cerrarCarritoModal();
+            const carritoModal = document.createElement("div");
+            carritoModal.className = "carrito-modal";
+            carritoModal.innerHTML = `
+                <div class="modal-content-container-carrito">
+                    <span class="close" onclick="cerrarCarritoModal()">&times;</span>
+                    <h2>Lista de pedidos</h2>
+                    <ul>
+                        ${carrito.map((producto, index) => `
+                            <li>
+                                Producto: ${producto.nombre_producto} -
+                                Responsable: ${producto.responsable} -
+                                Cantidad: ${producto.cantidad} -
+                                Unidad de medida: ${producto.unidad_de_medida} -
+                                Caracteristicas: ${producto.caracteristicas}
+                                <button onclick="eliminarDelCarrito(${index})">Eliminar</button>
+                            </li>
+                        `).join('')}
+                    </ul>
+                    <button onclick="enviarPedidos()">Enviar Pedidos</button>
+                </div>
+            `;
+            document.body.appendChild(carritoModal);
+        }
+
+        function cerrarCarritoModal() {
+            const carritoModal = document.querySelector(".carrito-modal");
+            if (carritoModal) carritoModal.remove();
+        }
+
+        function eliminarDelCarrito(index) {
+            carrito.splice(index, 1);
+            guardarCarritoEnLocalStorage();
+            mostrarCarrito();
+        }
+
+        async function enviarPedidos() {
+            if (carrito.length === 0) {
+                Swal.fire({
+                    position: "center",
+                    icon: "warning",
+                    title: "No hay productos en el carrito",
+                    showConfirmButton: true
+                });
+                return;
+            }
+
+            console.log("Enviando los siguientes pedidos:", carrito);
+
+            const url = "http://localhost:4100/pedido";
+            const token = sessionStorage.getItem("token");
+
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-access-token": token
+                    },
+                    body: JSON.stringify(carrito)
+                });
+
+                if (response.ok) {
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Pedidos enviados con éxito",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
+                    carrito.length = 0;
+                    guardarCarritoEnLocalStorage();
+                    cerrarCarritoModal();
+                } else {
+                    const errorData = await response.json();
+                    console.log("Respuesta del servidor:", errorData);
+                    alert(`Error al enviar los pedidos: ${errorData.message || "Error desconocido"}`);
+                }
+            } catch (error) {
+                console.error("Error al enviar los pedidos:", error);
+                alert("No se pudieron enviar los pedidos.");
+            }
+        }
+
+        window.onload = () => {
+            cargarCarritoDesdeLocalStorage();
+        };
+    </script>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">Siembra Fresca</div>
+            <ul>
+                <li><a href="/principalcliente">Tienda</a></li>
+                <li><a href="https://wa.me/+573006348274">Contáctanos</a></li>
+                <li><a href="/pedidos">Pedidos</a></li>
+            </ul>
+            <div class="icons">
+                <button class="cart-button" onclick="mostrarCarrito()"> 🛒</button>
+                <div class="usuario">Perfil 👤: <span id="usuario-nombre-header"> CLIENTE</span></div>
+                <button class="CerrarSesion-button" onclick="CerrarSesion()">Cerrar Sesión</button>
+            </div>
+        </nav>
+    </header>
+
+    <section class="search-bar">
+        <input type="text" id="searchBar" placeholder="Buscar...">
+    </section>
+
+    <section class="products-grid"></section>
+
+    <div id="order-modal" class="modal">
+        <div class="modal-content-container">
+            <span class="close" onclick="cerrarModal()">&times;</span>
+            <h2>Realizar Pedido</h2>
+            <form id="pedido-form" onsubmit="realizarPedido(event)">
+                <div class="modal-info">
+
+                    <label for="producto">Producto:</label>
+                    <p id="producto"></p>
+                    <input type="hidden" id="producto-nombre" name="producto-nombre">
+
+                    <label for="disponibilidad">Disponibilidad:</label>
+                    <p id="disponibilidad"></p>
+                    <input type="hidden" id="producto-disponibilidad" name="producto-disponibilidad">
+
+                    <label for="usuario-nombre">Usuario:</label>
+                    <input type="text" id="nombre-usuario" name="nombre-usuario" disabled>
+                    <input type="hidden" id="usuario" name="usuario">
+
+                    <label for="responsable">Responsable:</label>
+                    <input type="text" id="responsable" name="responsable" placeholder="Ingresa el responsable del pedido">
+
+                    <label for="cantidad">Cantidad:</label>
+                    <input type="number" id="cantidad" name="cantidad" placeholder="Ingresa la cantidad que necesitas" required>
+
+                    <label for="unidad_de_medida">Unidad de medida:</label>
+                    <input type="text" id="unidad-de-medida" name="unidad_de_medida" disabled>
+
+                    <label for="caracteristicas">Características:</label>
+                    <select name="caracteristicas" id="caracteristicas">
+                        <option value="" disabled selected>Selecciona las características</option>
+                        <option value="Pinton">Pinton</option>
+                        <option value="Maduro">Maduro</option>
+                        <option value="No aplica">No aplica</option>
+                    </select>
+
+                    <label for="fecha_pedido">Fecha del Pedido:</label>
+                    <p id="fecha-pedido"></p>
+                    <input type="hidden" id="fecha-pedido-hidden" name="fecha_pedido">
+
+                    <button type="submit">Enviar al carrito</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="/js/principalcliente.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

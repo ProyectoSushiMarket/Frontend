@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siembra Fresca</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs/build/css/alertify.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs/build/css/themes/default.min.css">
+    <link rel="stylesheet" href="/css/principal.css">
+
+    <script>
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+            window.location.href = "/";
+        }
+
+        async function obtenerDatosProveedor() {
+            const url = sessionStorage.getItem("urltiendaverduras") + "/login/datosusuario";
+            try {
+                const response = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-access-token": token
+                    }
+                });
+
+                if (!response.ok) throw new Error("No se pudo obtener la información del proveedor");
+
+                const data = await response.json();
+                if (data.error) {
+                    window.location.href = "/";
+                } else {
+                    sessionStorage.setItem("proveedorId", data.id_usuario);
+                    sessionStorage.setItem("proveedorNombre", data.nombre);
+                    document.getElementById("proveedor-nombre-header").textContent = data.nombre;
+                }
+            } catch (error) {
+                console.error("Error al obtener los datos del proveedor:", error);
+                window.location.href = "/";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", obtenerDatosProveedor);
+
+        function abrirModalAgregar() {
+            document.getElementById("add-product-modal").style.display = "flex";
+        }
+
+        function abrirModalEditar() {
+            document.getElementById("edit-product-modal").style.display = "flex";
+        }
+
+        function abrirModalEliminar() {
+            document.getElementById("delete-product-modal").style.display = "flex";
+        }
+
+        function cerrarModal() {
+            document.getElementById("add-product-modal").style.display = "none";
+            document.getElementById("edit-product-modal").style.display = "none";
+            document.getElementById("delete-product-modal").style.display = "none";
+        }
+
+                
+        function guardarCambios() {
+            const nombre = document.getElementById("product-name").value;
+            const unidadDeMedida = document.getElementById("unidaddemedida").value;
+            const disponibilidad = document.getElementById("new-disponibilidad").value;
+            const imagen = document.getElementById("product-image").value;
+
+            
+            if (!nombre || !unidadDeMedida || !disponibilidad || !imagen) {
+                let timerInterval;
+                    Swal.fire({
+                    title: "Por favor llena todos los campos!",
+                    html: "<b></b> milliseconds.",
+                    timer: 1500,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        const timer = Swal.getPopup().querySelector("b");
+                        timerInterval = setInterval(() => {
+                        timer.textContent = `${Swal.getTimerLeft()}`;
+                        }, 100);
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval);
+                    }
+                    }).then((result) => {
+                    /* Read more about handling dismissals below */
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        console.log("I was closed by the timer");
+                    }
+                    });
+                return;
+            }
+
+            const datos = {
+                nombre: nombre,
+                unidad_de_medida: unidadDeMedida,
+                disponibilidad: disponibilidad,
+                imagen: imagen
+            };
+
+            fetch('http://localhost:4100/producto', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(datos),
+            })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Error al guardar los datos');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                Swal.fire({
+                    position: "center", 
+                    icon: "success",
+                    title: "Producto guardado con éxito",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                console.log('Producto guardado con éxito:', data);
+                cerrarModal();  
+                setTimeout(() => {
+                    location.reload();  
+                }, 1500); 
+            })
+            .catch((error) => {
+                console.error('Error al guardar el producto:', error);
+                alertify.error("Hubo un error al guardar el producto.");
+            });
+        }
+
+        function cerrarModal() {
+            document.getElementById("add-product-modal").style.display = "none";
+            document.getElementById("edit-product-modal").style.display = "none";
+            document.getElementById("delete-product-modal").style.display = "none";
+        }
+
+        function editarProducto() {
+            const nombreOriginal = document.getElementById("product-name-edit").value;
+            const nuevoNombre = document.getElementById("new-product-name").value;
+            const nuevaUnidadDeMedida = document.getElementById("new-unidaddemedida").value;
+            const disponibilidad = document.getElementById("new-disponibilidad-editar").value;
+
+
+            if (!nombreOriginal || !nuevoNombre || !nuevaUnidadDeMedida || !disponibilidad) {
+                let timerInterval;
+                    Swal.fire({
+                    title: "Por favor llena todos los campos!",
+                    html: "<b></b> milliseconds.",
+                    timer: 1500,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        const timer = Swal.getPopup().querySelector("b");
+                        timerInterval = setInterval(() => {
+                        timer.textContent = `${Swal.getTimerLeft()}`;
+                        }, 100);
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval);
+                    }
+                    }).then((result) => {
+                    /* Read more about handling dismissals below */
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        console.log("I was closed by the timer");
+                    }
+                    });
+                return;
+            }
+
+            const datos = {
+                nombre: nombreOriginal,
+                nombre_nuevo: nuevoNombre,
+                unidad_de_medida: nuevaUnidadDeMedida,
+                disponibilidad: disponibilidad
+            };
+
+            fetch(`http://localhost:4100/producto/${nombreOriginal}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': token
+                },
+                body: JSON.stringify(datos),
+            })
+            .then((response) => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || 'Error al actualizar los datos');
+                    });
+                }
+                return response.json();
+            })
+            .then((data) => {
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Producto modificado con éxito",
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+                console.log('Producto actualizado con éxito:', data);
+                cerrarModal();
+                setTimeout(() => location.reload(), 1500);
+            })
+            .catch((error) => {
+                console.error('Error al editar el producto:', error);
+            });
+        }
+
+        async function eliminarProducto() {
+            const productName = document.getElementById("product-name-delete").value;
+
+            if (!productName) {
+                return;
+            }
+
+            const url = `http://localhost:4100/producto/${productName}`;
+            const options = {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': token
+                }
+            };
+
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    throw new Error('No se pudo eliminar el producto');
+                }
+                Swal.fire({
+                    position: "center",  
+                    icon: "success",
+                    title: "Producto eliminado con éxito",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
+                cerrarModal();
+                setTimeout(() => {
+                    location.reload(); 
+                }, 1500);  
+
+            } catch (error) {
+                console.error('Error al eliminar el producto:', error);
+
+                
+                Swal.fire({
+                    position: "center",  
+                    icon: "error",
+                    title: "Error al eliminar el producto",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        }
+        
+        const CerrarSesion = () => {
+            const swalWithCustomButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'swal2-confirm',
+                    cancelButton: 'swal2-cancel'    
+                },
+                buttonsStyling: false  
+            });
+            swalWithCustomButtons.fire({
+                title: "¿Quieres cerrar sesión?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, cerrar sesión",
+                cancelButtonText: "No, cancelar",
+                reverseButtons: true  
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    swalWithCustomButtons.fire({
+                        title: "¡Sesión cerrada!",
+                        text: "Has cerrado sesión correctamente.",
+                        icon: "success"
+                    }).then(() => {
+                        
+                        sessionStorage.clear();  
+                        history.replaceState(null, '', '/');  
+                        window.location.href = "/";
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithCustomButtons.fire({
+                        title: "Cancelado",
+                        text: "Tu sesión sigue activa.",
+                        icon: "error"
+                    });
+                }
+            });
+        };
+
+    </script>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">Siembra Fresca</div>
+            <ul>
+                <li><a href="/proveedor">Tienda</a></li>
+                <li><a href="https://wa.me/+573188342212">Soporte</a></li>
+                <li><a href="/vistaclienteproveedor">Clientes</a></li>
+                <li><a href="/pedidos">Pedidos</a></li>
+            </ul>
+            <div class="icons">
+                <div class="login-icon">Perfil 👤: <span id="proveedor-nombre-header">PROVEEDOR</span></div>
+                <button class="CerrarSesion-button" onclick="CerrarSesion()">Cerrar Sesión</button>
+            </div>
+        </nav>
+    </header>
+
+    <section class="search-bar">
+        <input type="text" id="searchBar" placeholder="Buscar...">
+    </section>
+
+    <section class="filter-bar">
+        <button class="AgregarProducto-button" onclick="abrirModalAgregar()">Agregar Producto</button>
+        <button class="AgregarProducto-button" onclick="abrirModalEditar()">Editar Producto</button>
+        <button class="EliminarProducto-button" onclick="abrirModalEliminar()">Eliminar Producto</button>
+    </section>
+
+    <section class="products-grid">
+        <script>
+            const apiURL = "http://localhost:4100/producto";
+
+            async function cargarProductos() {
+                try {
+                    const response = await fetch(apiURL);
+                    if (!response.ok) throw new Error("Error al cargar los productos");
+
+                    const productos = await response.json();
+                    const productsGrid = document.querySelector(".products-grid");
+
+                    productsGrid.innerHTML = "";
+
+                    productos.forEach(producto => {
+                        const productCard = document.createElement("div");
+                        productCard.className = "product-card";
+
+                        productCard.innerHTML = `
+                            <div class="product-image">
+                                <img src="${producto.imagen}" alt="${producto.nombre}">
+                            </div>
+                            <div class="product-info" style="text-align: center;">
+                                <h3>${producto.nombre}</h3>
+                                <h1 class="sombras">Disponibilidad: ${producto.disponibilidad}</h1>
+                                <p class="sombras">Unidad de medida: ${producto.unidad_de_medida}</p>
+                            </div>
+                        `;
+
+                        productsGrid.appendChild(productCard);
+                    });
+                } catch (error) {
+                    console.error("Error:", error);
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", cargarProductos);
+        </script>
+    </section>
+
+    <!-- Modal para agregar producto -->
+    <div id="add-product-modal" class="add-product-modal">
+        <div class="add-product-modal-content">
+            <div class="add-product-modal-header">Agregar Producto</div>
+            <div class="add-product-modal-body">
+                <form id="product-form">
+                    <label for="product-name">Nombre del producto:</label>
+                    <input type="text" id="product-name" name="product-name" placeholder="Ingresa el nombre del producto">
+
+                    <label for="unidaddemedida">Unidad de medida:</label>
+                        <select name="unidaddemedida" id="unidaddemedida">
+                        <option value="" disabled selected>Seleccione la unidad de medida</option>
+                        <option value="GR">GR</option>
+                        <option value="UND">UND</option>
+                        </select>
+
+                    <label for="new-disponibilidad">Disponibilidad:</label>
+                        <select name="new-disponibilidad" id="new-disponibilidad">
+                        <option value="" disabled selected>Seleccione si el producto esta disponible</option>
+                        <option value="AGOTADO">AGOTADO</option>
+                        <option value="DISPONIBLE">DISPONIBLE</option>unidaddemedida
+                        </select>
+
+                    <label for="product-image">Imagen del producto:</label>
+                    <input type="text" id="product-image" name="product-image" placeholder="Ingresa la URL de la imagen" style="width: 100%;">
+                </form>
+            </div>
+            <div class="add-product-modal-actions">
+                <button class="save-product-button" onclick="guardarCambios()">Guardar</button>
+                <button class="cancel-product-button" onclick="cerrarModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar producto -->
+    <div id="edit-product-modal" class="edit-product-modal" style="display: none;">
+        <div class="edit-product-modal-content">
+            <div class="edit-product-modal-header">Editar Producto</div>
+            <div class="edit-product-modal-body">
+
+                <label for="product-name-edit">Nombre original del producto:</label>
+                <input type="text" id="product-name-edit" name="product-name-edit" placeholder="Ingresa el nombre del producto original">
+
+                <label for="new-product-name">Nuevo nombre del producto:</label>
+                <input type="text" id="new-product-name" name="new-product-name" placeholder="Ingresa el nuevo nombre del producto">
+
+                <label for="new-unidaddemedida">Unidad de medida:</label>
+                <select name="new-unidaddemedida" id="new-unidaddemedida">
+                    <option value="" disabled selected>Seleccione la unidad de medida</option>
+                    <option value="GR">GR</option>
+                    <option value="UND">UND</option>
+                </select>
+
+                <label for="new-disponibilidad-editar">Disponibilidad:</label>
+                <select name="new-disponibilidad-editar" id="new-disponibilidad-editar">
+                    <option value="" disabled selected>Seleccione si el producto esta disponible</option>
+                    <option value="AGOTADO">AGOTADO</option>
+                    <option value="DISPONIBLE">DISPONIBLE</option>new-unidaddemedida
+                </select>
+            </div>
+            <div class="edit-product-modal-actions">
+                <button class="edit-product-button" onclick="editarProducto()">Guardar cambios</button>
+                <button class="cancel-product-button" onclick="cerrarModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para eliminar producto -->
+    <div id="delete-product-modal" class="delete-product-modal">
+        <div class="delete-product-modal-content">
+            <div class="delete-product-modal-header">Eliminar Producto</div>
+            <div class="delete-product-modal-body">
+                <label for="product-name-delete">Nombre del producto a eliminar:</label>
+                <input type="text" id="product-name-delete" name="product-name-delete" placeholder="Ingresa el nombre del producto a eliminar">
+            </div>
+            <div class="delete-product-modal-actions">
+                <button class="delete-product-button" onclick="eliminarProducto()">Eliminar</button>
+                <button class="cancel-product-button" onclick="cerrarModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alertifyjs/build/alertify.min.js"></script>
+    <script src="/js/principal.js"></script>
+</body>
+</html>

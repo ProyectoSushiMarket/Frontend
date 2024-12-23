@@ -1,0 +1,431 @@
+/* General */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .logo {
+    font-weight: bold;
+    color: #333;
+}
+
+.navbar ul {
+    display: flex;
+    list-style-type: none;
+}
+
+.navbar ul li {
+    margin: 0 15px;
+}
+
+.navbar ul li a {
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.navbar .icons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.navbar .login-icon {
+    margin-right: 20px;
+    color: #333;
+    text-decoration: none;
+}
+
+/* Perfil y botón Cerrar Sesión */
+.perfil-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.usuario {
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+}
+
+.cerrar-sesion {
+    padding: 8px 15px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+}
+
+.cerrar-sesion:hover {
+    background-color: #218838;
+}
+
+/* Botones */
+.contact-button, .CerrarSesion-button, .AgregarProducto-button {
+    background-color: #45a049;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Search Bar */
+.search-bar {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.search-bar input {
+    width: 300px;
+    padding: 10px;
+    border: 1px solid #000000;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+/* Filter Bar */
+.filter-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 50px;
+    background-color: #ffffff;
+}
+
+/* Products Grid */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px 50px;
+}
+
+.product-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover {
+    transform: scale(1.03);
+}
+
+.product-card .product-image img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+    margin: 0 auto;
+}
+
+.product-info {
+    text-align: center;
+    padding: 10px;
+}
+
+.product-name {
+    color: #45a049;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.make-order-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.make-order-button:hover {
+    background-color: #218838;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    padding-top: 60px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content-container {
+    position: relative;
+    margin: auto;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    width: 40%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.modal-content {
+    max-width: 80%;
+    max-height: 200px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    object-fit: contain;
+}
+
+.modal-info {
+    text-align: left;
+    margin-top: 10px;
+}
+
+.modal-info p {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.modal-info label {
+    display: block;
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.modal-info input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* Estilos para el select (flechita de selección) */
+.modal-info select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.modal-info select:hover {
+    border-color: #28a745;
+}
+
+.modal-info button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal-info button:hover {
+    background-color: #218838;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    color: #000;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #f00;
+    text-decoration: none;
+}
+.sombras {
+    padding: 10px;
+    background-color: #f9f9f9; 
+    box-shadow: 2px 2px 8px rgba(20, 200, 0, 0.889);
+    border-radius: 5px; 
+    margin: 10px 0; 
+    font-family: Arial, sans-serif; 
+    font-size: 16px; 
+}
+/* Estilo para los botones de alert2 */
+.swal2-confirm, .swal2-cancel {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.swal2-confirm {
+    background-color: #28a745;  
+    color: white;
+}
+
+.swal2-confirm:hover {
+    background-color: #218838; 
+}
+
+.swal2-cancel {
+    background-color: #dc3545;  
+    color: white;
+}
+
+.swal2-cancel:hover {
+    background-color: #c82333;  
+}
+.swal2-button {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    padding: 10px 26px;
+}
+/* Modal del carrito */
+.carrito-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content-container-carrito {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    width: 80%;
+    max-width: 500px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.3s ease-in-out;
+    position: relative;
+}
+
+.modal-content-container-carrito h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: #333333;
+}
+
+.modal-content-container-carrito ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 0 20px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.modal-content-container-carrito ul li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-content-container-carrito ul li:last-child {
+    border-bottom: none;
+}
+
+.modal-content-container-carrito ul li button {
+    background-color: #e74c3c;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.modal-content-container-carrito ul li button:hover {
+    background-color: #c0392b;
+}
+
+.modal-content-container-carrito button {
+    background-color: #218838;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: block;
+    margin: 0 auto;
+}
+
+.modal-content-container-carrito button:hover {
+    background-color: #218838;
+}
+
+.carrito-modal .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333333;
+    cursor: pointer;
+}
+
+.carrito-modal .close:hover {
+    color: #e74c3c;
+}
+
+/* Animación de aparición */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
+

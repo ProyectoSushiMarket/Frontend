@@ -1,0 +1,412 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    /* overflow: hidden; Esto es para paralizar la pantalla para que no se mueva, funciona igual para el modal */ 
+}
+
+.usuario {
+    padding-top: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .logo {
+    font-weight: bold;
+    color: #333;
+}
+
+.navbar ul {
+    display: flex;
+    list-style-type: none;
+}
+
+.navbar ul li {
+    margin: 0 15px;
+}
+
+.navbar ul li a {
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.navbar .icons {
+    display: flex;
+    align-items: center;
+}
+
+.navbar .cart-icon,
+.navbar .login-icon {
+    margin-right: 20px;
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+}
+
+.contact-button {
+    background-color: #45a049;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.CerrarSesion-button {
+    background-color: #45a049;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.AgregarProducto-button, .EliminarProducto-button, .EditarProducto-button {
+    background-color: #45a049;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.search-bar {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.search-bar input {
+    width: 300px;
+    padding: 10px;
+    border: 1px solid #000000;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.buscar-button {
+    padding: 10px 15px;
+    background-color: #45a049;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.filter-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 50px;
+    background-color: #ffffff;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px 50px;
+}
+
+.product-card:hover {
+    transform: scale(1.03);
+}
+
+.product-name {
+    color: #45a049;
+    font-weight: bold;
+    margin-top: 10px;
+}
+.product-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+.product-card:hover {
+    transform: scale(1.03);
+}
+
+.product-card .product-image img {
+    width: 150px; 
+    height: 150px; 
+    object-fit: cover; 
+    border-radius: 8px; 
+    display: block;
+    margin: 0 auto; 
+}
+
+.product-info {
+    text-align: center;
+    padding: 10px;; 
+}
+
+.product-card:hover .add-to-cart {
+    display: block;
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Modal general */
+.add-product-modal, .delete-product-modal, .new-modal, .edit-product-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.add-product-modal-content, .delete-product-modal-content, .new-modal-content, .edit-product-modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: left;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+/* Cabecera del modal */
+.add-product-modal-header, .delete-product-modal-header, .new-modal-header, .edit-product-modal-header {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #4CAF50;
+    font-weight: bold;
+    text-align: center;
+}
+
+.delete-product-modal-header {
+    color: #e74c3c;
+}
+
+.new-modal-header {
+    color: #3498db;
+}
+
+.edit-product-modal-header {
+    color: #e68c0e;;
+}
+
+/* Cuerpo del modal */
+.add-product-modal-body, .delete-product-modal-body, .new-modal-body, .edit-product-modal-body {
+    padding: 10px 0;
+}
+
+.add-product-modal-body label, .delete-product-modal-body label, .new-modal-body label, .edit-product-modal-body label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Campos de entrada del modal */
+.add-product-modal-body input, .delete-product-modal-body input, .new-modal-body input, .edit-product-modal-body input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+/* Acciones del modal */
+.add-product-modal-actions, .delete-product-modal-actions, .new-modal-actions, .edit-product-modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.save-product-button, .cancel-product-button, .delete-product-button, .new-modal-button, .edit-product-button {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-size: 1rem;
+    width: 45%;
+}
+
+/* Estilo para el botón "Guardar" */
+.save-product-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.save-product-button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+.save-product-button:active {
+    transform: scale(0.98);
+}
+
+/* Estilo para el botón "Cancelar" */
+.cancel-product-button {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.cancel-product-button:hover {
+    background-color: #c0392b;
+    transform: scale(1.05);
+}
+
+.cancel-product-button:active {
+    transform: scale(0.98);
+}
+
+/* Estilo para el botón "Eliminar" */
+.delete-product-button, .EliminarProducto-button {
+    background-color: #45a049;
+    color: white;
+}
+
+.delete-product-button:hover, .EliminarProducto-button:hover {
+    background-color: #1f6322;
+    transform: scale(1.05);
+}
+
+.delete-product-button:active, .EliminarProducto-button:active {
+    transform: scale(0.98);
+}
+
+/* Estilo para el botón "Editar" */
+.edit-product-button {
+    background-color: #45a049;
+    color: white;
+}
+
+.edit-product-button:hover {
+    background-color: #1f6322;
+    transform: scale(1.05);
+}
+
+.edit-product-button:active {
+    transform: scale(0.98);
+}
+.edit-product-modal-body select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #ffffff;
+    cursor: pointer;
+}
+.add-product-modal-body select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #ffffff;
+    cursor: pointer;
+}
+
+/* Estilo para el nuevo modal */
+.new-modal {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.new-modal-button {
+    background-color: #3498db;
+    color: white;
+}
+
+.new-modal-button:hover {
+    background-color: #2980b9;
+    transform: scale(1.05);
+}
+
+.new-modal-button:active {
+    transform: scale(0.98);
+}
+.sombras {
+    padding: 10px;
+    background-color: #f9f9f9; 
+    box-shadow: 2px 2px 8px rgba(20, 200, 0, 0.889);
+    border-radius: 5px; 
+    margin: 10px 0; 
+    font-family: Arial, sans-serif; 
+    font-size: 16px; 
+}
+/* Estilo para los botones de alert2 */
+.swal2-confirm, .swal2-cancel {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.swal2-confirm {
+    background-color: #28a745;  
+    color: white;
+}
+
+.swal2-confirm:hover {
+    background-color: #218838; 
+}
+
+.swal2-cancel {
+    background-color: #dc3545;  
+    color: white;
+}
+
+.swal2-cancel:hover {
+    background-color: #c82333;  
+}
+.swal2-button {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    padding: 10px 26px;
+}
+
