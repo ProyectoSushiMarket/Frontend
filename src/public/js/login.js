@@ -95,7 +95,7 @@ const login = async () => {
         icon: "error",
         title: "Oops...",
         text: "Contraseña Incorrecta :(",
-        footer: '<a href="https://wa.me/573188342212?" target="_blank">Comunicate con Soporte</a>'
+        footer: '<a href="https://wa.me/573006348274?" target="_blank">Comunicate con Soporte</a>'
       })
     }
   } catch (err) {

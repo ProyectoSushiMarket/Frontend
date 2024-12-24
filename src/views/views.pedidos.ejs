@@ -35,7 +35,7 @@
                 document.getElementById("proveedor-nombre-header").textContent = data.nombre;
             }
             // Verificar el rol y mostrar u ocultar el botón
-            if (data.rol === "Proveedor") {
+            if (data.rol === "Proveedor" || "Administrador") {
                 document.querySelector(".eliminarpedido.eliminar-todos").style.display = "inline-block"; // Mostrar botón eliminar
             } else {
                 document.querySelector(".eliminarpedido.eliminar-todos").style.display = "none"; // Ocultar botón eliminar
@@ -206,7 +206,11 @@
             }
         } catch (error) {
             console.error("Error al cargar los pedidos:", error);
-            alert("No se pudieron cargar los pedidos.");
+            Swal.fire({
+            icon: "error",
+            title: "Error en el servidor",
+            text: "No se pudo cargar los pedidos",
+            });
         }
     }
 
@@ -249,59 +253,59 @@
 
 
     // Función que elimina todos los pedidos
-async function eliminarTodosLosPedidos() {
-    const url = "http://localhost:4100/pedido"; // URL de la API para eliminar todos los pedidos
-    const token = sessionStorage.getItem("token");
+        async function eliminarTodosLosPedidos() {
+            const url = "http://localhost:4100/pedido"; // URL de la API para eliminar todos los pedidos
+            const token = sessionStorage.getItem("token");
 
-    try {
-        const response = await fetch(url, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-access-token': token // Se pasa el token en los headers para la autenticación
-            }
-        });
+            try {
+                const response = await fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-access-token': token // Se pasa el token en los headers para la autenticación
+                    }
+                });
 
-        if (response.ok) {
-            console.log('Todos los pedidos han sido eliminados exitosamente');
-            
-            // Limpiar la lista de pedidos en la interfaz de usuario
-            const listaPedidos = document.getElementById("pedido-rows");
-            if (listaPedidos) {
-                while (listaPedidos.firstChild) {
-                    listaPedidos.removeChild(listaPedidos.firstChild);
+                if (response.ok) {
+                    console.log('Todos los pedidos han sido eliminados exitosamente');
+                    
+                    // Limpiar la lista de pedidos en la interfaz de usuario
+                    const listaPedidos = document.getElementById("pedido-rows");
+                    if (listaPedidos) {
+                        while (listaPedidos.firstChild) {
+                            listaPedidos.removeChild(listaPedidos.firstChild);
+                        }
+                    }
+
+                    // Cerrar el modal y mostrar mensaje de éxito
+                    cerrarModalEliminarTodos();
+                    Swal.fire({
+                        title: '¡Éxito!',
+                        text: 'Todos los pedidos han sido eliminados.',
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    });
+
+                } else {
+                    const error = await response.json();
+                    console.error('Error al eliminar los pedidos:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'No se pudieron eliminar los pedidos.',
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
                 }
+            } catch (error) {
+                console.error('Hubo un problema con la solicitud:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al eliminar los pedidos.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
             }
-
-            // Cerrar el modal y mostrar mensaje de éxito
-            cerrarModalEliminarTodos();
-            Swal.fire({
-                title: '¡Éxito!',
-                text: 'Todos los pedidos han sido eliminados.',
-                icon: 'success',
-                confirmButtonText: 'Aceptar'
-            });
-
-        } else {
-            const error = await response.json();
-            console.error('Error al eliminar los pedidos:', error);
-            Swal.fire({
-                title: 'Error',
-                text: 'No se pudieron eliminar los pedidos.',
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-            });
         }
-    } catch (error) {
-        console.error('Hubo un problema con la solicitud:', error);
-        Swal.fire({
-            title: 'Error',
-            text: 'Hubo un problema al eliminar los pedidos.',
-            icon: 'error',
-            confirmButtonText: 'Aceptar'
-        });
-    }
-}
 
 
     
