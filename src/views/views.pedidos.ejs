@@ -35,7 +35,7 @@
                 document.getElementById("proveedor-nombre-header").textContent = data.nombre;
             }
             // Verificar el rol y mostrar u ocultar el botón
-            if (data.rol === "Proveedor" || "Administrador") {
+            if (data.rol === "Proveedor") {
                 document.querySelector(".eliminarpedido.eliminar-todos").style.display = "inline-block"; // Mostrar botón eliminar
             } else {
                 document.querySelector(".eliminarpedido.eliminar-todos").style.display = "none"; // Ocultar botón eliminar

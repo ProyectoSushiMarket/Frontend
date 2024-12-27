@@ -1,16 +1,29 @@
 Reinicia los ID de las tablas
-ALTER TABLE nombre_de_la_tabla AUTO_INCREMENT = 1;
+Entrar a operaciones y darle al TRUNCATE(vaciar la tabla)
 
 
 
 REALIZADOS:
 clientes que no aparezca el precio (listo)
+
 organizar el orden de la tabla de los pedidos (listo)
+
 crear los clientes ya fijos (listo)
+
 poner si un producto no esta disponible (listo)
+
 hacer carrito de compras para listar los pedidos y despues enviarlo(listo)
+
 modificar la tabla de los pedidos ya que cuando se llega a un limite de pedidos no aparecen mas pedidos. (listo/mejorado)
 
+Darle permisos especificos a jaiber como (administrador) que el tenga todos los permisos y el proveedor solo pueda
+agregar un producto (listo)
+
+Agregarle la direccion del cliente pero que no aparezca en la tabla solamente en la base de datos
+hacer un video de presentacion explicando la vista del proveedor y el cliente (listo)
+
 PENDIENTES:
+
+
 
 

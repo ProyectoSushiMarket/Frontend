@@ -123,6 +123,8 @@
                 <form id="cliente-form">
                     <label for="cliente-nombre">Nombre del cliente:</label>
                     <input type="text" id="cliente-nombre" name="cliente-nombre" placeholder="Ingresa el nombre">
+                    <label for="direccion">Direccion:</label>
+                    <input type="text" id="direccion" name="direccion" placeholder="Ingresa la direccion">
                     <label for="cliente-usuario">Usuario:</label>
                     <input type="text" id="cliente-usuario" name="cliente-usuario" placeholder="Ingresa el usuario">
                     <label for="cliente-contrasena">Contraseña:</label>
@@ -154,6 +156,9 @@
 
                     <label for="edit-cliente-nombre">Nombre del cliente:</label>
                     <input type="text" id="edit-cliente-nombre" name="edit-cliente-nombre" placeholder="Ingresa el nombre">
+
+                    <label for="Editar-Direccion">Direccion:</label>
+                    <input type="text" id="Editar-Direccion" name="Editar-Direccion" placeholder="Ingresa la direccion">
 
                     <label for="edit-cliente-usuario">Usuario:</label>
                     <input type="text" id="edit-cliente-usuario" name="edit-cliente-usuario" placeholder="Ingresa el usuario">
@@ -246,12 +251,14 @@
         
         function guardarCliente() {
             const nombre = document.getElementById("cliente-nombre").value;
+            const direccion = document.getElementById("direccion").value;
             const usuario = document.getElementById("cliente-usuario").value;
             const contrasena = document.getElementById("cliente-contrasena").value;
             const rol = document.getElementById("cliente-rol").value;
 
             const datos = {
                 nombre: nombre,
+                direccion: direccion,
                 usuario: usuario,
                 contrasena: contrasena,
                 rol: rol
@@ -294,6 +301,7 @@
         function guardarEdicion() {
             const id = document.getElementById("edit-cliente-id").value;
             const nombre = document.getElementById("edit-cliente-nombre").value;
+            const direccion = document.getElementById("Editar-Direccion").value;
             const usuario = document.getElementById("edit-cliente-usuario").value;
             const contrasena = document.getElementById("edit-cliente-contrasena").value;
             const rol = document.getElementById("edit-cliente-rol").value;
@@ -301,6 +309,7 @@
             const datos = {
                 id: id,
                 nombre: nombre,
+                direccion: direccion,
                 usuario: usuario,
                 contrasena: contrasena,
                 rol: rol

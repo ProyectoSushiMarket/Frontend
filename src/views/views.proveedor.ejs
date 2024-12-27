@@ -35,6 +35,15 @@
                     sessionStorage.setItem("proveedorNombre", data.nombre);
                     document.getElementById("proveedor-nombre-header").textContent = data.nombre;
                 }
+                //Verificar el rol para el boton de editar y eliminar
+                if (data.rol == "Administrador") {
+                    document.querySelector(".AgregarProducto-button").style.display = "inline-block";
+                    document.querySelector(".EditarProducto-button").style.display = "inline-block";
+                    document.querySelector(".EliminarProducto-button").style.display = "inline-block";
+                } else {
+                    document.querySelector(".EditarProducto-button").style.display = "none";
+                    document.querySelector(".EliminarProducto-button").style.display = "none";
+                }
             } catch (error) {
                 console.error("Error al obtener los datos del proveedor:", error);
                 window.location.href = "/";
@@ -217,7 +226,7 @@
         async function eliminarProducto() {
             const productName = document.getElementById("product-name-delete").value;
 
-            if (!productName) {
+            if (!productName) { 
                 return;
             }
 
@@ -312,7 +321,7 @@
                 <li><a href="/pedidos">Pedidos</a></li>
             </ul>
             <div class="icons">
-                <div class="login-icon">Perfil 👤: <span id="proveedor-nombre-header">PROVEEDOR</span></div>
+                <div class="login-icon"> Perfil 👤: <span id="proveedor-nombre-header">ADMINISTRADOR</span></div>
                 <button class="CerrarSesion-button" onclick="CerrarSesion()">Cerrar Sesión</button>
             </div>
         </nav>
@@ -324,7 +333,7 @@
 
     <section class="filter-bar">
         <button class="AgregarProducto-button" onclick="abrirModalAgregar()">Agregar Producto</button>
-        <button class="AgregarProducto-button" onclick="abrirModalEditar()">Editar Producto</button>
+        <button class="EditarProducto-button" onclick="abrirModalEditar()">Editar Producto</button>
         <button class="EliminarProducto-button" onclick="abrirModalEliminar()">Eliminar Producto</button>
     </section>
 
@@ -450,7 +459,6 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alertifyjs/build/alertify.min.js"></script>
     <script src="/js/principal.js"></script>
 </body>
 </html>
