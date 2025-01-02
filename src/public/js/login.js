@@ -1,4 +1,4 @@
-//  DOM esté cargado
+// DOM esté cargado
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("login-form");
   const showLogin = document.getElementById("show-login");
@@ -69,7 +69,9 @@ const login = async () => {
     return;
   }
 
-  sessionStorage.setItem("urltiendaverduras", "http://localhost:4100");
+  // Cambia la URL base por la URL del dominio
+  sessionStorage.setItem("urltiendaverduras", "https://siembrafresca.com");
+
   const urltiendaverduras =
     sessionStorage.getItem("urltiendaverduras") + "/login/loginusuario";
 
@@ -97,6 +99,7 @@ const login = async () => {
         timer: 1500,
       });
 
+
       setTimeout(() => {
         window.location.href = sessionStorage.getItem("rol");
       }, 1500);
@@ -104,7 +107,7 @@ const login = async () => {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Contraseña Incorrecta :(",
+        text: "Contraseña Incorrecta. :(",
         footer: '<a href="https://wa.me/573006348274?" target="_blank">Comunicate con Soporte</a>'
       });
     }
