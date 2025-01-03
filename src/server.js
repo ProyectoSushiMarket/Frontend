@@ -2,6 +2,7 @@ import express from "express";
 import { fileURLToPath } from 'url';
 import path from "path";
 import cors from 'cors';
+import ejs from "ejs";
 import { config } from "dotenv";
 import ruta from "./routes/index.js";
 config();
