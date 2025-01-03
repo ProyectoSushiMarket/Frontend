@@ -73,7 +73,7 @@ const login = async () => {
   sessionStorage.setItem("urltiendaverduras", "https://api.siembrafresca.com");
 
   const urltiendaverduras =
-    sessionStorage.getItem("urltiendaverduras") + "https://api.siembrafresca.com";
+    sessionStorage.getItem("urltiendaverduras") + "/login/loginusuario";
 
   const options = {
     method: "POST",

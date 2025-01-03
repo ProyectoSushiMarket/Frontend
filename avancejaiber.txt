@@ -23,7 +23,7 @@ Agregarle la direccion del cliente pero que no aparezca en la tabla solamente en
 hacer un video de presentacion explicando la vista del proveedor y el cliente (listo)
 
 PENDIENTES:
-/login/loginusuario
+
 
 
 
