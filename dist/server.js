@@ -16,7 +16,16 @@ server.use(express.json());
 server.use(express.static(path.join(__dirname, "public")));
 server.set("view engine", "ejs");
 server.set("views", path.join(__dirname, 'views'));
-server.use(cors());
+
+// Configuración de CORS
+server.use(cors({
+  origin: 'https://www.siembrafresca.com',  // Permite solo este origen
+  methods: ['GET', 'POST', 'OPTIONS'],   // Métodos permitidos
+  allowedHeaders: ['Content-Type', 'Authorization'],  // Encabezados permitidos
+}));
+
+// Responder correctamente a las solicitudes OPTIONS (preflight requests)
+server.options('*', cors());
 
 server.use("/", ruta);
 
