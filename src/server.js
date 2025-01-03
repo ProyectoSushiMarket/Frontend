@@ -19,7 +19,7 @@ server.set("views", path.join(__dirname, 'views'));
 
 // Configuración de CORS
 server.use(cors({
-  origin: ['https://www.siembrafresca.com', "https://api.siembrafresca.com"], 
+  origin: ["https://api.siembrafresca.com"], 
   methods: ['GET', 'POST', 'OPTIONS'],  
   allowedHeaders: ['Content-Type', 'Authorization'],  
 }));
