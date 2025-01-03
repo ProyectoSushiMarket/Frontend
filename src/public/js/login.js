@@ -71,7 +71,7 @@ const login = async () => {
 
   // Cambia la URL base por la URL del dominio
   sessionStorage.setItem("urltiendaverduras", "https://siembrafresca.com");
-  //URL del login
+
   const urltiendaverduras =
     sessionStorage.getItem("urltiendaverduras") + "/login/loginusuario";
 
