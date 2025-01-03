@@ -19,10 +19,22 @@ server.set("views", path.join(__dirname, 'views'));
 
 // Configuración de CORS
 server.use(cors({
-  origin: ["https://api.siembrafresca.com"], 
-  methods: ['GET', 'POST', 'OPTIONS'],  
-  allowedHeaders: ['Content-Type', 'Authorization'],  
-}));
+    origin: ["https://api.siembrafresca.com", "https://www.siembrafresca.com"], 
+    methods: ['GET', 'POST', 'OPTIONS'],  
+    allowedHeaders: ['Content-Type', 'Authorization'],  
+    credentials: true,  // Si estás enviando cookies o credenciales
+  }));
+  server.use((req, res, next) => {
+    if (req.method === 'OPTIONS') {
+      res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+      return res.status(204).end();
+    }
+    next();
+  });
+  
 
 // Responder correctamente a las solicitudes OPTIONS (preflight requests)
 server.options('*', cors());
